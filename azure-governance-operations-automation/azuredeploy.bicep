@@ -93,16 +93,16 @@ param location string {
 }
 
 var packageURI = 'https://msignite2016stg.blob.core.windows.net/cloudwise/package.zip'
-var hostingPlanName = 'CloudWiseHostingplan-${uniqueString(resourceGroup().id)}'
-var webSiteName = 'CloudWise${uniqueString(resourceGroup().id)}'
-var sqlserverName = 'sqlcloudwise${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = 'CloudWiseHostingplan-${uniqueString(resourceGroup().id)}'
+var webSiteName_var = 'CloudWise${uniqueString(resourceGroup().id)}'
+var sqlserverName_var = 'sqlcloudwise${uniqueString(resourceGroup().id)}'
 var sqlDatabaseName = 'cloudwisedb'
 var sqlCollation = 'SQL_Latin1_General_CP1_CI_AS'
 var sqlMaxSizeBytes = '1073741824'
 var sqlEdition = 'Basic'
 var sqlRequestedServiceObjectiveName = 'Basic'
-var insightsName = '${webSiteName}insights'
-var omsWorkspaceName_variable = concat(omsWorkspaceName, uniqueString(resourceGroup().id, deployment().name))
+var insightsName_var = '${webSiteName_var}insights'
+var omsWorkspaceName_var = concat(omsWorkspaceName, uniqueString(resourceGroup().id, deployment().name))
 var OMSWebAppsRunBookAndDashboardTemplateFolder = 'nested/AutomationRunbooksOMSDashboard'
 var OMSWebAppsRunBookAndDashboardTemplateFileName = 'OMSAutomationRunbooksDashboard.json'
 var OMSCommonTemplateFolder = 'nested/OMSCommon'
@@ -112,8 +112,8 @@ var quickstartTags = {
   name: 'azure-governance-operations-automation'
 }
 
-resource sqlserverName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
-  name: sqlserverName
+resource sqlserverName 'Microsoft.Sql/servers@2014-04-01-preview' = {
+  name: sqlserverName_var
   location: location
   tags: {
     displayName: 'SqlServer'
@@ -126,7 +126,7 @@ resource sqlserverName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
 }
 
 resource sqlserverName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2014-04-01-preview' = {
-  name: '${sqlserverName}/${sqlDatabaseName}'
+  name: '${sqlserverName_var}/${sqlDatabaseName}'
   location: location
   properties: {
     edition: sqlEdition
@@ -135,12 +135,12 @@ resource sqlserverName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2014-04-
     requestedServiceObjectiveName: sqlRequestedServiceObjectiveName
   }
   dependsOn: [
-    sqlserverName_resource
+    sqlserverName
   ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2015-08-01' = {
+  name: hostingPlanName_var
   location: location
   tags: {
     displayName: 'HostingPlan'
@@ -151,29 +151,29 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
     capacity: skuCapacity
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2015-08-01' = {
-  name: webSiteName
+resource webSiteName 'Microsoft.Web/sites@2015-08-01' = {
+  name: webSiteName_var
   location: location
   tags: {
-    'hidden-related:${hostingPlanName_resource.id}': 'empty'
+    'hidden-related:${hostingPlanName.id}': 'empty'
     displayName: 'Website'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: webSiteName
-    serverFarmId: hostingPlanName_resource.id
+    name: webSiteName_var
+    serverFarmId: hostingPlanName.id
   }
   dependsOn: [
-    hostingPlanName
+    hostingPlanName_var
   ]
 }
 
 resource webSiteName_web 'Microsoft.Web/sites/config@2015-08-01' = {
-  name: '${webSiteName}/web'
+  name: '${webSiteName_var}/web'
   tags: {
     displayName: 'WebAppConfig'
     quickstartName: quickstartTags.name
@@ -182,31 +182,31 @@ resource webSiteName_web 'Microsoft.Web/sites/config@2015-08-01' = {
     netFrameworkVersion: 'v4.6'
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
     webSiteName_MSDeploy
   ]
 }
 
 resource webSiteName_connectionstrings 'Microsoft.Web/sites/config@2015-08-01' = {
-  name: '${webSiteName}/connectionstrings'
+  name: '${webSiteName_var}/connectionstrings'
   properties: {
     DefaultConnection: {
-      value: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${sqlserverName}').fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabaseName};User Id=${sqlAdministratorLogin}@${sqlserverName};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+      value: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${sqlserverName_var}').fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabaseName};User Id=${sqlAdministratorLogin}@${sqlserverName_var};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
       type: 'SQLServer'
     }
     SQLCONNSTR_DefaultConnection: {
-      value: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${sqlserverName}').fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabaseName};User Id=${sqlAdministratorLogin}@${sqlserverName};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+      value: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${sqlserverName_var}').fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabaseName};User Id=${sqlAdministratorLogin}@${sqlserverName_var};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
       type: 'SQLServer'
     }
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
     webSiteName_MSDeploy
   ]
 }
 
 resource webSiteName_MSDeploy 'Microsoft.Web/sites/extensions@2015-08-01' = {
-  name: '${webSiteName}/MSDeploy'
+  name: '${webSiteName_var}/MSDeploy'
   location: location
   tags: {
     displayName: 'WebAppMSDeploy'
@@ -216,20 +216,20 @@ resource webSiteName_MSDeploy 'Microsoft.Web/sites/extensions@2015-08-01' = {
     packageUri: packageURI
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
   ]
 }
 
 resource hostingPlanName_name 'Microsoft.Insights/autoscalesettings@2014-04-01' = {
-  name: '${hostingPlanName}-${resourceGroup().name}'
+  name: '${hostingPlanName_var}-${resourceGroup().name}'
   location: location
   tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}': 'Resource'
-    displayName: '${insightsName} AutoScale'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}': 'Resource'
+    displayName: '${insightsName_var} AutoScale'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: '${hostingPlanName}-${resourceGroup().name}'
+    name: '${hostingPlanName_var}-${resourceGroup().name}'
     profiles: [
       {
         name: 'Default'
@@ -242,7 +242,7 @@ resource hostingPlanName_name 'Microsoft.Insights/autoscalesettings@2014-04-01' 
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
+              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT10M'
@@ -260,7 +260,7 @@ resource hostingPlanName_name 'Microsoft.Insights/autoscalesettings@2014-04-01' 
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
+              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT1H'
@@ -279,30 +279,30 @@ resource hostingPlanName_name 'Microsoft.Insights/autoscalesettings@2014-04-01' 
       }
     ]
     enabled: false
-    targetResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
+    targetResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}'
   }
   dependsOn: [
-    hostingPlanName_resource
+    hostingPlanName
   ]
 }
 
 resource CPUHigh_hostingPlanName 'Microsoft.Insights/alertrules@2014-04-01' = {
-  name: 'CPUHigh ${hostingPlanName}'
+  name: 'CPUHigh ${hostingPlanName_var}'
   location: location
   tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}': 'Resource'
-    displayName: 'CPUHigh${insightsName}'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}': 'Resource'
+    displayName: 'CPUHigh${insightsName_var}'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: 'CPUHigh ${hostingPlanName}'
-    description: 'The average CPU is high across all the instances of ${hostingPlanName}'
+    name: 'CPUHigh ${hostingPlanName_var}'
+    description: 'The average CPU is high across all the instances of ${hostingPlanName_var}'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}'
         metricName: 'CpuPercentage'
       }
       operator: 'GreaterThan'
@@ -316,27 +316,27 @@ resource CPUHigh_hostingPlanName 'Microsoft.Insights/alertrules@2014-04-01' = {
     }
   }
   dependsOn: [
-    hostingPlanName_resource
+    hostingPlanName
   ]
 }
 
 resource LongHttpQueue_hostingPlanName 'Microsoft.Insights/alertrules@2014-04-01' = {
-  name: 'LongHttpQueue ${hostingPlanName}'
+  name: 'LongHttpQueue ${hostingPlanName_var}'
   location: location
   tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}': 'Resource'
-    displayName: 'LongHttpQueue${insightsName}'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}': 'Resource'
+    displayName: 'LongHttpQueue${insightsName_var}'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: 'LongHttpQueue ${hostingPlanName}'
-    description: 'The HTTP queue for the instances of ${hostingPlanName} has a large number of pending requests.'
+    name: 'LongHttpQueue ${hostingPlanName_var}'
+    description: 'The HTTP queue for the instances of ${hostingPlanName_var} has a large number of pending requests.'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}'
         metricName: 'HttpQueueLength'
       }
       operator: 'GreaterThan'
@@ -350,27 +350,27 @@ resource LongHttpQueue_hostingPlanName 'Microsoft.Insights/alertrules@2014-04-01
     }
   }
   dependsOn: [
-    hostingPlanName_resource
+    hostingPlanName
   ]
 }
 
 resource ServerErrors_insightsName 'Microsoft.Insights/alertrules@2014-04-01' = {
-  name: 'ServerErrors ${insightsName}'
+  name: 'ServerErrors ${insightsName_var}'
   location: location
   tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName}': 'Resource'
-    displayName: 'ServerErrors ${insightsName}'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName_var}': 'Resource'
+    displayName: 'ServerErrors ${insightsName_var}'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: 'ServerErrors ${webSiteName}'
-    description: '${webSiteName} has some server errors, status code 5xx.'
+    name: 'ServerErrors ${webSiteName_var}'
+    description: '${webSiteName_var} has some server errors, status code 5xx.'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName_var}'
         metricName: 'Http5xx'
       }
       operator: 'GreaterThan'
@@ -384,26 +384,26 @@ resource ServerErrors_insightsName 'Microsoft.Insights/alertrules@2014-04-01' = 
     }
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
   ]
 }
 
 resource ForbiddenRequests_insightsName 'Microsoft.Insights/alertrules@2014-04-01' = {
-  name: 'ForbiddenRequests ${insightsName}'
+  name: 'ForbiddenRequests ${insightsName_var}'
   location: location
   tags: {
-    displayName: 'ForbiddenRequests${insightsName}'
+    displayName: 'ForbiddenRequests${insightsName_var}'
     quickstartName: quickstartTags.name
   }
   properties: {
-    name: 'ForbiddenRequests ${webSiteName}'
-    description: '${webSiteName} has some requests that are forbidden, status code 403.'
+    name: 'ForbiddenRequests ${webSiteName_var}'
+    description: '${webSiteName_var} has some requests that are forbidden, status code 403.'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName_var}'
         metricName: 'Http403'
       }
       operator: 'GreaterThan'
@@ -417,30 +417,30 @@ resource ForbiddenRequests_insightsName 'Microsoft.Insights/alertrules@2014-04-0
     }
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
   ]
 }
 
-resource insightsName_resource 'Microsoft.Insights/components@2014-04-01' = {
-  name: insightsName
+resource insightsName 'Microsoft.Insights/components@2014-04-01' = {
+  name: insightsName_var
   location: 'East US'
   tags: {
-    displayName: 'Component${insightsName}'
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName}': 'Resource'
+    displayName: 'Component${insightsName_var}'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webSiteName_var}': 'Resource'
     quickstartName: quickstartTags.name
   }
   properties: {
-    applicationId: webSiteName
+    applicationId: webSiteName_var
   }
   dependsOn: [
-    webSiteName_resource
+    webSiteName
   ]
 }
 
-module omsWorkspace '<failed to parse [concat(parameters(\'_artifactsLocation\'), \'/\', variables(\'OMSCommonTemplateFolder\'), \'/\', variables(\'OMSCommonTemplateFileName\'), parameters(\'_artifactsLocationSasToken\'))]>' = {
+module omsWorkspace '?' /*TODO: replace with correct path to [concat(parameters('_artifactsLocation'), '/', variables('OMSCommonTemplateFolder'), '/', variables('OMSCommonTemplateFileName'), parameters('_artifactsLocationSasToken'))]*/ = {
   name: 'omsWorkspace'
   params: {
-    workspaceName: omsWorkspaceName_variable
+    workspaceName: omsWorkspaceName_var
     location: omsRegion
     serviceTier: 'Free'
     quickstartTags: quickstartTags
@@ -448,12 +448,12 @@ module omsWorkspace '<failed to parse [concat(parameters(\'_artifactsLocation\')
   dependsOn: []
 }
 
-module OMSAutomationRunBooksAndDashboard '<failed to parse [concat(parameters(\'_artifactsLocation\'), \'/\', variables(\'OMSWebAppsRunBookAndDashboardTemplateFolder\'), \'/\', variables(\'OMSWebAppsRunBookAndDashboardTemplateFileName\'), parameters(\'_artifactsLocationSasToken\'))]>' = {
+module OMSAutomationRunBooksAndDashboard '?' /*TODO: replace with correct path to [concat(parameters('_artifactsLocation'), '/', variables('OMSWebAppsRunBookAndDashboardTemplateFolder'), '/', variables('OMSWebAppsRunBookAndDashboardTemplateFileName'), parameters('_artifactsLocationSasToken'))]*/ = {
   name: 'OMSAutomationRunBooksAndDashboard'
   params: {
     omsId: reference('omsWorkspace').outputs.workspaceIdOutput.value
     omsKey: reference('omsWorkspace').outputs.sharedKeyOutput.value
-    omsWorkspaceName: omsWorkspaceName_variable
+    omsWorkspaceName: omsWorkspaceName_var
     automationAccountName: automationAccountName
     automationRegion: automationRegion
     omsworkspaceRegion: omsRegion

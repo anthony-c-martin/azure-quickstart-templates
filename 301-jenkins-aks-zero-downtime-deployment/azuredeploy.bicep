@@ -65,25 +65,25 @@ param location string {
 
 var resourcePrefix = 'jenkins'
 var OSDiskName = '${resourcePrefix}-os-disk'
-var nicName = '${resourcePrefix}-nic'
+var nicName_var = '${resourcePrefix}-nic'
 var subnetName = '${resourcePrefix}-subnet'
-var publicIPAddressName = '${resourcePrefix}-ip'
-var vmName = '${resourcePrefix}-vm'
-var virtualNetworkName = '${resourcePrefix}-vnet'
+var publicIPAddressName_var = '${resourcePrefix}-ip'
+var vmName_var = '${resourcePrefix}-vm'
+var virtualNetworkName_var = '${resourcePrefix}-vnet'
 var vmExtensionName = '${resourcePrefix}-init'
-var frontEndNSGName = '${resourcePrefix}-nsg'
-var aksName = 'aks'
+var frontEndNSGName_var = '${resourcePrefix}-nsg'
+var aksName_var = 'aks'
 var aksDnsPrefix = 'aks${uniqueString(resourceGroup().id)}'
 var artifactsLocation = 'https://raw.githubusercontent.com/Azure/jenkins/master'
 var extensionScript = '301-jenkins-aks-zero-downtime-deployment.sh'
 var artifactsLocationSasToken = ''
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -119,18 +119,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -143,17 +140,17 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} --app_id "${servicePrincipalAppId}" --app_key "${servicePrincipalAppKey}" --subscription_id "${subscription().subscriptionId}" --tenant_id "${subscription().tenantId}" --resource_group "${resourceGroup().name}" --aks_name "${aksName}" --jenkins_fqdn "${reference(publicIPAddressName).dnsSettings.fqdn}" --artifacts_location "${artifactsLocation}" --sas_token "${artifactsLocationSasToken}"'
+      commandToExecute: './${extensionScript} --app_id "${servicePrincipalAppId}" --app_key "${servicePrincipalAppKey}" --subscription_id "${subscription().subscriptionId}" --tenant_id "${subscription().tenantId}" --resource_group "${resourceGroup().name}" --aks_name "${aksName_var}" --jenkins_fqdn "${reference(publicIPAddressName_var).dnsSettings.fqdn}" --artifacts_location "${artifactsLocation}" --sas_token "${artifactsLocationSasToken}"'
     }
   }
   dependsOn: [
-    vmName_resource
-    aksName_resource
+    vmName
+    aksName
   ]
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-12-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-12-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -172,8 +169,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-12-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-09-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -181,28 +178,26 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
         name: 'ipconfig1'
         properties: {
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIPAddressName_resource.id
+          publicIPAddress: {
+            id: publicIPAddressName.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: frontEndNSGName_resource.id
+      id: frontEndNSGName.id
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
-    frontEndNSGName_resource
+    virtualNetworkName
   ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -212,8 +207,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2017-06-01' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2017-06-01' = {
+  name: frontEndNSGName_var
   location: location
   properties: {
     securityRules: [
@@ -247,9 +242,9 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2017-
   }
 }
 
-resource aksName_resource 'Microsoft.ContainerService/managedClusters@2017-08-31' = {
+resource aksName 'Microsoft.ContainerService/managedClusters@2017-08-31' = {
   location: location
-  name: aksName
+  name: aksName_var
   properties: {
     kubernetesVersion: kubernetesVersion
     dnsPrefix: aksDnsPrefix
@@ -274,14 +269,14 @@ resource aksName_resource 'Microsoft.ContainerService/managedClusters@2017-08-31
       }
     }
     servicePrincipalProfile: {
-      ClientId: servicePrincipalAppId
-      Secret: servicePrincipalAppKey
+      clientId: servicePrincipalAppId
+      secret: servicePrincipalAppKey
     }
   }
 }
 
 output admin_username string = adminUsername
-output jenkins_vm_fqdn string = reference(publicIPAddressName).dnsSettings.fqdn
-output jenkins_url string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}'
-output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
-output kubernetes_master_fqdn string = aksName_resource.properties.fqdn
+output jenkins_vm_fqdn string = reference(publicIPAddressName_var).dnsSettings.fqdn
+output jenkins_url string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output kubernetes_master_fqdn string = aksName.properties.fqdn

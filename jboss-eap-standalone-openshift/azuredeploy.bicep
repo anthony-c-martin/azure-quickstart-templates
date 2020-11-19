@@ -73,12 +73,12 @@ param location string {
 
 var ScriptFolder = 'scripts'
 var ScriptFileName = 'allinone.sh'
-var virtualNetworkName = 'openshiftVnet'
+var virtualNetworkName_var = 'openshiftVnet'
 var addressPrefix = '10.0.0.0/16'
-var nicName = 'OneVmNic'
-var publicIPAddressName = 'onevmPublicIP'
+var nicName_var = 'OneVmNic'
+var publicIPAddressName_var = 'onevmPublicIP'
 var subnetName = 'openshiftVsnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 var singlequote = '\''
 var escapedQuote = '"'
@@ -138,18 +138,15 @@ resource name 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-04-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -158,7 +155,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -168,13 +165,12 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-04-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -184,8 +180,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-04-01' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     displayName: 'VirtualNetwork'
@@ -224,7 +220,7 @@ resource name_installcustomscript 'Microsoft.Compute/virtualMachines/extensions@
       ]
     }
     protectedSettings: {
-      commandToExecute: 'bash allinone.sh  ${resourceGroup().name} ${dnsLabelPrefix} ${adminUsername} ${singlequote}${openshiftPassword}${singlequote} ${reference(publicIPAddressName).dnsSettings.fqdn} ${rhsmUser} ${singlequote}${rhsmPassword}${singlequote} ${rhsmPool} ${reference('onevmPublicIP').ipAddress}${escapedQuote}${sshKeyData}${escapedQuote}'
+      commandToExecute: 'bash allinone.sh  ${resourceGroup().name} ${dnsLabelPrefix} ${adminUsername} ${singlequote}${openshiftPassword}${singlequote} ${reference(publicIPAddressName_var).dnsSettings.fqdn} ${rhsmUser} ${singlequote}${rhsmPassword}${singlequote} ${rhsmPool} ${reference('onevmPublicIP').ipAddress}${escapedQuote}${sshKeyData}${escapedQuote}'
     }
   }
   dependsOn: [
@@ -296,6 +292,6 @@ resource name_nsg 'Microsoft.Network/networkSecurityGroups@2018-04-01' = {
   }
 }
 
-output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
-output OpenshiftConsole string = 'https://${reference(publicIPAddressName).dnsSettings.fqdn}:8443'
+output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output OpenshiftConsole string = 'https://${reference(publicIPAddressName_var).dnsSettings.fqdn}:8443'
 output publicIP string = reference('onevmPublicIP').ipAddress

@@ -128,7 +128,7 @@ param workerPoolThreeInstanceCount int {
   default: 0
 }
 
-resource aseName_resource 'Microsoft.Web/hostingEnvironments@2015-08-01' = {
+resource aseName_res 'Microsoft.Web/hostingEnvironments@2015-08-01' = {
   name: aseName
   location: aseLocation
   properties: {

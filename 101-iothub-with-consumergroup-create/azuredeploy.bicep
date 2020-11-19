@@ -25,9 +25,9 @@ param capacityUnits int {
   default: 1
 }
 
-var consumerGroupName = '${iotHubName}/events/cg1'
+var consumerGroupName_var = '${iotHubName}/events/cg1'
 
-resource iotHubName_resource 'Microsoft.Devices/IotHubs@2020-03-01' = {
+resource iotHubName_res 'Microsoft.Devices/IotHubs@2020-03-01' = {
   name: iotHubName
   location: location
   properties: {
@@ -60,9 +60,9 @@ resource iotHubName_resource 'Microsoft.Devices/IotHubs@2020-03-01' = {
   }
 }
 
-resource consumerGroupName_resource 'Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups@2020-03-01' = {
-  name: consumerGroupName
+resource consumerGroupName 'Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups@2020-03-01' = {
+  name: consumerGroupName_var
   dependsOn: [
-    iotHubName_resource
+    iotHubName_res
   ]
 }

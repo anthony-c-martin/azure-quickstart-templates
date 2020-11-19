@@ -207,7 +207,7 @@ var computeNodeImages = {
 var currentComputeNodeImage = computeNodeImages[computeNodeImage]
 var artifactsBaseUrl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/create-hpc-cluster'
 
-module mainTemplate '<failed to parse [concat(variables(\'artifactsBaseUrl\'), \'/mainTemplate.json\')]>' = {
+module mainTemplate '?' /*TODO: replace with correct path to [concat(variables('artifactsBaseUrl'), '/mainTemplate.json')]*/ = {
   name: 'mainTemplate'
   params: {
     clusterName: clusterName

@@ -34,15 +34,15 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var apiVersion = '2017-04-01'
-var namespaceAuthRuleName = concat(namespaceName, '/${namespaceAuthorizationRuleName}')
+var namespaceAuthRuleName_var = concat(namespaceName, '/${namespaceAuthorizationRuleName}')
 var nsAuthorizationRuleResourceId = resourceId('Microsoft.Relay/namespaces/authorizationRules', namespaceName, namespaceAuthorizationRuleName)
 var hcAuthorizationRuleResourceId = resourceId('Microsoft.Relay/namespaces/WcfRelays/authorizationRules', namespaceName, wcfrelayName, wcfrelayAuthorizationRuleName)
 
-resource namespaceName_resource 'Microsoft.Relay/Namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.Relay/Namespaces@2017-04-01' = {
   name: namespaceName
-  location: location_variable
+  location: location_var
   sku: {
     name: 'Standard'
   }
@@ -58,7 +58,7 @@ resource namespaceName_wcfrelayName 'Microsoft.Relay/Namespaces/WcfRelays@[varia
     userMetadata: 'Meta Data supplied by user for wcfRelays'
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 
@@ -74,15 +74,15 @@ resource namespaceName_wcfrelayName_wcfrelayAuthorizationRuleName 'Microsoft.Rel
   ]
 }
 
-resource namespaceAuthRuleName_resource 'Microsoft.Relay/namespaces/authorizationRules@[variables(\'apiVersion\')]' = {
-  name: namespaceAuthRuleName
+resource namespaceAuthRuleName 'Microsoft.Relay/namespaces/authorizationRules@[variables(\'apiVersion\')]' = {
+  name: namespaceAuthRuleName_var
   properties: {
     Rights: [
       'Send'
     ]
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 

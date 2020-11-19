@@ -104,9 +104,9 @@ param vmssSubnetName string {
   default: 'VMSSSubnet'
 }
 
-var publicIpAddressName = '${vmName}PublicIP'
+var publicIpAddressName_var = '${vmName}PublicIP'
 var vmssPublicIpAddressName = '${vmssName}PublicIP'
-var networkInterfaceName = '${vmName}NetInt'
+var networkInterfaceName_var = '${vmName}NetInt'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 var vmssSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, vmssSubnetName)
 var osDiskType = 'Standard_LRS'
@@ -116,8 +116,8 @@ var vmssScriptFileName = 'cloud-init-vmss.sh'
 var subscriptionId = subscription().subscriptionId
 var tenantId = subscription().tenantId
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2019-11-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -128,20 +128,19 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIpAddressName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -167,8 +166,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-
   }
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
+  name: publicIpAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -180,7 +179,7 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   name: vmName
   location: location
   properties: {
@@ -204,7 +203,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
@@ -225,9 +224,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
       }
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource vmName_customScript 'Microsoft.Compute/virtualMachines/extensions@2019-07-01' = {
@@ -246,11 +242,11 @@ resource vmName_customScript 'Microsoft.Compute/virtualMachines/extensions@2019-
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
   name: vmssName
   tags: {
     'cluster-autoscaler-enabled': 'true'
@@ -350,10 +346,10 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
     }
   }
   dependsOn: [
-    networkInterfaceName_resource
+    networkInterfaceName
   ]
 }
 
-output adminUsername_output string = adminUsername
-output hostname string = reference(publicIpAddressName).dnsSettings.fqdn
-output sshCommand string = 'ssh ${adminUsername}@${reference(publicIpAddressName).dnsSettings.fqdn}'
+output adminUsername_out string = adminUsername
+output hostname string = reference(publicIpAddressName_var).dnsSettings.fqdn
+output sshCommand string = 'ssh ${adminUsername}@${reference(publicIpAddressName_var).dnsSettings.fqdn}'

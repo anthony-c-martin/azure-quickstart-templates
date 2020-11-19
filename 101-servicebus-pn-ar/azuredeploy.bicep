@@ -28,11 +28,11 @@ param location string {
 
 var ehVersion = '2017-04-01'
 var defaultSASKeyName = 'RootManageSharedAccessKey'
-var customSASKeyName = concat(premiumNamespaceName, '/${namespaceSASKeyName}')
+var customSASKeyName_var = concat(premiumNamespaceName, '/${namespaceSASKeyName}')
 var defaultAuthRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', premiumNamespaceName, defaultSASKeyName)
 var customAuthRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', premiumNamespaceName, namespaceSASKeyName)
 
-resource premiumNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource premiumNamespaceName_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: premiumNamespaceName
   location: location
   kind: 'Messaging'
@@ -46,18 +46,18 @@ resource premiumNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-
   }
 }
 
-resource customSASKeyName_resource 'Microsoft.ServiceBus/namespaces/authorizationRules@2017-04-01' = {
-  name: customSASKeyName
+resource customSASKeyName 'Microsoft.ServiceBus/namespaces/authorizationRules@2017-04-01' = {
+  name: customSASKeyName_var
   location: location
   properties: {
-    Rights: [
+    rights: [
       'Send'
       'Listen'
       'Manage'
     ]
   }
   dependsOn: [
-    premiumNamespaceName_resource
+    premiumNamespaceName_res
   ]
 }
 

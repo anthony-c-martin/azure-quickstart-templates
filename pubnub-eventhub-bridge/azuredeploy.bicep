@@ -81,12 +81,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var sbVersion = '2015-08-01'
 var ehInAuthorizationRuleResourceId = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', Event_Hub_Namespace, Azure_Ingress_Event_Hub_Name, Azure_Ingress_SAS_Policy_Name)
 var ehOutAuthorizationRuleResourceId = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', Event_Hub_Namespace, Azure_Egress_Event_Hub_Name, Azure_Egress_SAS_Policy_Name)
 
-resource Event_Hub_Namespace_resource 'Microsoft.EventHub/namespaces@2015-08-01' = {
+resource Event_Hub_Namespace_res 'Microsoft.EventHub/namespaces@2015-08-01' = {
   sku: {
     name: 'Basic'
     tier: 'Basic'
@@ -105,13 +105,13 @@ resource Event_Hub_Namespace_Azure_Ingress_Event_Hub_Name 'Microsoft.EventHub/na
     partitionCount: 2
   }
   dependsOn: [
-    Event_Hub_Namespace_resource
+    Event_Hub_Namespace_res
   ]
 }
 
 resource Event_Hub_Namespace_Azure_Ingress_Event_Hub_Name_Azure_Ingress_SAS_Policy_Name 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2015-08-01' = {
   name: '${Event_Hub_Namespace}/${Azure_Ingress_Event_Hub_Name}/${Azure_Ingress_SAS_Policy_Name}'
-  location: location_variable
+  location: location_var
   properties: {
     rights: [
       'Send'
@@ -125,20 +125,20 @@ resource Event_Hub_Namespace_Azure_Ingress_Event_Hub_Name_Azure_Ingress_SAS_Poli
 
 resource Event_Hub_Namespace_Azure_Egress_Event_Hub_Name 'Microsoft.EventHub/namespaces/eventhubs@2015-08-01' = {
   name: '${Event_Hub_Namespace}/${Azure_Egress_Event_Hub_Name}'
-  location: location_variable
+  location: location_var
   properties: {
     messageRetentionInDays: 1
     partitionCount: 2
   }
   dependsOn: [
-    Event_Hub_Namespace_resource
+    Event_Hub_Namespace_res
     Event_Hub_Namespace_Azure_Ingress_Event_Hub_Name
   ]
 }
 
 resource Event_Hub_Namespace_Azure_Egress_Event_Hub_Name_Azure_Egress_SAS_Policy_Name 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2015-08-01' = {
   name: '${Event_Hub_Namespace}/${Azure_Egress_Event_Hub_Name}/${Azure_Egress_SAS_Policy_Name}'
-  location: location_variable
+  location: location_var
   properties: {
     rights: [
       'Send'
@@ -150,7 +150,7 @@ resource Event_Hub_Namespace_Azure_Egress_Event_Hub_Name_Azure_Egress_SAS_Policy
   ]
 }
 
-resource Azure_Service_Plan_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource Azure_Service_Plan_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   sku: {
     name: 'B1'
     tier: 'Basic'
@@ -159,7 +159,7 @@ resource Azure_Service_Plan_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
     capacity: 1
   }
   name: Azure_Service_Plan
-  location: location_variable
+  location: location_var
   properties: {
     name: Azure_Service_Plan
     numberOfWorkers: 1
@@ -167,9 +167,9 @@ resource Azure_Service_Plan_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   dependsOn: []
 }
 
-resource Azure_Webjob_Name_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource Azure_Webjob_Name_res 'Microsoft.Web/sites@2015-08-01' = {
   name: Azure_Webjob_Name
-  location: location_variable
+  location: location_var
   properties: {
     name: Azure_Webjob_Name
     hostNames: [
@@ -193,11 +193,8 @@ resource Azure_Webjob_Name_resource 'Microsoft.Web/sites@2015-08-01' = {
         ipBasedSslState: 0
       }
     ]
-    serverFarmId: Azure_Service_Plan_resource.id
+    serverFarmId: Azure_Service_Plan_res.id
   }
-  dependsOn: [
-    Azure_Service_Plan_resource
-  ]
 }
 
 resource Azure_Webjob_Name_web 'Microsoft.Web/sites/config@2015-08-01' = {
@@ -206,7 +203,7 @@ resource Azure_Webjob_Name_web 'Microsoft.Web/sites/config@2015-08-01' = {
     alwaysOn: true
   }
   dependsOn: [
-    Azure_Webjob_Name_resource
+    Azure_Webjob_Name_res
   ]
 }
 
@@ -218,7 +215,7 @@ resource Microsoft_Web_sites_sourcecontrols_Azure_Webjob_Name_web 'Microsoft.Web
     IsManualIntegration: true
   }
   dependsOn: [
-    Azure_Webjob_Name_resource
+    Azure_Webjob_Name_res
   ]
 }
 
@@ -255,7 +252,7 @@ resource Azure_Webjob_Name_connectionstrings 'Microsoft.Web/sites/config@2015-08
     }
   }
   dependsOn: [
-    Azure_Webjob_Name_resource
+    Azure_Webjob_Name_res
     Microsoft_Web_sites_sourcecontrols_Azure_Webjob_Name_web
   ]
 }

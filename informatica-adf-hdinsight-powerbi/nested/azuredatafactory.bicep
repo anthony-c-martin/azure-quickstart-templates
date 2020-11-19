@@ -66,7 +66,7 @@ param quickstartTags object
 
 var storageApiVersion = '2015-06-15'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/datafactories@2015-10-01' = {
   name: dataFactoryName
   location: 'westus'
   tags: {
@@ -85,7 +85,7 @@ resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafac
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -98,7 +98,7 @@ resource dataFactoryName_hivestoredlinkedservice 'Microsoft.DataFactory/datafact
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -115,7 +115,7 @@ resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFacto
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_storageLinkedServiceName
   ]
 }
@@ -129,7 +129,7 @@ resource dataFactoryName_azureSqlDWLinkedServiceName 'Microsoft.DataFactory/data
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -153,7 +153,7 @@ resource dataFactoryName_blobInputDataset 'Microsoft.DataFactory/datafactories/d
     policy: {}
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_storageLinkedServiceName
   ]
 }
@@ -177,7 +177,7 @@ resource dataFactoryName_blobOutputDataset 'Microsoft.DataFactory/datafactories/
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_storageLinkedServiceName
   ]
 }
@@ -197,7 +197,7 @@ resource dataFactoryName_sqlDWOutputDataset 'Microsoft.DataFactory/datafactories
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureSqlDWLinkedServiceName
   ]
 }
@@ -277,7 +277,7 @@ resource dataFactoryName_dataFactoryName 'Microsoft.DataFactory/datafactories/da
     isPaused: false
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_storageLinkedServiceName
     dataFactoryName_hdInsightOnDemandLinkedServiceName
     dataFactoryName_azureSqlDWLinkedServiceName

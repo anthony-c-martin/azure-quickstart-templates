@@ -15,14 +15,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var apiVersion = '2017-04-01'
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var defaultAuthRuleResourceId = resourceId('Microsoft.Relay/namespaces/authorizationRules', namespaceName, defaultSASKeyName)
 
-resource namespaceName_resource 'Microsoft.Relay/Namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.Relay/Namespaces@2017-04-01' = {
   name: namespaceName
-  location: location_variable
+  location: location_var
   sku: {
     name: 'Standard'
   }
@@ -36,7 +36,7 @@ resource namespaceName_hybridConnectionName 'Microsoft.Relay/Namespaces/HybridCo
     userMetadata: 'Meta Data supplied by user for hybridConnections'
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 

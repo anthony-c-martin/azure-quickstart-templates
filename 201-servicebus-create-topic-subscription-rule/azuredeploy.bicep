@@ -25,12 +25,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var authRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceName, defaultSASKeyName)
 var sbVersion = '2017-04-01'
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -53,7 +53,7 @@ resource serviceBusNamespaceName_serviceBusTopicName 'Microsoft.ServiceBus/names
     enableExpress: 'false'
   }
   dependsOn: [
-    serviceBusNamespaceName_resource
+    serviceBusNamespaceName_res
   ]
 }
 

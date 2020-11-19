@@ -79,12 +79,12 @@ var imageOffer = 'WindowsServer'
 var osSku = '2012-R2-Datacenter'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 var dnsNameForPublicIP = toLower(vmName)
-var publicIPAddressName = toLower('publicIP${vmName}')
+var publicIPAddressName_var = toLower('publicIP${vmName}')
 var publicIPAddressType = 'Dynamic'
-var nicName = toLower('nic${vmName}')
+var nicName_var = toLower('nic${vmName}')
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -94,8 +94,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -104,7 +104,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -113,12 +113,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
   name: vmName
   location: location
   properties: {
@@ -144,17 +141,14 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
-module UpdateEncryptionSettings '<failed to parse https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-encrypt-running-windows-vm/azuredeploy.json>' = {
+module UpdateEncryptionSettings '?' /*TODO: replace with correct path to https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-encrypt-running-windows-vm/azuredeploy.json*/ = {
   name: 'UpdateEncryptionSettings'
   params: {
     vmName: vmName
@@ -166,6 +160,6 @@ module UpdateEncryptionSettings '<failed to parse https://raw.githubusercontent.
     keyEncryptionKeyURL: keyEncryptionKeyURL
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

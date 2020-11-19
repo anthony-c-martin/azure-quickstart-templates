@@ -37,7 +37,7 @@ var pipelineName = 'Tutorial4_SparkPipeline'
 var scriptRootPath = 'adftutorial/spark/script'
 var entryFilePath = 'WordCount_Spark.py'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
   name: dataFactoryName
   location: dataFactoryLocation
   properties: {}
@@ -56,7 +56,7 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -83,7 +83,7 @@ resource dataFactoryName_onDemandHDInsightLinkedServiceName 'Microsoft.DataFacto
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
@@ -118,7 +118,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
     ]
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureStorageLinkedServiceName
     dataFactoryName_onDemandHDInsightLinkedServiceName
   ]

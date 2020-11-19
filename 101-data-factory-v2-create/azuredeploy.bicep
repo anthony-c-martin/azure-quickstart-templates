@@ -6,7 +6,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource name_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource name_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: name
   location: location
   identity: {

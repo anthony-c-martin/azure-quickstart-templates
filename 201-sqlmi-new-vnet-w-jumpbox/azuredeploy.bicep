@@ -119,16 +119,16 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-var networkSecurityGroupName = 'SQLMI-${managedInstanceName}-NSG'
-var routeTableName = 'SQLMI-${managedInstanceName}-Route-Table'
-var virtualMachineName = '${take(managedInstanceName, 13)}JB'
-var networkInterfaceName = 'SQLMI-${managedInstanceName}-JB-NIC'
-var publicIpAddressName = 'SQLMI-${managedInstanceName}-JB-IP'
-var jbNetworkSecurityGroupName = 'SQLMI-${managedInstanceName}-JB-NSG'
+var networkSecurityGroupName_var = 'SQLMI-${managedInstanceName}-NSG'
+var routeTableName_var = 'SQLMI-${managedInstanceName}-Route-Table'
+var virtualMachineName_var = '${take(managedInstanceName, 13)}JB'
+var networkInterfaceName_var = 'SQLMI-${managedInstanceName}-JB-NIC'
+var publicIpAddressName_var = 'SQLMI-${managedInstanceName}-JB-IP'
+var jbNetworkSecurityGroupName_var = 'SQLMI-${managedInstanceName}-JB-NSG'
 var scriptFileUri = uri(artifactsLocation, 'installSSMS.ps1${artifactsLocationSasToken}')
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -192,15 +192,15 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource routeTableName_resource 'Microsoft.Network/routeTables@2019-06-01' = {
-  name: routeTableName
+resource routeTableName 'Microsoft.Network/routeTables@2019-06-01' = {
+  name: routeTableName_var
   location: location
   properties: {
     disableBgpRoutePropagation: false
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-06-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -215,10 +215,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
         properties: {
           addressPrefix: subnetPrefix
           routeTable: {
-            id: routeTableName_resource.id
+            id: routeTableName.id
           }
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
           delegations: [
             {
@@ -238,13 +238,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
       }
     ]
   }
-  dependsOn: [
-    routeTableName_resource
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2019-06-01-preview' = {
+resource managedInstanceName_res 'Microsoft.Sql/managedInstances@2019-06-01-preview' = {
   identity: {
     type: 'SystemAssigned'
   }
@@ -262,20 +258,20 @@ resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2019-06-01
     licenseType: licenseType
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: virtualMachineName
+resource virtualMachineName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: virtualMachineName_var
   location: location
   properties: {
     osProfile: {
-      computerName: virtualMachineName
+      computerName: virtualMachineName_var
       adminUsername: administratorLogin
       adminPassword: administratorLoginPassword
       windowsConfiguration: {
-        provisionVmAgent: 'true'
+        provisionVMAgent: 'true'
       }
     }
     hardwareProfile: {
@@ -298,18 +294,15 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-12-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource virtualMachineName_SetupSSMS 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${virtualMachineName}/SetupSSMS'
+  name: '${virtualMachineName_var}/SetupSSMS'
   location: location
   tags: {
     displayName: 'SetupSSMS'
@@ -327,12 +320,12 @@ resource virtualMachineName_SetupSSMS 'Microsoft.Compute/virtualMachines/extensi
     }
   }
   dependsOn: [
-    virtualMachineName_resource
+    virtualMachineName
   ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2019-06-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -343,36 +336,34 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
             id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, managementSubnetName)
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: jbNetworkSecurityGroupName_resource.id
+      id: jbNetworkSecurityGroupName.id
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-    jbNetworkSecurityGroupName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2019-06-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIpAddresses@2019-06-01' = {
+  name: publicIpAddressName_var
   location: location
   properties: {
-    publicIpAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Dynamic'
   }
   sku: {
     name: 'Basic'
   }
 }
 
-resource jbNetworkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
-  name: jbNetworkSecurityGroupName
+resource jbNetworkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+  name: jbNetworkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [

@@ -86,22 +86,22 @@ param probeRequestPath string {
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = 'vmssvnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIPAddressName = 'publicip1'
-var publicIPAddressID = publicIPAddressName_resource.id
-var lbName = 'loadBalancer1'
-var lbID = lbName_resource.id
+var virtualNetworkName_var = 'vmssvnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var publicIPAddressName_var = 'publicip1'
+var publicIPAddressID = publicIPAddressName.id
+var lbName_var = 'loadBalancer1'
+var lbID = lbName.id
 var lbFEName = 'loadBalancerFrontEnd'
 var lbWebProbeName = 'loadBalancerWebProbe'
 var lbBEAddressPool = 'loadBalancerBEAddressPool'
 var lbFEIPConfigID = '${lbID}/frontendIPConfigurations/${lbFEName}'
 var lbBEAddressPoolID = '${lbID}/backendAddressPools/${lbBEAddressPool}'
 var lbWebProbeID = '${lbID}/probes/${lbWebProbeName}'
-var imageName = 'myCustomImage'
+var imageName_var = 'myCustomImage'
 
-resource imageName_resource 'Microsoft.Compute/images@2017-03-30' = {
-  name: imageName
+resource imageName 'Microsoft.Compute/images@2017-03-30' = {
+  name: imageName_var
   location: resourceGroup().location
   properties: {
     storageProfile: {
@@ -115,8 +115,8 @@ resource imageName_resource 'Microsoft.Compute/images@2017-03-30' = {
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-04-01' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -135,8 +135,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -146,8 +146,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2017-04-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2017-04-01' = {
+  name: lbName_var
   location: resourceGroup().location
   properties: {
     frontendIPConfigurations: [
@@ -198,12 +198,9 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2017-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmSSName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmSSName
   location: resourceGroup().location
   sku: {
@@ -219,7 +216,7 @@ resource vmSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
     virtualMachineProfile: {
       storageProfile: {
         imageReference: {
-          id: imageName_resource.id
+          id: imageName.id
         }
       }
       osProfile: {
@@ -255,9 +252,7 @@ resource vmSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
     }
   }
   dependsOn: [
-    lbName_resource
-    virtualNetworkName_resource
-    imageName_resource
+    virtualNetworkName
   ]
 }
 

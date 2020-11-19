@@ -31,13 +31,13 @@ param d2cPartitions string {
   default: '4'
 }
 
-var iotHubName = '${projectName}Hub${uniqueString(resourceGroup().id)}'
-var storageAccountName = concat(toLower(projectName), uniqueString(resourceGroup().id))
+var iotHubName_var = '${projectName}Hub${uniqueString(resourceGroup().id)}'
+var storageAccountName_var = concat(toLower(projectName), uniqueString(resourceGroup().id))
 var storageEndpoint = '${projectName}StorageEndpont'
 var storageContainerName = '${toLower(projectName)}results'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -48,17 +48,17 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
 }
 
 resource storageAccountName_default_storageContainerName 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
-  name: '${storageAccountName}/default/${storageContainerName}'
+  name: '${storageAccountName_var}/default/${storageContainerName}'
   properties: {
     publicAccess: 'None'
   }
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName
   ]
 }
 
-resource IoTHubName_resource 'Microsoft.Devices/IotHubs@2020-07-10-preview' = {
-  name: iotHubName
+resource IoTHubName 'Microsoft.Devices/IotHubs@2020-07-10-preview' = {
+  name: iotHubName_var
   location: location
   sku: {
     name: skuName
@@ -75,7 +75,7 @@ resource IoTHubName_resource 'Microsoft.Devices/IotHubs@2020-07-10-preview' = {
       endpoints: {
         storageContainers: [
           {
-            connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+            connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
             containerName: storageContainerName
             fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
             batchFrequencyInSeconds: 100
@@ -124,7 +124,4 @@ resource IoTHubName_resource 'Microsoft.Devices/IotHubs@2020-07-10-preview' = {
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }

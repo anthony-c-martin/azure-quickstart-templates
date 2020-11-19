@@ -21,7 +21,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource sendgridName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource sendgridName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: sendgridName
   properties: {
@@ -35,7 +35,7 @@ resource sendgridName_resource 'Microsoft.Web/connections@2018-07-01-preview' = 
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -109,15 +109,12 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
         value: {
           sendgrid: {
             id: '${subscription().id}/providers/Microsoft.Web/locations/${location}/managedApis/sendgrid'
-            connectionId: sendgridName_resource.id
+            connectionId: sendgridName_res.id
           }
         }
       }
     }
   }
-  dependsOn: [
-    sendgridName_resource
-  ]
 }
 
-output triggerURI string = listCallbackURL('${logicAppName_resource.id}/triggers/manual', '2016-06-01').value
+output triggerURI string = listCallbackURL('${logicAppName_res.id}/triggers/manual', '2016-06-01').value

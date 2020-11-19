@@ -48,7 +48,7 @@ var inputDatasetName = 'Tutorial3-InputBlobDataset'
 var outputDatasetName = 'Tutorial3-OutputSqlDataset'
 var pipelineName = 'Tutorial3-CopyFromOnPremSqlToBlobPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
   name: dataFactoryName
   location: dataFactoryLocation
   properties: {}
@@ -67,7 +67,7 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -77,7 +77,7 @@ resource dataFactoryName_selfHostedIRName 'Microsoft.DataFactory/factories/integ
     type: 'SelfHosted'
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -97,7 +97,7 @@ resource dataFactoryName_onPremSqlServerLinkedServiceName 'Microsoft.DataFactory
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_selfHostedIRName
   ]
 }
@@ -115,7 +115,7 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_onPremSqlServerLinkedServiceName
   ]
 }
@@ -134,7 +134,7 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
@@ -172,7 +172,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
     ]
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_inputDatasetName
     dataFactoryName_outputDatasetName
   ]

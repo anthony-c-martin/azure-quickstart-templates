@@ -37,19 +37,19 @@ var addressPrefix = '10.0.0.0/16'
 var imageOffer = 'WindowsServer'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageSKU = '2019-Datacenter'
-var lbName = 'myLB'
-var networkSecurityGroupName = '${subnetName}-nsg'
-var nic1NamePrefix = 'nic1'
-var nic2NamePrefix = 'nic2'
-var publicIPAddressName = 'myPublicIP'
+var lbName_var = 'myLB'
+var networkSecurityGroupName_var = '${subnetName}-nsg'
+var nic1NamePrefix_var = 'nic1'
+var nic2NamePrefix_var = 'nic2'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
 var storageAccountType = 'Standard_LRS'
 var subnetName = 'Subnet-1'
 var subnetPrefix = '10.0.0.0/24'
-var vmNamePrefix = 'myVM'
-var vnetName = 'myVNET'
+var vmNamePrefix_var = 'myVM'
+var vnetName_var = 'myVNET'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -58,8 +58,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'StorageV2'
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: lbName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -67,7 +67,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
         name: 'LoadBalancerFrontEnd'
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -82,7 +82,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
         name: 'RDP-VM0'
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName, 'LoadBalancerFrontEnd')
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName_var, 'LoadBalancerFrontEnd')
           }
           protocol: 'Tcp'
           frontendPort: 50001
@@ -92,19 +92,16 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {}
 }
 
-resource nic1NamePrefix_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nic1NamePrefix
+resource nic1NamePrefix 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nic1NamePrefix_var
   location: location
   properties: {
     ipConfigurations: [
@@ -113,16 +110,16 @@ resource nic1NamePrefix_resource 'Microsoft.Network/networkInterfaces@2020-05-01
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, 'BackendPool1')
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, 'BackendPool1')
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', lbName, 'RDP-VM0')
+              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', lbName_var, 'RDP-VM0')
             }
           ]
         }
@@ -130,13 +127,13 @@ resource nic1NamePrefix_resource 'Microsoft.Network/networkInterfaces@2020-05-01
     ]
   }
   dependsOn: [
-    vnetName_resource
-    lbName_resource
+    vnetName
+    lbName
   ]
 }
 
-resource nic2NamePrefix_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nic2NamePrefix
+resource nic2NamePrefix 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nic2NamePrefix_var
   location: location
   properties: {
     ipConfigurations: [
@@ -145,19 +142,19 @@ resource nic2NamePrefix_resource 'Microsoft.Network/networkInterfaces@2020-05-01
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
           }
         }
       }
     ]
   }
   dependsOn: [
-    vnetName_resource
+    vnetName
   ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -167,15 +164,15 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource vmNamePrefix_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmNamePrefix
+resource vmNamePrefix 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmNamePrefix_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmNamePrefix
+      computerName: vmNamePrefix_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -196,13 +193,13 @@ resource vmNamePrefix_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = 
           properties: {
             primary: true
           }
-          id: nic1NamePrefix_resource.id
+          id: nic1NamePrefix.id
         }
         {
           properties: {
             primary: false
           }
-          id: nic2NamePrefix_resource.id
+          id: nic2NamePrefix.id
         }
       ]
     }
@@ -214,14 +211,12 @@ resource vmNamePrefix_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = 
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nic1NamePrefix_resource
-    nic2NamePrefix_resource
+    storageAccountName_res
   ]
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -235,13 +230,10 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }

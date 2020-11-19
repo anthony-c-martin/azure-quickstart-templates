@@ -78,7 +78,7 @@ param autoscaleMaxThroughput int {
   default: 4000
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -111,8 +111,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: accountName_var
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
@@ -129,19 +129,19 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01'
 }
 
 resource accountName_keyspaceName 'Microsoft.DocumentDB/databaseAccounts/cassandraKeyspaces@2020-04-01' = {
-  name: '${accountName_variable}/${keyspaceName}'
+  name: '${accountName_var}/${keyspaceName}'
   properties: {
     resource: {
       id: keyspaceName
     }
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
   ]
 }
 
 resource accountName_keyspaceName_tableName 'Microsoft.DocumentDb/databaseAccounts/cassandraKeyspaces/tables@2020-04-01' = {
-  name: '${accountName_variable}/${keyspaceName}/${tableName}'
+  name: '${accountName_var}/${keyspaceName}/${tableName}'
   properties: {
     resource: {
       id: tableName

@@ -19,7 +19,7 @@ param description string {
   default: 'Sample Description'
 }
 
-resource galleryName_resource 'Microsoft.Compute/galleries@2019-12-01' = {
+resource galleryName_res 'Microsoft.Compute/galleries@2019-12-01' = {
   name: galleryName
   location: location
   properties: {
@@ -27,5 +27,5 @@ resource galleryName_resource 'Microsoft.Compute/galleries@2019-12-01' = {
   }
 }
 
-output galleryName_output string = galleryName
-output location_output string = location
+output galleryName_out string = galleryName
+output location_out string = location

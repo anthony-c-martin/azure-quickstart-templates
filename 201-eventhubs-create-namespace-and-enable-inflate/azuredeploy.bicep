@@ -52,7 +52,7 @@ param location string {
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var authRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', namespaceName, defaultSASKeyName)
 
-resource namespaceName_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: namespaceName
   location: location
   sku: {
@@ -72,7 +72,7 @@ resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@201
     partitionCount: partitionCount
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 

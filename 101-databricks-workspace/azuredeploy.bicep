@@ -22,7 +22,7 @@ param location string {
 
 var managedResourceGroupName = 'databricks-rg-${workspaceName}-${uniqueString(workspaceName, resourceGroup().id)}'
 
-resource workspaceName_resource 'Microsoft.Databricks/workspaces@2018-04-01' = {
+resource workspaceName_res 'Microsoft.Databricks/workspaces@2018-04-01' = {
   name: workspaceName
   location: location
   sku: {
@@ -33,4 +33,4 @@ resource workspaceName_resource 'Microsoft.Databricks/workspaces@2018-04-01' = {
   }
 }
 
-output workspace object = workspaceName_resource.properties
+output workspace object = workspaceName_res.properties

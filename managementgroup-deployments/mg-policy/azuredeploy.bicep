@@ -16,10 +16,10 @@ param allowedLocations array {
 }
 
 var mgScope = tenantResourceId('Microsoft.Management/managementGroups', targetMG)
-var policyDefinition = 'LocationRestriction'
+var policyDefinition_var = 'LocationRestriction'
 
-resource policyDefinition_resource 'Microsoft.Authorization/policyDefinitions@2019-09-01' = {
-  name: policyDefinition
+resource policyDefinition 'Microsoft.Authorization/policyDefinitions@2019-09-01' = {
+  name: policyDefinition_var
   properties: {
     policyType: 'Custom'
     mode: 'All'
@@ -42,9 +42,9 @@ resource location_lock 'Microsoft.Authorization/policyAssignments@2019-09-01' = 
   name: 'location-lock'
   properties: {
     scope: mgScope
-    policyDefinitionId: extensionResourceId(mgScope, 'Microsoft.Authorization/policyDefinitions', policyDefinition)
+    policyDefinitionId: extensionResourceId(mgScope, 'Microsoft.Authorization/policyDefinitions', policyDefinition_var)
   }
   dependsOn: [
-    policyDefinition_resource
+    policyDefinition
   ]
 }

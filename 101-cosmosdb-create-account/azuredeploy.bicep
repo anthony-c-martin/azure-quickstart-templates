@@ -17,7 +17,7 @@ param tier string {
   default: 'Standard'
 }
 
-resource name_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+resource name_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
   name: name
   location: location
   properties: {

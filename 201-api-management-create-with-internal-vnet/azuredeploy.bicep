@@ -73,12 +73,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var apiManagementServiceName = 'apiservice${uniqueString(resourceGroup().id)}'
+var apiManagementServiceName_var = 'apiservice${uniqueString(resourceGroup().id)}'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var apimNsgName = 'apimnsg${uniqueString(resourceGroup().id)}'
+var apimNsgName_var = 'apimnsg${uniqueString(resourceGroup().id)}'
 
-resource apimNsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: apimNsgName
+resource apimNsgName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: apimNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -338,7 +338,7 @@ resource apimNsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-0
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -353,20 +353,17 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: apimNsgName_resource.id
+            id: apimNsgName.id
           }
           serviceEndpoints: apimSubnetServiceEndpoints
         }
       }
     ]
   }
-  dependsOn: [
-    apimNsgName_resource
-  ]
 }
 
-resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2019-12-01' = {
-  name: apiManagementServiceName
+resource apiManagementServiceName 'Microsoft.ApiManagement/service@2019-12-01' = {
+  name: apiManagementServiceName_var
   location: location
   sku: {
     name: sku
@@ -381,6 +378,6 @@ resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2019
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }

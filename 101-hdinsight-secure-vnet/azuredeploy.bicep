@@ -34,7 +34,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var vNet_variable = {
+var vNet_var = {
   name: '${clusterName}-vnet'
   addressSpacePrefix: '10.0.0.0/16'
   subnetName: 'subnet1'
@@ -87,19 +87,19 @@ resource networkSecurityGroup_name 'Microsoft.Network/networkSecurityGroups@2020
 }
 
 resource vNet_name 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vNet_variable.name
+  name: vNet_var.name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vNet_variable.addressSpacePrefix
+        vNet_var.addressSpacePrefix
       ]
     }
     subnets: [
       {
-        name: vNet_variable.subnetName
+        name: vNet_var.subnetName
         properties: {
-          addressPrefix: vNet_variable.subnetPrefix
+          addressPrefix: vNet_var.subnetPrefix
           networkSecurityGroup: {
             id: networkSecurityGroup_name.id
           }
@@ -107,9 +107,6 @@ resource vNet_name 'Microsoft.Network/virtualNetworks@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroup_name
-  ]
 }
 
 resource defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -122,7 +119,7 @@ resource defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-0
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -164,7 +161,7 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
           }
           virtualNetworkProfile: {
             id: vNet_name.id
-            subnet: vNet_variable.subnet
+            subnet: vNet_var.subnet
           }
         }
         {
@@ -181,18 +178,14 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
           }
           virtualNetworkProfile: {
             id: vNet_name.id
-            subnet: vNet_variable.subnet
+            subnet: vNet_var.subnet
           }
         }
       ]
     }
   }
-  dependsOn: [
-    defaultStorageAccount_name
-    vNet_name
-  ]
 }
 
 output storage object = defaultStorageAccount_name.properties
 output vnet object = vNet_name.properties
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties

@@ -28,13 +28,13 @@ param artifactsLocationSasToken string {
 var lockLevel = 'None'
 var description = 'Sample Managed application definition'
 var displayName = 'Sample Managed application definition'
-var managedApplicationDefinitionName = '${applicationName}_ApplicationDefinition'
+var managedApplicationDefinitionName_var = '${applicationName}_ApplicationDefinition'
 var packageFileUri = uri(artifactsLocation, 'artifacts/ManagedAppZip/pkg.zip${artifactsLocationSasToken}')
 var managedResourceGroupId = '${subscription().id}/resourceGroups/${applicationName}_managed'
-var applicationDefinitionResourceId = managedApplicationDefinitionName_resource.id
+var applicationDefinitionResourceId = managedApplicationDefinitionName.id
 
-resource managedApplicationDefinitionName_resource 'Microsoft.Solutions/applicationDefinitions@2019-07-01' = {
-  name: managedApplicationDefinitionName
+resource managedApplicationDefinitionName 'Microsoft.Solutions/applicationDefinitions@2019-07-01' = {
+  name: managedApplicationDefinitionName_var
   location: location
   properties: {
     lockLevel: lockLevel
@@ -44,7 +44,7 @@ resource managedApplicationDefinitionName_resource 'Microsoft.Solutions/applicat
   }
 }
 
-resource applicationName_resource 'Microsoft.Solutions/applications@2019-07-01' = {
+resource applicationName_res 'Microsoft.Solutions/applications@2019-07-01' = {
   name: applicationName
   location: location
   kind: 'ServiceCatalog'
@@ -63,7 +63,4 @@ resource applicationName_resource 'Microsoft.Solutions/applications@2019-07-01' 
       }
     }
   }
-  dependsOn: [
-    managedApplicationDefinitionName_resource
-  ]
 }

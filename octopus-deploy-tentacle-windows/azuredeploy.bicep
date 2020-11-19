@@ -89,8 +89,8 @@ var diagnostics = {
     name: 'diagnostics${uniqueString(resourceGroup().id)}'
   }
 }
-var networkSecurityGroupName = '${namespace}-nsg'
-var publicIPAddressName = '${namespace}-publicip'
+var networkSecurityGroupName_var = '${namespace}-nsg'
+var publicIPAddressName_var = '${namespace}-publicip'
 var vnet = {
   name: '${namespace}-vnet'
   addressPrefix: '10.0.0.0/16'
@@ -103,7 +103,7 @@ var nic = {
   name: '${namespace}-nic'
   ipConfigName: '${namespace}-ipconfig'
 }
-var vmName = '${namespace}-vm'
+var vmName_var = '${namespace}-vm'
 
 resource diagnostics_storageAccount_name 'Microsoft.Storage/storageAccounts@2016-01-01' = {
   name: diagnostics.storageAccount.name
@@ -119,8 +119,8 @@ resource diagnostics_storageAccount_name 'Microsoft.Storage/storageAccounts@2016
   properties: {}
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: networkSecurityGroupName_var
   location: location
   tags: {
     vendor: tags.vendor
@@ -146,8 +146,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
     vendor: tags.vendor
@@ -180,15 +180,12 @@ resource vnet_name 'Microsoft.Network/virtualNetworks@2016-03-30' = {
         properties: {
           addressPrefix: vnet.subnet.addressPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
 resource nic_name 'Microsoft.Network/networkInterfaces@2016-03-30' = {
@@ -205,7 +202,7 @@ resource nic_name 'Microsoft.Network/networkInterfaces@2016-03-30' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: '${vnet_name.id}/subnets/${vnet.subnet.name}'
@@ -215,14 +212,12 @@ resource nic_name 'Microsoft.Network/networkInterfaces@2016-03-30' = {
     ]
   }
   dependsOn: [
-    vnet_name
-    publicIPAddressName_resource
-    networkSecurityGroupName_resource
+    networkSecurityGroupName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   tags: {
     vendor: tags.vendor
@@ -233,7 +228,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmAdminUsername
       adminPassword: vmAdminPassword
     }
@@ -268,7 +263,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
   }
   dependsOn: [
     diagnostics_storageAccount_name
-    nic_name
   ]
 }
 
@@ -298,8 +292,8 @@ resource namespace_vm_OctopusDeployWindowsTentacle 'Microsoft.Compute/virtualMac
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output vmFullyQualifiedDomainName string = reference('Microsoft.Network/publicIPAddresses/${publicIPAddressName}').dnsSettings.fqdn
+output vmFullyQualifiedDomainName string = reference('Microsoft.Network/publicIPAddresses/${publicIPAddressName_var}').dnsSettings.fqdn

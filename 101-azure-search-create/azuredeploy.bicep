@@ -59,7 +59,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource name_resource 'Microsoft.Search/searchServices@2020-03-13' = {
+resource name_res 'Microsoft.Search/searchServices@2020-03-13' = {
   name: name
   location: location
   sku: {

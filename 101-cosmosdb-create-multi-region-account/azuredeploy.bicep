@@ -83,7 +83,7 @@ param automaticFailover bool {
   default: true
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var apiType = {
   Sql: {
     kind: 'GlobalDocumentDB'
@@ -150,8 +150,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: accountName_var
   location: location
   kind: apiType[api].kind
   properties: {

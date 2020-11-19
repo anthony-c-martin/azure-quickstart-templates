@@ -39,7 +39,7 @@ param logicAppLocation string {
   default: resourceGroup().location
 }
 
-resource integrationAccountName_resource 'Microsoft.Logic/integrationAccounts@2016-06-01' = {
+resource integrationAccountName_res 'Microsoft.Logic/integrationAccounts@2016-06-01' = {
   properties: {}
   sku: {
     name: 'Standard'
@@ -56,7 +56,7 @@ resource integrationAccountName_Order 'Microsoft.Logic/integrationAccounts/schem
   }
   name: '${integrationAccountName}/Order'
   dependsOn: [
-    integrationAccountName_resource
+    integrationAccountName_res
   ]
 }
 
@@ -68,11 +68,11 @@ resource integrationAccountName_SAPOrderMap 'Microsoft.Logic/integrationAccounts
   }
   name: '${integrationAccountName}/SAPOrderMap'
   dependsOn: [
-    integrationAccountName_resource
+    integrationAccountName_res
   ]
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2016-06-01' = {
   name: logicAppName
   location: logicAppLocation
   tags: {
@@ -81,7 +81,7 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
   properties: {
     state: 'Enabled'
     integrationAccount: {
-      id: integrationAccountName_resource.id
+      id: integrationAccountName_res.id
     }
     definition: {
       '$schema': 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
@@ -148,7 +148,4 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
       }
     }
   }
-  dependsOn: [
-    integrationAccountName_resource
-  ]
 }

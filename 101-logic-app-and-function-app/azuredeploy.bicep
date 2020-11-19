@@ -22,12 +22,12 @@ param location string {
 var repoUrl = 'https://github.com/AzureBytes/functionshttpecho.git'
 var branch = 'master'
 var functionName = 'Echo'
-var hostingPlanName = functionAppName
-var storageAccountName = 'azfunctions${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = functionAppName
+var storageAccountName_var = 'azfunctions${uniqueString(resourceGroup().id)}'
 var LogicAppLocation = location
 var storageAccountType = 'Standard_LRS'
 
-resource LogicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource LogicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: LogicAppName
   location: LogicAppLocation
   tags: {
@@ -80,8 +80,8 @@ resource LogicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
   ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   kind: 'StorageV2'
   sku: {
@@ -89,38 +89,38 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   }
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: 'Y1'
     tier: 'Dynamic'
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     computeMode: 'Dynamic'
   }
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource functionAppName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp'
   properties: {
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     siteConfig: {
       appSettings: [
         {
           name: 'AzureWebJobsDashboard'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
@@ -137,20 +137,16 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
       ]
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-  ]
 }
 
 resource functionAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
   name: '${functionAppName}/web'
   properties: {
-    RepoUrl: repoUrl
+    repoUrl: repoUrl
     branch: branch
-    IsManualIntegration: true
+    isManualIntegration: true
   }
   dependsOn: [
-    functionAppName_resource
+    functionAppName_res
   ]
 }

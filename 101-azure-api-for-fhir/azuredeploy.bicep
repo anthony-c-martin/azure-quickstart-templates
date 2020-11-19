@@ -24,7 +24,7 @@ param location string {
   }
 }
 
-resource serviceName_resource 'Microsoft.HealthcareApis/services@2020-03-15' = {
+resource serviceName_res 'Microsoft.HealthcareApis/services@2020-03-15' = {
   name: serviceName
   location: location
   kind: 'fhir-R4'

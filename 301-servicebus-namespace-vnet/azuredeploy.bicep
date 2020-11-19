@@ -30,9 +30,9 @@ param location string {
   default: resourceGroup().location
 }
 
-var namespaceVirtualNetworkRuleName = concat(serviceBusNamespaceName, '/${vnetRuleName}')
+var namespaceVirtualNetworkRuleName_var = concat(serviceBusNamespaceName, '/${vnetRuleName}')
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -42,7 +42,7 @@ resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-
   properties: {}
 }
 
-resource vnetRuleName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+resource vnetRuleName_res 'Microsoft.Network/virtualNetworks@2017-09-01' = {
   name: vnetRuleName
   location: location
   properties: {
@@ -67,12 +67,12 @@ resource vnetRuleName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = 
   }
 }
 
-resource namespaceVirtualNetworkRuleName_resource 'Microsoft.ServiceBus/namespaces/VirtualNetworkRules@2018-01-01-preview' = {
-  name: namespaceVirtualNetworkRuleName
+resource namespaceVirtualNetworkRuleName 'Microsoft.ServiceBus/namespaces/VirtualNetworkRules@2018-01-01-preview' = {
+  name: namespaceVirtualNetworkRuleName_var
   properties: {
     virtualNetworkSubnetId: resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetRuleName, subnetName)
   }
   dependsOn: [
-    serviceBusNamespaceName_resource
+    serviceBusNamespaceName_res
   ]
 }

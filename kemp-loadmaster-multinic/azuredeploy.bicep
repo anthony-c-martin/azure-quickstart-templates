@@ -43,20 +43,20 @@ param vmSize string {
 }
 
 var publicIPAddressType = 'Dynamic'
-var vmName = 'VLM-MultiNIC'
+var vmName_var = 'VLM-MultiNIC'
 var subnetRef1 = resourceId(existingvirtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', existingvirtualNetworkName, existingsubnetName1)
 var subnetRef2 = resourceId(existingvirtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', existingvirtualNetworkName, existingsubnetName2)
-var nicName1 = 'NIC1'
-var nicName2 = 'NIC2'
+var nicName1_var = 'NIC1'
+var nicName2_var = 'NIC2'
 var dnsNameForPublicIP = 'vlm${uniqueString(resourceGroup().id)}'
 var imageOffer = 'vlm-azure'
 var imagePublisher = 'kemptech'
 var imageVersion = 'latest'
 var imageSKU = 'basic-byol'
-var publicIPAddressName = vmName
+var publicIPAddressName_var = vmName_var
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
     displayName: 'PublicIPAddress'
@@ -69,8 +69,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource nicName1_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
-  name: nicName1
+resource nicName1 'Microsoft.Network/networkInterfaces@2019-11-01' = {
+  name: nicName1_var
   location: location
   tags: {
     displayName: 'NetworkInterface'
@@ -82,7 +82,7 @@ resource nicName1_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef1
@@ -91,13 +91,10 @@ resource nicName1_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource nicName2_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
-  name: nicName2
+resource nicName2 'Microsoft.Network/networkInterfaces@2019-11-01' = {
+  name: nicName2_var
   location: location
   tags: {
     displayName: 'NetworkInterface2'
@@ -117,8 +114,8 @@ resource nicName2_resource 'Microsoft.Network/networkInterfaces@2019-11-01' = {
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   tags: {
     displayName: 'VirtualMachine'
@@ -133,7 +130,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: balUsername
       adminPassword: balPassword
     }
@@ -145,7 +142,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: imageVersion
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -153,13 +150,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName1_resource.id
+          id: nicName1.id
           properties: {
             primary: true
           }
         }
         {
-          id: nicName2_resource.id
+          id: nicName2.id
           properties: {
             primary: false
           }
@@ -167,10 +164,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    nicName1_resource
-    nicName2_resource
-  ]
 }
 
-output FQDN string = reference(publicIPAddressName_resource.id, '2019-11-01').dnsSettings.fqdn
+output FQDN string = reference(publicIPAddressName.id, '2019-11-01').dnsSettings.fqdn

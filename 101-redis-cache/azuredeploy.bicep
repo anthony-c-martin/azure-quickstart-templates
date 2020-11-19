@@ -63,7 +63,7 @@ param existingDiagnosticsStorageAccountId string {
   }
 }
 
-resource redisCacheName_resource 'Microsoft.Cache/Redis@2020-06-01' = {
+resource redisCacheName_res 'Microsoft.Cache/Redis@2020-06-01' = {
   name: redisCacheName
   location: location
   properties: {
@@ -94,6 +94,6 @@ resource redisCacheName_Microsoft_Insights_redisCacheName 'Microsoft.Cache/redis
     ]
   }
   dependsOn: [
-    redisCacheName_resource
+    redisCacheName_res
   ]
 }

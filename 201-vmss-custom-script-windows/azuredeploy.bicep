@@ -42,17 +42,17 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-var vnetName = 'vnet'
+var vnetName_var = 'vnet'
 var subnetName = 'subnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
-var publicIPAddressName = 'pip'
-var loadBalancerName = 'loadBalancer'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
+var publicIPAddressName_var = 'pip'
+var loadBalancerName_var = 'loadBalancer'
 var loadBalancerFrontEndName = 'loadBalancerFrontEnd'
 var loadBalancerBackEndName = 'loadBalancerBackEnd'
 var loadBalancerProbeName = 'loadBalancerHttpProbe'
 var loadBalancerNatPoolName = 'loadBalancerNatPool'
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmssName
   location: resourceGroup().location
   sku: {
@@ -97,12 +97,12 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${loadBalancerBackEndName}'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${loadBalancerBackEndName}'
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatPools/${loadBalancerNatPoolName}'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatPools/${loadBalancerNatPoolName}'
                       }
                     ]
                   }
@@ -136,13 +136,13 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
     }
   }
   dependsOn: [
-    vnetName_resource
-    loadBalancerName_resource
+    vnetName
+    loadBalancerName
   ]
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2017-04-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2017-04-01' = {
+  name: vnetName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -161,8 +161,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2017-04-01' = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -172,8 +172,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2017-04-01' = {
+  name: loadBalancerName_var
   location: resourceGroup().location
   properties: {
     frontendIPConfigurations: [
@@ -181,7 +181,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' 
         name: loadBalancerFrontEndName
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -196,10 +196,10 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' 
         name: 'roundRobinLBRule'
         properties: {
           frontendIPConfiguration: {
-            id: '${loadBalancerName_resource.id}/frontendIPConfigurations/${loadBalancerFrontEndName}'
+            id: '${loadBalancerName.id}/frontendIPConfigurations/${loadBalancerFrontEndName}'
           }
           backendAddressPool: {
-            id: '${loadBalancerName_resource.id}/backendAddressPools/${loadBalancerBackEndName}'
+            id: '${loadBalancerName.id}/backendAddressPools/${loadBalancerBackEndName}'
           }
           protocol: 'Tcp'
           frontendPort: 80
@@ -207,7 +207,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' 
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: '${loadBalancerName_resource.id}/probes/${loadBalancerProbeName}'
+            id: '${loadBalancerName.id}/probes/${loadBalancerProbeName}'
           }
         }
       }
@@ -228,7 +228,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' 
         name: loadBalancerNatPoolName
         properties: {
           frontendIPConfiguration: {
-            id: '${loadBalancerName_resource.id}/frontendIPConfigurations/${loadBalancerFrontEndName}'
+            id: '${loadBalancerName.id}/frontendIPConfigurations/${loadBalancerFrontEndName}'
           }
           protocol: 'Tcp'
           frontendPortRangeStart: 50000
@@ -238,7 +238,4 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-04-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }

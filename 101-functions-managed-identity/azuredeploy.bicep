@@ -168,14 +168,14 @@ param timezone string {
   default: 'UTC'
 }
 
-var hostingPlanName = functionAppName
-var storageAccountName = 'storage${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = functionAppName
+var storageAccountName_var = 'storage${uniqueString(resourceGroup().id)}'
 var insightsLocation = {
   AzureCloud: 'eastus'
   AzureUSGovernment: 'usgovvirginia'
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource functionAppName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: functionAppName
   location: location
   kind: 'functionapp'
@@ -191,7 +191,7 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -203,7 +203,7 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
@@ -217,20 +217,15 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
     }
     name: functionAppName
     clientAffinityEnabled: false
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-    Microsoft_Insights_components_functionAppName
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
   sku: {
     name: 'Y1'
@@ -241,8 +236,8 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -253,11 +248,11 @@ resource Microsoft_Insights_components_functionAppName 'Microsoft.Insights/compo
   name: functionAppName
   location: insightsLocation[environment().name]
   tags: {
-    'hidden-link:${functionAppName_resource.id}': 'Resource'
+    'hidden-link:${functionAppName_res.id}': 'Resource'
   }
   properties: {
     ApplicationId: functionAppName
   }
 }
 
-output principalId string = reference(functionAppName_resource.id, '2019-08-01', 'Full').identity.principalId
+output principalId string = reference(functionAppName_res.id, '2019-08-01', 'Full').identity.principalId

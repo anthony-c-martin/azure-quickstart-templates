@@ -95,49 +95,46 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var storageAccountName = '${toLower(appDnsPrefix)}storage'
-var servicePlanName = '${appDnsPrefix}ServicePlan'
-var webAppName = '${appDnsPrefix}Web'
-var appInsightsName = '${appDnsPrefix}AppInsights'
-var mySqlServerName = '${toLower(appDnsPrefix)}mysqlserver'
+var storageAccountName_var = '${toLower(appDnsPrefix)}storage'
+var servicePlanName_var = '${appDnsPrefix}ServicePlan'
+var webAppName_var = '${appDnsPrefix}Web'
+var appInsightsName_var = '${appDnsPrefix}AppInsights'
+var mySqlServerName_var = '${toLower(appDnsPrefix)}mysqlserver'
 var mySqlDbName = '${toLower(appDnsPrefix)}mysqldb'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-06-01' = {
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2017-06-01' = {
   sku: {
     name: 'Standard_RAGRS'
   }
   kind: 'Storage'
-  name: storageAccountName
+  name: storageAccountName_var
   location: location
   properties: {}
 }
 
-resource servicePlanName_resource 'Microsoft.Web/serverfarms@2016-09-01' = {
+resource servicePlanName 'Microsoft.Web/serverfarms@2016-09-01' = {
   sku: {
     name: 'B1'
   }
   kind: 'app'
-  name: servicePlanName
+  name: servicePlanName_var
   location: location
   properties: {
-    name: servicePlanName
+    name: servicePlanName_var
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2016-08-01' = {
+resource webAppName 'Microsoft.Web/sites@2016-08-01' = {
   kind: 'app'
-  name: webAppName
+  name: webAppName_var
   location: location
   properties: {
-    serverFarmId: servicePlanName_resource.id
+    serverFarmId: servicePlanName.id
   }
-  dependsOn: [
-    servicePlanName_resource
-  ]
 }
 
 resource webAppName_web 'Microsoft.Web/sites/config@2016-08-01' = {
-  name: '${webAppName}/web'
+  name: '${webAppName_var}/web'
   location: location
   properties: {
     javaVersion: '1.8'
@@ -145,38 +142,38 @@ resource webAppName_web 'Microsoft.Web/sites/config@2016-08-01' = {
     javaContainerVersion: '9.0'
   }
   dependsOn: [
-    webAppName_resource
+    webAppName
   ]
 }
 
 resource webAppName_connectionstrings 'Microsoft.Web/sites/config@2016-08-01' = {
-  name: '${webAppName}/connectionstrings'
+  name: '${webAppName_var}/connectionstrings'
   properties: {
     defaultConnection: {
-      value: 'Database=${mySqlDbName};Data Source=${mySqlServerName_resource.properties.fullyQualifiedDomainName};User Id=${mySqlAdminLogin}@${mySqlServerName};Password=${mySqlAdminPassword}'
+      value: 'Database=${mySqlDbName};Data Source=${mySqlServerName.properties.fullyQualifiedDomainName};User Id=${mySqlAdminLogin}@${mySqlServerName_var};Password=${mySqlAdminPassword}'
       type: 'MySql'
     }
   }
   dependsOn: [
-    webAppName_resource
+    webAppName
   ]
 }
 
-resource appInsightsName_resource 'microsoft.insights/components@2015-05-01' = {
+resource appInsightsName 'microsoft.insights/components@2015-05-01' = {
   kind: 'java'
-  name: appInsightsName
+  name: appInsightsName_var
   location: 'eastus'
   tags: {
-    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webAppName}': 'Resource'
+    'hidden-link:${resourceGroup().id}/providers/Microsoft.Web/sites/${webAppName_var}': 'Resource'
   }
   properties: {
-    ApplicationId: appInsightsName
+    ApplicationId: appInsightsName_var
   }
 }
 
-resource mySqlServerName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
+resource mySqlServerName 'Microsoft.DBforMySQL/servers@2017-12-01' = {
   location: location
-  name: mySqlServerName
+  name: mySqlServerName_var
   properties: {
     version: '5.7'
     storageMB: 51200
@@ -192,28 +189,28 @@ resource mySqlServerName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
 
 resource mySqlServerName_mySqlServerName_Firewall 'Microsoft.DBforMySQL/servers/firewallrules@2017-12-01' = {
   location: location
-  name: '${mySqlServerName}/${mySqlServerName}Firewall'
+  name: '${mySqlServerName_var}/${mySqlServerName_var}Firewall'
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '255.255.255.255'
   }
   dependsOn: [
-    mySqlServerName_resource
+    mySqlServerName
   ]
 }
 
 resource mySqlServerName_mySqlDbName 'Microsoft.DBforMySQL/servers/databases@2017-12-01' = {
-  name: '${mySqlServerName}/${mySqlDbName}'
+  name: '${mySqlServerName_var}/${mySqlDbName}'
   properties: {
     charset: 'utf8'
     collation: 'utf8_general_ci'
   }
   dependsOn: [
-    mySqlServerName_resource
+    mySqlServerName
   ]
 }
 
-module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/jenkins.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module jenkinsDeployment '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/jenkins.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'jenkinsDeployment'
   params: {
     adminUsername: jenkinsVMAdminUsername
@@ -222,19 +219,19 @@ module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     repositoryUrl: repositoryUrl
     clientId: clientId
     clientSecret: clientSecret
-    storageAccountName: storageAccountName
-    storageAccountKey: listKeys(storageAccountName_resource.id, '2016-01-01').keys[0].value
-    webAppName: webAppName
+    storageAccountName: storageAccountName_var
+    storageAccountKey: listKeys(storageAccountName.id, '2016-01-01').keys[0].value
+    webAppName: webAppName_var
     '_artifactsLocation': artifactsLocation
     '_artifactsLocationSasToken': artifactsLocationSasToken
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
   }
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName
   ]
 }
 
 output jenkinsURL string = reference('jenkinsDeployment').outputs.jenkinsURL.value
 output jenkinsSSH string = reference('jenkinsDeployment').outputs.jenkinsSSH.value
-output webAppURL string = 'http://${reference(webAppName).defaultHostName}'
+output webAppURL string = 'http://${reference(webAppName_var).defaultHostName}'

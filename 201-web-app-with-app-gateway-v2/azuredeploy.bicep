@@ -4,22 +4,22 @@ param appGatewaySubnetName string = 'myAppGatewaySubnet'
 param appGatewayName string = 'myAppGateway'
 param location string = resourceGroup().location
 
-var location_variable = location
-var virtualNetworkName_variable = '${virtualNetworkName}-${uniqueString(resourceGroup().id)}'
+var location_var = location
+var virtualNetworkName_var = '${virtualNetworkName}-${uniqueString(resourceGroup().id)}'
 var virtualNetworkAddressPrefix = '10.0.0.0/20'
 var virtualNetworkSubnetName = appGatewaySubnetName
 var virtualNetworkSubnetPrefix = '10.0.0.0/24'
-var virtualNetworkId = virtualNetworkName_resource.id
-var virtualNetworkSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_variable, virtualNetworkSubnetName)
-var publicIpAddressName = 'myAppGatewayPublicIp-${uniqueString(resourceGroup().id)}'
+var virtualNetworkId = virtualNetworkName_res.id
+var virtualNetworkSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, virtualNetworkSubnetName)
+var publicIpAddressName_var = 'myAppGatewayPublicIp-${uniqueString(resourceGroup().id)}'
 var publicIpAddressSku = 'Standard'
 var publicIpAddressAllocationType = 'Static'
-var publicIpAddressId = publicIpAddressName_resource.id
-var webAppName_variable = '${webAppName}-${uniqueString(resourceGroup().id)}'
-var webAppPlanName = '${webAppName}Plan-${uniqueString(resourceGroup().id)}'
+var publicIpAddressId = publicIpAddressName.id
+var webAppName_var = '${webAppName}-${uniqueString(resourceGroup().id)}'
+var webAppPlanName_var = '${webAppName}Plan-${uniqueString(resourceGroup().id)}'
 var webAppPlanSku = 'S1'
-var webAppPlanId = webAppPlanName_resource.id
-var applicationGatewayName = '${appGatewayName}-${uniqueString(resourceGroup().id)}'
+var webAppPlanId = webAppPlanName.id
+var applicationGatewayName_var = '${appGatewayName}-${uniqueString(resourceGroup().id)}'
 var applicationGatewaySkuSize = 'Standard_v2'
 var applicationGatewayTier = 'Standard_v2'
 var applicationGatewayAutoScaleMinCapacity = 2
@@ -27,21 +27,21 @@ var applicationGatewayAutoScaleMaxCapacity = 5
 var appGwIpConfigName = 'appGatewayIpConfigName'
 var appGwFrontendPortName = 'appGatewayFrontendPort_80'
 var appGwFrontendPort = 80
-var appGwFrontendPortId = resourceId('Microsoft.Network/applicationGateways/frontendPorts/', applicationGatewayName, appGwFrontendPortName)
+var appGwFrontendPortId = resourceId('Microsoft.Network/applicationGateways/frontendPorts/', applicationGatewayName_var, appGwFrontendPortName)
 var appGwFrontendIpConfigName = 'appGatewayPublicFrontendIpConfig'
-var appGwFrontendIpConfigId = resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations/', applicationGatewayName, appGwFrontendIpConfigName)
+var appGwFrontendIpConfigId = resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations/', applicationGatewayName_var, appGwFrontendIpConfigName)
 var appGwHttpSettingName = 'appGatewayHttpSetting_80'
-var appGwHttpSettingId = resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', applicationGatewayName, appGwHttpSettingName)
+var appGwHttpSettingId = resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection/', applicationGatewayName_var, appGwHttpSettingName)
 var appGwHttpSettingProbeName = 'appGatewayHttpSettingProbe_80'
-var appGwBackendAddressPoolName = 'appGateway${webAppName_variable}BackendPool'
-var appGwBackendAddressPoolId = resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', applicationGatewayName, appGwBackendAddressPoolName)
+var appGwBackendAddressPoolName = 'appGateway${webAppName_var}BackendPool'
+var appGwBackendAddressPoolId = resourceId('Microsoft.Network/applicationGateways/backendAddressPools/', applicationGatewayName_var, appGwBackendAddressPoolName)
 var appGwListenerName = 'appGatewayListener'
-var appGwListenerId = resourceId('Microsoft.Network/applicationGateways/httpListeners/', applicationGatewayName, appGwListenerName)
+var appGwListenerId = resourceId('Microsoft.Network/applicationGateways/httpListeners/', applicationGatewayName_var, appGwListenerName)
 var appGwRoutingRuleName = 'appGatewayRoutingRule'
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName_variable
-  location: location_variable
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -67,9 +67,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource webAppPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: webAppPlanName
-  location: location_variable
+resource webAppPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: webAppPlanName_var
+  location: location_var
   properties: {
     reserved: 'false'
   }
@@ -79,9 +79,9 @@ resource webAppPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
-  name: webAppName_variable
-  location: location_variable
+resource webAppName_res 'Microsoft.Web/sites@2020-06-01' = {
+  name: webAppName_var
+  location: location_var
   properties: {
     serverFarmId: webAppPlanId
     reserved: 'false'
@@ -107,23 +107,23 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
   ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIpAddressName
-  location: location_variable
+resource publicIpAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIpAddressName_var
+  location: location_var
   sku: {
     name: publicIpAddressSku
   }
   properties: {
     publicIPAllocationMethod: publicIpAddressAllocationType
     dnsSettings: {
-      domainNameLabel: toLower(webAppName_variable)
+      domainNameLabel: toLower(webAppName_var)
     }
   }
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-01' = {
-  name: applicationGatewayName
-  location: location_variable
+resource applicationGatewayName 'Microsoft.Network/applicationGateways@2020-05-01' = {
+  name: applicationGatewayName_var
+  location: location_var
   properties: {
     sku: {
       name: applicationGatewaySkuSize
@@ -143,7 +143,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: appGwFrontendIpConfigName
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: publicIpAddressId
           }
         }
@@ -153,7 +153,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: appGwFrontendPortName
         properties: {
-          Port: appGwFrontendPort
+          port: appGwFrontendPort
         }
       }
     ]
@@ -163,7 +163,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
         properties: {
           backendAddresses: [
             {
-              fqdn: reference(webAppName_variable).hostNames[0]
+              fqdn: reference(webAppName_var).hostNames[0]
             }
           ]
         }
@@ -173,8 +173,8 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: appGwHttpSettingName
         properties: {
-          Port: 80
-          Protocol: 'Http'
+          port: 80
+          protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           requestTimeout: 20
           pickHostNameFromBackendAddress: true
@@ -197,9 +197,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     ]
     requestRoutingRules: [
       {
-        Name: appGwRoutingRuleName
+        name: appGwRoutingRuleName
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: appGwListenerId
           }
@@ -243,5 +243,5 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
   ]
 }
 
-output appGatewayUrl string = 'http://${reference(publicIpAddressName).dnsSettings.fqdn}/'
-output webAppUrl string = 'http://${reference(webAppName_variable).hostNames[0]}/'
+output appGatewayUrl string = 'http://${reference(publicIpAddressName_var).dnsSettings.fqdn}/'
+output webAppUrl string = 'http://${reference(webAppName_var).hostNames[0]}/'

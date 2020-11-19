@@ -45,7 +45,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var osType_variable = {
+var osType_var = {
   windows: {
     marketplacePlan: {
       name: 'windows2016'
@@ -77,21 +77,21 @@ var osType_variable = {
 }
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${vmssName}vnet'
-var publicIPAddressName = '${vmssName}pip'
+var virtualNetworkName_var = '${vmssName}vnet'
+var publicIPAddressName_var = '${vmssName}pip'
 var subnetName = '${vmssName}subnet'
-var loadBalancerName = '${vmssName}lb'
-var publicIPAddressID = publicIPAddressName_resource.id
+var loadBalancerName_var = '${vmssName}lb'
+var publicIPAddressID = publicIPAddressName.id
 var natPoolName = '${vmssName}natpool'
 var bePoolName = '${vmssName}bepool'
 var natStartPort = 50000
 var natEndPort = 50120
 var nicName = '${vmssName}nic'
 var ipConfigName = '${vmssName}ipconfig'
-var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'loadBalancerFrontEnd')
+var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd')
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-04-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -110,8 +110,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2019-04-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -121,8 +121,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2019-04-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2019-04-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -150,17 +150,14 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2019-04-01' 
           protocol: 'Tcp'
           frontendPortRangeStart: natStartPort
           frontendPortRangeEnd: natEndPort
-          backendPort: osType_variable[osType].natBackendPort
+          backendPort: osType_var[osType].natBackendPort
         }
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
   name: vmssName
   location: location
   sku: {
@@ -168,7 +165,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
     tier: 'Standard'
     capacity: instanceCount
   }
-  plan: osType_variable[osType].marketplacePlan
+  plan: osType_var[osType].marketplacePlan
   properties: {
     overprovision: false
     upgradePolicy: {
@@ -180,7 +177,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
           createOption: 'FromImage'
           caching: 'ReadWrite'
         }
-        imageReference: osType_variable[osType].imageReference
+        imageReference: osType_var[osType].imageReference
       }
       osProfile: {
         computerNamePrefix: vmssName
@@ -198,16 +195,16 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, bePoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, bePoolName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, natPoolName)
                       }
                     ]
                   }
@@ -220,7 +217,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
     }
   }
   dependsOn: [
-    loadBalancerName_resource
-    virtualNetworkName_resource
+    loadBalancerName
+    virtualNetworkName
   ]
 }

@@ -51,7 +51,7 @@ var sqlDatabaseName = 'MyData'
 var sqlDatabaseServiceObjective = 'Basic'
 var sqlDatabaseEdition = 'Basic'
 
-resource sqlServerPrimaryName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource sqlServerPrimaryName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   kind: 'v12.0'
   name: sqlServerPrimaryName
   location: location
@@ -68,7 +68,7 @@ resource sqlServerPrimaryName_sqlFailoverGroupName 'Microsoft.Sql/servers/failov
     serverName: sqlServerPrimaryName
     partnerServers: [
       {
-        id: sqlServerSecondaryName_resource.id
+        id: sqlServerSecondaryName_res.id
       }
     ]
     readWriteEndpoint: {
@@ -83,9 +83,7 @@ resource sqlServerPrimaryName_sqlFailoverGroupName 'Microsoft.Sql/servers/failov
     ]
   }
   dependsOn: [
-    sqlServerPrimaryName_resource
-    sqlServerPrimaryName_sqlDatabaseName
-    sqlServerSecondaryName_resource
+    sqlServerPrimaryName_res
   ]
 }
 
@@ -97,11 +95,11 @@ resource sqlServerPrimaryName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2
     requestedServiceObjectiveName: sqlDatabaseServiceObjective
   }
   dependsOn: [
-    sqlServerPrimaryName_resource
+    sqlServerPrimaryName_res
   ]
 }
 
-resource sqlServerSecondaryName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource sqlServerSecondaryName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   kind: 'v12.0'
   name: sqlServerSecondaryName
   location: sqlServerSecondaryRegion

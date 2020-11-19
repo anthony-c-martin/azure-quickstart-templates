@@ -31,7 +31,7 @@ param numberOfStreamingUnits int {
   }
 }
 
-resource streamAnalyticsJobName_resource 'Microsoft.StreamAnalytics/StreamingJobs@2019-06-01' = {
+resource streamAnalyticsJobName_res 'Microsoft.StreamAnalytics/StreamingJobs@2019-06-01' = {
   name: streamAnalyticsJobName
   location: location
   properties: {

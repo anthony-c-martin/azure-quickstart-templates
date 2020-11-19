@@ -16,7 +16,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -32,6 +32,6 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
 resource storageAccountName_default_containerName 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
   name: '${storageAccountName}/default/${containerName}'
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName_res
   ]
 }

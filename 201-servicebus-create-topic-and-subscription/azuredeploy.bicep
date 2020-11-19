@@ -20,7 +20,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource service_BusNamespace_Name_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource service_BusNamespace_Name_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: service_BusNamespace_Name
   location: location
   sku: {
@@ -43,7 +43,7 @@ resource service_BusNamespace_Name_serviceBusTopicName 'Microsoft.ServiceBus/nam
     enableExpress: false
   }
   dependsOn: [
-    service_BusNamespace_Name_resource
+    service_BusNamespace_Name_res
   ]
 }
 

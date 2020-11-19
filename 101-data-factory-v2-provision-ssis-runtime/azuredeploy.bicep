@@ -60,7 +60,7 @@ param catalogPricingTier string {
   default: 'Basic'
 }
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: dataFactoryName
   location: location
   properties: {}
@@ -95,6 +95,6 @@ resource dataFactoryName_SPAzureSsisIR 'Microsoft.DataFactory/factories/integrat
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }

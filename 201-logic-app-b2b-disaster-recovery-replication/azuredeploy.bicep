@@ -58,7 +58,7 @@ param X12_Primary_Connection_DisplayName string = 'x12-primary'
 param X12_Secondary_Connection_Name string = 'x12-secondary'
 param X12_Secondary_Connection_DisplayName string = 'x12-secondary'
 
-resource AS2_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource AS2_DR_LogicApp_Name_res 'Microsoft.Logic/workflows@2016-06-01' = {
   properties: {
     state: 'Enabled'
     definition: {
@@ -111,12 +111,12 @@ resource AS2_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = 
         value: {
           'as2-primary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/as2'
-            connectionId: AS2_Primary_Connection_Name_resource.id
+            connectionId: AS2_Primary_Connection_Name_res.id
             connectionName: AS2_Primary_Connection_Name
           }
           'as2-secondary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/as2'
-            connectionId: AS2_Secondary_Connection_Name_resource.id
+            connectionId: AS2_Secondary_Connection_Name_res.id
             connectionName: AS2_Secondary_Connection_Name
           }
         }
@@ -125,13 +125,9 @@ resource AS2_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = 
   }
   name: AS2_DR_LogicApp_Name
   location: DR_LogicApp_Location
-  dependsOn: [
-    AS2_Primary_Connection_Name_resource
-    AS2_Secondary_Connection_Name_resource
-  ]
 }
 
-resource Edifact_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource Edifact_DR_LogicApp_Name_res 'Microsoft.Logic/workflows@2016-06-01' = {
   properties: {
     state: 'Enabled'
     definition: {
@@ -184,12 +180,12 @@ resource Edifact_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01
         value: {
           'edifact-primary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/edifact'
-            connectionId: Edifact_Primary_Connection_Name_resource.id
+            connectionId: Edifact_Primary_Connection_Name_res.id
             connectionName: Edifact_Primary_Connection_Name
           }
           'edifact-secondary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/edifact'
-            connectionId: Edifact_Secondary_Connection_Name_resource.id
+            connectionId: Edifact_Secondary_Connection_Name_res.id
             connectionName: Edifact_Secondary_Connection_Name
           }
         }
@@ -198,13 +194,9 @@ resource Edifact_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01
   }
   name: Edifact_DR_LogicApp_Name
   location: DR_LogicApp_Location
-  dependsOn: [
-    Edifact_Primary_Connection_Name_resource
-    Edifact_Secondary_Connection_Name_resource
-  ]
 }
 
-resource X12_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource X12_DR_LogicApp_Name_res 'Microsoft.Logic/workflows@2016-06-01' = {
   properties: {
     state: 'Enabled'
     definition: {
@@ -257,12 +249,12 @@ resource X12_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = 
         value: {
           'x12-secondary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/x12'
-            connectionId: X12_Secondary_Connection_Name_resource.id
+            connectionId: X12_Secondary_Connection_Name_res.id
             connectionName: X12_Secondary_Connection_Name
           }
           'x12-primary': {
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${DR_LogicApp_Location}/managedApis/x12'
-            connectionId: X12_Primary_Connection_Name_resource.id
+            connectionId: X12_Primary_Connection_Name_res.id
             connectionName: X12_Primary_Connection_Name
           }
         }
@@ -271,13 +263,9 @@ resource X12_DR_LogicApp_Name_resource 'Microsoft.Logic/workflows@2016-06-01' = 
   }
   name: X12_DR_LogicApp_Name
   location: DR_LogicApp_Location
-  dependsOn: [
-    X12_Primary_Connection_Name_resource
-    X12_Secondary_Connection_Name_resource
-  ]
 }
 
-resource AS2_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource AS2_Primary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: AS2_Primary_Connection_Name
   location: DR_LogicApp_Location
   properties: {
@@ -292,7 +280,7 @@ resource AS2_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06
   }
 }
 
-resource AS2_Secondary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource AS2_Secondary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: AS2_Secondary_Connection_Name
   location: DR_LogicApp_Location
   properties: {
@@ -307,7 +295,7 @@ resource AS2_Secondary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-
   }
 }
 
-resource Edifact_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource Edifact_Primary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: Edifact_Primary_Connection_Name
   location: DR_LogicApp_Location
   properties: {
@@ -322,7 +310,7 @@ resource Edifact_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@201
   }
 }
 
-resource Edifact_Secondary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource Edifact_Secondary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: Edifact_Secondary_Connection_Name
   location: DR_LogicApp_Location
   properties: {
@@ -337,7 +325,7 @@ resource Edifact_Secondary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2
   }
 }
 
-resource X12_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource X12_Primary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: X12_Primary_Connection_Name
   location: DR_LogicApp_Location
   properties: {
@@ -352,7 +340,7 @@ resource X12_Primary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06
   }
 }
 
-resource X12_Secondary_Connection_Name_resource 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
+resource X12_Secondary_Connection_Name_res 'MICROSOFT.WEB/CONNECTIONS@2016-06-01' = {
   name: X12_Secondary_Connection_Name
   location: DR_LogicApp_Location
   properties: {

@@ -116,10 +116,10 @@ param nodeTypeSize string {
 
 var dnsName = clusterName
 var vmName = 'vm'
-var virtualNetworkName = 'VNet'
+var virtualNetworkName_var = 'VNet'
 var addressPrefix = '10.0.0.0/16'
 var nicName = 'NIC'
-var lbIPName = 'PublicIP-LB-FE'
+var lbIPName_var = 'PublicIP-LB-FE'
 var overProvision = false
 var nt0applicationStartPort = '20000'
 var nt0applicationEndPort = '30000'
@@ -129,20 +129,20 @@ var nt0fabricTcpGatewayPort = '19000'
 var nt0fabricHttpGatewayPort = '19080'
 var subnet0Name = 'Subnet-0'
 var subnet0Prefix = '10.0.0.0/24'
-var subnet0Ref = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, subnet0Name)
-var supportLogStorageAccountName = '${uniqueString(resourceGroup().id)}2'
-var applicationDiagnosticsStorageAccountName = '${uniqueString(resourceGroup().id)}3'
-var lbName = 'LB-${clusterName}-${vmNodeType0Name}'
-var lbIPConfig0 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations/', lbName, 'LoadBalancerIPConfig')
-var lbPoolID0 = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, 'LoadBalancerBEAddressPool')
-var lbProbeID0 = resourceId('Microsoft.Network/loadBalancers/probes', lbName, 'FabricGatewayProbe')
-var lbHttpProbeID0 = resourceId('Microsoft.Network/loadBalancers/probes', lbName, 'FabricHttpGatewayProbe')
-var lbNatPoolID0 = resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName, 'LoadBalancerBEAddressNatPool')
-var vmNodeType0Name = toLower('NT1${vmName}')
+var subnet0Ref = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, subnet0Name)
+var supportLogStorageAccountName_var = '${uniqueString(resourceGroup().id)}2'
+var applicationDiagnosticsStorageAccountName_var = '${uniqueString(resourceGroup().id)}3'
+var lbName_var = 'LB-${clusterName}-${vmNodeType0Name_var}'
+var lbIPConfig0 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations/', lbName_var, 'LoadBalancerIPConfig')
+var lbPoolID0 = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, 'LoadBalancerBEAddressPool')
+var lbProbeID0 = resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, 'FabricGatewayProbe')
+var lbHttpProbeID0 = resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, 'FabricHttpGatewayProbe')
+var lbNatPoolID0 = resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName_var, 'LoadBalancerBEAddressNatPool')
+var vmNodeType0Name_var = toLower('NT1${vmName}')
 var vmNodeType0Size = nodeTypeSize
 
-resource supportLogStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: supportLogStorageAccountName
+resource supportLogStorageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: supportLogStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -155,8 +155,8 @@ resource supportLogStorageAccountName_resource 'Microsoft.Storage/storageAccount
   properties: {}
 }
 
-resource applicationDiagnosticsStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: applicationDiagnosticsStorageAccountName
+resource applicationDiagnosticsStorageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: applicationDiagnosticsStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -169,8 +169,8 @@ resource applicationDiagnosticsStorageAccountName_resource 'Microsoft.Storage/st
   properties: {}
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     resourceType: 'Service Fabric'
@@ -193,8 +193,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource lbIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: lbIPName
+resource lbIPName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: lbIPName_var
   location: location
   tags: {
     resourceType: 'Service Fabric'
@@ -208,8 +208,8 @@ resource lbIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   }
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: lbName_var
   location: location
   tags: {
     resourceType: 'Service Fabric'
@@ -221,7 +221,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
         name: 'LoadBalancerIPConfig'
         properties: {
           publicIPAddress: {
-            id: lbIPName_resource.id
+            id: lbIPName.id
           }
         }
       }
@@ -285,7 +285,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
           frontendPort: loadBalancedAppPort1
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, 'AppPortProbe1')
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, 'AppPortProbe1')
           }
           protocol: 'Tcp'
         }
@@ -304,7 +304,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
           frontendPort: loadBalancedAppPort2
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, 'AppPortProbe2')
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, 'AppPortProbe2')
           }
           protocol: 'Tcp'
         }
@@ -363,13 +363,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    lbIPName_resource
-  ]
 }
 
-resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
-  name: vmNodeType0Name
+resource vmNodeType0Name 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
+  name: vmNodeType0Name_var
   location: location
   sku: {
     name: vmNodeType0Size
@@ -394,13 +391,13 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@202
               type: 'ServiceFabricNode'
               autoUpgradeMinorVersion: true
               protectedSettings: {
-                StorageAccountKey1: listKeys(supportLogStorageAccountName_resource.id, '2015-05-01-preview').key1
-                StorageAccountKey2: listKeys(supportLogStorageAccountName_resource.id, '2015-05-01-preview').key2
+                StorageAccountKey1: listKeys(supportLogStorageAccountName.id, '2015-05-01-preview').key1
+                StorageAccountKey2: listKeys(supportLogStorageAccountName.id, '2015-05-01-preview').key2
               }
               publisher: 'Microsoft.Azure.ServiceFabric'
               settings: {
                 clusterEndpoint: reference(clusterName).clusterEndpoint
-                nodeTypeRef: vmNodeType0Name
+                nodeTypeRef: vmNodeType0Name_var
                 dataPath: '${((nodeDataDrive == 'OS') ? 'C' : 'D')}:\\\\SvcFab'
                 durabilityLevel: 'Silver'
                 nicPrefixOverride: subnet0Prefix
@@ -418,8 +415,8 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@202
               type: 'IaaSDiagnostics'
               autoUpgradeMinorVersion: true
               protectedSettings: {
-                storageAccountName: applicationDiagnosticsStorageAccountName
-                storageAccountKey: listKeys(applicationDiagnosticsStorageAccountName_resource.id, '2015-05-01-preview').key1
+                storageAccountName: applicationDiagnosticsStorageAccountName_var
+                storageAccountKey: listKeys(applicationDiagnosticsStorageAccountName.id, '2015-05-01-preview').key1
                 storageAccountEndPoint: 'https://${environment().suffixes.storage}'
               }
               publisher: 'Microsoft.Azure.Diagnostics'
@@ -459,7 +456,7 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@202
                     }
                   }
                 }
-                StorageAccount: applicationDiagnosticsStorageAccountName
+                StorageAccount: applicationDiagnosticsStorageAccountName_var
               }
               typeHandlerVersion: '1.5'
             }
@@ -499,7 +496,7 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@202
       osProfile: {
         adminPassword: adminPassword
         adminUsername: adminUsername
-        computernamePrefix: vmNodeType0Name
+        computerNamePrefix: vmNodeType0Name_var
         secrets: [
           {
             sourceVault: {
@@ -532,14 +529,12 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@202
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    lbName_resource
-    supportLogStorageAccountName_resource
-    applicationDiagnosticsStorageAccountName_resource
+    virtualNetworkName
+    lbName
   ]
 }
 
-resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2019-03-01' = {
+resource clusterName_res 'Microsoft.ServiceFabric/clusters@2019-03-01' = {
   name: clusterName
   location: location
   tags: {
@@ -553,11 +548,11 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2019-03-01' = {
     }
     clusterState: 'Default'
     diagnosticsStorageAccountConfig: {
-      blobEndpoint: reference(supportLogStorageAccountName_resource.id, '2018-07-01').primaryEndpoints.blob
+      blobEndpoint: reference(supportLogStorageAccountName.id, '2018-07-01').primaryEndpoints.blob
       protectedAccountKeyName: 'StorageAccountKey1'
-      queueEndpoint: reference(supportLogStorageAccountName_resource.id, '2018-07-01').primaryEndpoints.queue
-      storageAccountName: supportLogStorageAccountName
-      tableEndpoint: reference(supportLogStorageAccountName_resource.id, '2018-07-01').primaryEndpoints.table
+      queueEndpoint: reference(supportLogStorageAccountName.id, '2018-07-01').primaryEndpoints.queue
+      storageAccountName: supportLogStorageAccountName_var
+      tableEndpoint: reference(supportLogStorageAccountName.id, '2018-07-01').primaryEndpoints.table
     }
     fabricSettings: [
       {
@@ -570,10 +565,10 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2019-03-01' = {
         name: 'Security'
       }
     ]
-    managementEndpoint: 'https://${reference(lbIPName).dnsSettings.fqdn}:${nt0fabricHttpGatewayPort}'
+    managementEndpoint: 'https://${reference(lbIPName_var).dnsSettings.fqdn}:${nt0fabricHttpGatewayPort}'
     nodeTypes: [
       {
-        name: vmNodeType0Name
+        name: vmNodeType0Name_var
         applicationPorts: {
           endPort: nt0applicationEndPort
           startPort: nt0applicationStartPort
@@ -594,9 +589,6 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2019-03-01' = {
     upgradeMode: 'Automatic'
     vmImage: 'Windows'
   }
-  dependsOn: [
-    supportLogStorageAccountName_resource
-  ]
 }
 
 output clusterProperties object = reference(clusterName)

@@ -115,29 +115,29 @@ param location string {
 
 var api_version = '2015-06-15'
 var extensionName = 'initdevbox'
-var newStorageAccountName = concat(storageAccountNamePrefixString, uniqueString(resourceGroup().id, deployment().name))
-var databaseAccountName = 'docdb${uniqueString(resourceGroup().id, deployment().name)}'
+var newStorageAccountName_var = concat(storageAccountNamePrefixString, uniqueString(resourceGroup().id, deployment().name))
+var databaseAccountName_var = 'docdb${uniqueString(resourceGroup().id, deployment().name)}'
 var sqlServerAdminLogin = 'sqladmin'
 var sqlServerAdminPassword = concat(clientSecret, uniqueString(resourceGroup().id, deployment().name))
-var sqlServerName = 'sqlserver${uniqueString(resourceGroup().id, deployment().name)}'
+var sqlServerName_var = 'sqlserver${uniqueString(resourceGroup().id, deployment().name)}'
 var sqlDatabaseName = 'azuremetabroker'
-var vmName = 'myjumpbox${uniqueString(resourceGroup().id, deployment().name)}'
-var location_variable = location
+var vmName_var = 'myjumpbox${uniqueString(resourceGroup().id, deployment().name)}'
+var location_var = location
 var storageAccountType = 'Standard_GRS'
 var vmStorageAccountContainerName = 'vhds'
-var storageid = newStorageAccountName_resource.id
-var virtualNetworkName_variable = virtualNetworkName
+var storageid = newStorageAccountName.id
+var virtualNetworkName_var = virtualNetworkName
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 var addressPrefix = '10.0.0.0/16'
-var vnetID = virtualNetworkName_resource.id
+var vnetID = virtualNetworkName_res.id
 var subnet1Name = subnetNameForBosh
 var subnet1Prefix = '10.0.0.0/24'
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
-var subnet1NSG = NSGNameForBosh
+var subnet1NSG_var = NSGNameForBosh
 var subnet2Name = subnetNameForCloudFoundry
 var subnet2Prefix = '10.0.16.0/20'
-var subnet2NSG = NSGNameForCF
-var nicName = vmName
+var subnet2NSG_var = NSGNameForCF
+var nicName_var = vmName_var
 var devboxPrivateIPAddress = '10.0.0.100'
 var devboxPublicIPAddressID = vmName_devbox.id
 var imagePublisher = 'Canonical'
@@ -145,44 +145,44 @@ var imageOffer = 'UbuntuServer'
 var ubuntuOSVersion = '14.04.5-LTS'
 var webSessionPassword = uniqueString(adminSSHKey)
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: newStorageAccountName
-  location: location_variable
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: newStorageAccountName_var
+  location: location_var
   properties: {
     accountType: storageAccountType
   }
 }
 
 resource vmName_devbox 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: '${vmName}-devbox'
-  location: location_variable
+  name: '${vmName_var}-devbox'
+  location: location_var
   properties: {
     publicIPAllocationMethod: 'dynamic'
     dnsSettings: {
-      domainNameLabel: vmName
+      domainNameLabel: vmName_var
     }
   }
 }
 
 resource vmName_bosh 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: '${vmName}-bosh'
-  location: location_variable
+  name: '${vmName_var}-bosh'
+  location: location_var
   properties: {
     publicIPAllocationMethod: 'static'
   }
 }
 
 resource vmName_cf 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: '${vmName}-cf'
-  location: location_variable
+  name: '${vmName_var}-cf'
+  location: location_var
   properties: {
     publicIPAllocationMethod: 'static'
   }
 }
 
-resource subnet1NSG_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: subnet1NSG
-  location: location_variable
+resource subnet1NSG 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: subnet1NSG_var
+  location: location_var
   properties: {
     securityRules: [
       {
@@ -217,14 +217,14 @@ resource subnet1NSG_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15
   }
 }
 
-resource subnet2NSG_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: subnet2NSG
-  location: location_variable
+resource subnet2NSG 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: subnet2NSG_var
+  location: location_var
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName_variable
-  location: location_variable
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -237,7 +237,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: subnet1NSG_resource.id
+            id: subnet1NSG.id
           }
         }
       }
@@ -246,21 +246,17 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
         properties: {
           addressPrefix: subnet2Prefix
           networkSecurityGroup: {
-            id: subnet2NSG_resource.id
+            id: subnet2NSG.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    subnet1NSG_resource
-    subnet2NSG_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
-  location: location_variable
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
+  location: location_var
   properties: {
     ipConfigurations: [
       {
@@ -279,20 +275,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    'Microsoft.Network/publicIPAddresses/${vmName}-devbox'
-    virtualNetworkName_resource
+    'Microsoft.Network/publicIPAddresses/${vmName_var}-devbox'
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
-  location: location_variable
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
+  location: location_var
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -314,7 +309,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -322,31 +317,30 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName
   ]
 }
 
-resource databaseAccountName_resource 'Microsoft.DocumentDB/databaseAccounts@2015-04-08' = {
-  name: databaseAccountName
+resource databaseAccountName 'Microsoft.DocumentDB/databaseAccounts@2015-04-08' = {
+  name: databaseAccountName_var
   location: resourceGroup().location
   tags: {
     displayName: 'DocumentDB'
   }
   properties: {
-    name: databaseAccountName
+    name: databaseAccountName_var
     databaseAccountOfferType: 'Standard'
   }
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
-  name: sqlServerName
+resource sqlServerName 'Microsoft.Sql/servers@2014-04-01-preview' = {
+  name: sqlServerName_var
   location: resourceGroup().location
   tags: {
     displayName: 'SQL Server'
@@ -360,36 +354,36 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
 }
 
 resource sqlServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrules@2014-04-01-preview' = {
-  name: '${sqlServerName}/AllowAllWindowsAzureIps'
+  name: '${sqlServerName_var}/AllowAllWindowsAzureIps'
   location: resourceGroup().location
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName
   ]
 }
 
 resource sqlServerName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2014-04-01-preview' = {
-  name: '${sqlServerName}/${sqlDatabaseName}'
+  name: '${sqlServerName_var}/${sqlDatabaseName}'
   location: resourceGroup().location
   tags: {
     displayName: 'SQL Database'
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName
   ]
 }
 
 resource vmName_initdevbox 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/initdevbox'
-  location: location_variable
+  name: '${vmName_var}/initdevbox'
+  location: location_var
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
     type: 'CustomScriptForLinux'
     typeHandlerVersion: '1.4'
-    autoupgradeMinorVersion: false
+    autoUpgradeMinorVersion: false
     settings: {
       fileUris: [
         'https://s3-us-west-2.amazonaws.com/test-epsilon/bootstrap.py'
@@ -403,31 +397,31 @@ resource vmName_initdevbox 'Microsoft.Compute/virtualMachines/extensions@2015-06
       apigeeAdminEmail: apigeeAdminEmail
       adminSSHKey: adminSSHKey
       commandToExecute: 'python ./bootstrap.py ${installSize} ${webSessionPassword}'
-      location: location_variable
-      'VNET-NAME': virtualNetworkName_variable
+      location: location_var
+      'VNET-NAME': virtualNetworkName_var
       'SUBNET-NAME': subnet1Name
       'SUBNET-NAME-FOR-CF': subnet2Name
-      'NSG-NAME-FOR-CF': subnet2NSG
-      'NSG-NAME-FOR-BOSH': subnet1NSG
+      'NSG-NAME-FOR-CF': subnet2NSG_var
+      'NSG-NAME-FOR-BOSH': subnet1NSG_var
       'SUBSCRIPTION-ID': subscription().subscriptionId
-      'STORAGE-ACCOUNT-NAME': newStorageAccountName
+      'STORAGE-ACCOUNT-NAME': newStorageAccountName_var
       'STORAGE-ACCESS-KEY': listKeys(storageid, api_version).key1
       'RESOURCE-GROUP-NAME': resourceGroup().name
       'TENANT-ID': tenantID
       'CLIENT-ID': clientID
       'CLIENT-SECRET': clientSecret
-      'cf-ip': reference('${vmName}-cf').ipAddress
-      'bosh-ip': reference('${vmName}-bosh').ipAddress
+      'cf-ip': reference('${vmName_var}-cf').ipAddress
+      'bosh-ip': reference('${vmName_var}-bosh').ipAddress
       username: adminUsername
       'enable-dns': enableDNSOnDevbox
-      databaseAccountName: databaseAccountName
-      'documentdb-endpoint': reference('Microsoft.DocumentDb/databaseAccounts/${databaseAccountName}').documentEndpoint
-      'documentdb-masterkey': listKeys(databaseAccountName_resource.id, '2015-04-08').primaryMasterKey
+      databaseAccountName: databaseAccountName_var
+      'documentdb-endpoint': reference('Microsoft.DocumentDb/databaseAccounts/${databaseAccountName_var}').documentEndpoint
+      'documentdb-masterkey': listKeys(databaseAccountName.id, '2015-04-08').primaryMasterKey
       sqlServerAdminLogin: sqlServerAdminLogin
       sqlServerAdminPassword: sqlServerAdminPassword
-      sqlServerName: sqlServerName
+      sqlServerName: sqlServerName_var
       sqlDatabaseName: sqlDatabaseName
-      sqlServerFQDN: reference('Microsoft.Sql/servers/${sqlServerName}').fullyQualifiedDomainName
+      sqlServerFQDN: reference('Microsoft.Sql/servers/${sqlServerName_var}').fullyQualifiedDomainName
       metabrokerenvironment: metabrokerEnvironment
       'pivnet-api-token': pivnetAPIToken
     }
@@ -436,10 +430,10 @@ resource vmName_initdevbox 'Microsoft.Compute/virtualMachines/extensions@2015-06
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output scriptoutput string = split(split(reference(resourceId('Microsoft.Compute/virtualMachines/extensions', vmName, extensionName), '2015-06-15').instanceView.statuses[0].message, '---')[2], '###QUOTACHECK###')[1]
-output ProgressMonitorURL string = 'https://gamma:${webSessionPassword}@${reference('${vmName}-devbox').dnsSettings.fqdn}'
-output JumpboxFQDN string = reference('${vmName}-devbox').dnsSettings.fqdn
+output scriptoutput string = split(split(reference(resourceId('Microsoft.Compute/virtualMachines/extensions', vmName_var, extensionName), '2015-06-15').instanceView.statuses[0].message, '---')[2], '###QUOTACHECK###')[1]
+output ProgressMonitorURL string = 'https://gamma:${webSessionPassword}@${reference('${vmName_var}-devbox').dnsSettings.fqdn}'
+output JumpboxFQDN string = reference('${vmName_var}-devbox').dnsSettings.fqdn

@@ -25,11 +25,11 @@ resource clusters_kustocluster_name_databases_kustodb_name 'Microsoft.Kusto/clus
     hotCachePeriodInDays: 31
   }
   dependsOn: [
-    clusters_kustocluster_name_resource
+    clusters_kustocluster_name_res
   ]
 }
 
-resource clusters_kustocluster_name_resource 'Microsoft.Kusto/clusters@2020-06-14' = {
+resource clusters_kustocluster_name_res 'Microsoft.Kusto/clusters@2020-06-14' = {
   name: clusters_kustocluster_name
   sku: {
     name: 'Standard_D13_v2'

@@ -138,7 +138,7 @@ param vmNodeType0Size string {
 var computeLocation = clusterLocation
 var dnsName = clusterName
 var vmName = 'vm'
-var virtualNetworkName = 'VNet'
+var virtualNetworkName_var = 'VNet'
 var addressPrefix = '10.0.0.0/16'
 var nicName = 'NIC'
 var lbName = 'LoadBalancer'
@@ -152,9 +152,9 @@ var nt0fabricTcpGatewayPort = '19000'
 var nt0fabricHttpGatewayPort = '19080'
 var subnet0Name = 'Subnet-0'
 var subnet0Prefix = '10.0.0.0/24'
-var subnet0Ref = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, subnet0Name)
-var supportLogStorageAccountName = toLower('${uniqueString(resourceGroup().id)}2')
-var applicationDiagnosticsStorageAccountName = toLower('wad${uniqueString(resourceGroup().id)}3')
+var subnet0Ref = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, subnet0Name)
+var supportLogStorageAccountName_var = toLower('${uniqueString(resourceGroup().id)}2')
+var applicationDiagnosticsStorageAccountName_var = toLower('wad${uniqueString(resourceGroup().id)}3')
 var wadlogs = '<WadCfg><DiagnosticMonitorConfiguration>'
 var wadperfcounters1 = '<PerformanceCounters scheduledTransferPeriod="PT1M"><PerformanceCounterConfiguration counterSpecifier="\\Memory\\AvailableMemory" sampleRate="PT15S" unit="Bytes"><annotation displayName="Memory available" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Memory\\PercentAvailableMemory" sampleRate="PT15S" unit="Percent"><annotation displayName="Mem. percent available" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Memory\\UsedMemory" sampleRate="PT15S" unit="Bytes"><annotation displayName="Memory used" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Memory\\PercentUsedMemory" sampleRate="PT15S" unit="Percent"><annotation displayName="Memory percentage" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Memory\\PercentUsedByCache" sampleRate="PT15S" unit="Percent"><annotation displayName="Mem. used by cache" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Processor\\PercentIdleTime" sampleRate="PT15S" unit="Percent"><annotation displayName="CPU idle time" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Processor\\PercentUserTime" sampleRate="PT15S" unit="Percent"><annotation displayName="CPU user time" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Processor\\PercentProcessorTime" sampleRate="PT15S" unit="Percent"><annotation displayName="CPU percentage guest OS" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\Processor\\PercentIOWaitTime" sampleRate="PT15S" unit="Percent"><annotation displayName="CPU IO wait time" locale="en-us"/></PerformanceCounterConfiguration>'
 var wadperfcounters2 = '<PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\BytesPerSecond" sampleRate="PT15S" unit="BytesPerSecond"><annotation displayName="Disk total bytes" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\ReadBytesPerSecond" sampleRate="PT15S" unit="BytesPerSecond"><annotation displayName="Disk read guest OS" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\WriteBytesPerSecond" sampleRate="PT15S" unit="BytesPerSecond"><annotation displayName="Disk write guest OS" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\TransfersPerSecond" sampleRate="PT15S" unit="CountPerSecond"><annotation displayName="Disk transfers" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\ReadsPerSecond" sampleRate="PT15S" unit="CountPerSecond"><annotation displayName="Disk reads" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\WritesPerSecond" sampleRate="PT15S" unit="CountPerSecond"><annotation displayName="Disk writes" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\AverageReadTime" sampleRate="PT15S" unit="Seconds"><annotation displayName="Disk read time" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\AverageWriteTime" sampleRate="PT15S" unit="Seconds"><annotation displayName="Disk write time" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\AverageTransferTime" sampleRate="PT15S" unit="Seconds"><annotation displayName="Disk transfer time" locale="en-us"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier="\\PhysicalDisk\\AverageDiskQueueLength" sampleRate="PT15S" unit="Count"><annotation displayName="Disk queue length" locale="en-us"/></PerformanceCounterConfiguration></PerformanceCounters>'
@@ -166,11 +166,11 @@ var lbPoolID0 = '${lbID0}/backendAddressPools/LoadBalancerBEAddressPool'
 var lbProbeID0 = '${lbID0}/probes/FabricGatewayProbe'
 var lbHttpProbeID0 = '${lbID0}/probes/FabricHttpGatewayProbe'
 var lbNatPoolID0 = '${lbID0}/inboundNatPools/LoadBalancerBEAddressNatPool'
-var vmNodeType0Name = toLower('NT1${vmName}')
-var wadmetricsresourceid0 = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${vmNodeType0Name}'
+var vmNodeType0Name_var = toLower('NT1${vmName}')
+var wadmetricsresourceid0 = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${vmNodeType0Name_var}'
 
-resource supportLogStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-06-01' = {
-  name: supportLogStorageAccountName
+resource supportLogStorageAccountName 'Microsoft.Storage/storageAccounts@2017-06-01' = {
+  name: supportLogStorageAccountName_var
   location: computeLocation
   properties: {}
   kind: 'Storage'
@@ -184,8 +184,8 @@ resource supportLogStorageAccountName_resource 'Microsoft.Storage/storageAccount
   dependsOn: []
 }
 
-resource applicationDiagnosticsStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-06-01' = {
-  name: applicationDiagnosticsStorageAccountName
+resource applicationDiagnosticsStorageAccountName 'Microsoft.Storage/storageAccounts@2017-06-01' = {
+  name: applicationDiagnosticsStorageAccountName_var
   location: computeLocation
   properties: {}
   kind: 'Storage'
@@ -199,8 +199,8 @@ resource applicationDiagnosticsStorageAccountName_resource 'Microsoft.Storage/st
   dependsOn: []
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+  name: virtualNetworkName_var
   location: computeLocation
   properties: {
     addressSpace: {
@@ -225,7 +225,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-
 }
 
 resource lbIPName_vmNodeType0Name 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
-  name: '${lbIPName}-${vmNodeType0Name}'
+  name: '${lbIPName}-${vmNodeType0Name_var}'
   location: computeLocation
   properties: {
     dnsSettings: {
@@ -240,7 +240,7 @@ resource lbIPName_vmNodeType0Name 'Microsoft.Network/publicIPAddresses@2017-09-0
 }
 
 resource LB_clusterName_vmNodeType0Name 'Microsoft.Network/loadBalancers@2017-09-01' = {
-  name: 'LB-${clusterName}-${vmNodeType0Name}'
+  name: 'LB-${clusterName}-${vmNodeType0Name_var}'
   location: computeLocation
   properties: {
     frontendIPConfigurations: [
@@ -394,13 +394,10 @@ resource LB_clusterName_vmNodeType0Name 'Microsoft.Network/loadBalancers@2017-09
     resourceType: 'Service Fabric'
     clusterName: clusterName
   }
-  dependsOn: [
-    lbIPName_vmNodeType0Name
-  ]
 }
 
-resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
-  name: vmNodeType0Name
+resource vmNodeType0Name 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+  name: vmNodeType0Name_var
   location: computeLocation
   properties: {
     overprovision: overProvision
@@ -416,13 +413,13 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@201
               type: 'ServiceFabricLinuxNode'
               autoUpgradeMinorVersion: true
               protectedSettings: {
-                StorageAccountKey1: listKeys(supportLogStorageAccountName_resource.id, '2017-06-01').keys[0]
-                StorageAccountKey2: listKeys(supportLogStorageAccountName_resource.id, '2017-06-01').keys[1]
+                StorageAccountKey1: listKeys(supportLogStorageAccountName.id, '2017-06-01').keys[0]
+                StorageAccountKey2: listKeys(supportLogStorageAccountName.id, '2017-06-01').keys[1]
               }
               publisher: 'Microsoft.Azure.ServiceFabric'
               settings: {
                 clusterEndpoint: reference(clusterName).clusterEndpoint
-                nodeTypeRef: vmNodeType0Name
+                nodeTypeRef: vmNodeType0Name_var
                 durabilityLevel: 'Bronze'
                 enableParallelJobs: true
                 nicPrefixOverride: subnet0Prefix
@@ -440,14 +437,14 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@201
               type: 'LinuxDiagnostic'
               autoUpgradeMinorVersion: true
               protectedSettings: {
-                storageAccountName: applicationDiagnosticsStorageAccountName
-                storageAccountKey: listKeys(applicationDiagnosticsStorageAccountName_resource.id, '2017-06-01').keys[0]
+                storageAccountName: applicationDiagnosticsStorageAccountName_var
+                storageAccountKey: listKeys(applicationDiagnosticsStorageAccountName.id, '2017-06-01').keys[0]
                 storageAccountEndPoint: 'https://core.windows.net/'
               }
               publisher: 'Microsoft.OSTCExtensions'
               settings: {
                 xmlCfg: base64(concat(wadcfgxstart, wadmetricsresourceid0, wadcfgxend))
-                StorageAccount: applicationDiagnosticsStorageAccountName
+                StorageAccount: applicationDiagnosticsStorageAccountName_var
               }
               typeHandlerVersion: '2.3'
             }
@@ -487,7 +484,7 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@201
       osProfile: {
         adminPassword: adminPassword
         adminUsername: adminUserName
-        computernamePrefix: vmNodeType0Name
+        computerNamePrefix: vmNodeType0Name_var
         secrets: [
           {
             sourceVault: {
@@ -528,18 +525,16 @@ resource vmNodeType0Name_resource 'Microsoft.Compute/virtualMachineScaleSets@201
     clusterName: clusterName
   }
   dependsOn: [
-    virtualNetworkName_resource
-    'Microsoft.Network/loadBalancers/LB-${clusterName}-${vmNodeType0Name}'
-    supportLogStorageAccountName_resource
-    applicationDiagnosticsStorageAccountName_resource
+    virtualNetworkName
+    'Microsoft.Network/loadBalancers/LB-${clusterName}-${vmNodeType0Name_var}'
   ]
 }
 
-resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2017-07-01-preview' = {
+resource clusterName_res 'Microsoft.ServiceFabric/clusters@2017-07-01-preview' = {
   name: clusterName
   location: clusterLocation
   properties: {
-    addonFeatures: [
+    addOnFeatures: [
       'DnsService'
       'RepairManager'
     ]
@@ -549,11 +544,11 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2017-07-01-previ
     }
     clusterState: 'Default'
     diagnosticsStorageAccountConfig: {
-      blobEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName}', '2017-06-01').primaryEndpoints.blob
+      blobEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName_var}', '2017-06-01').primaryEndpoints.blob
       protectedAccountKeyName: 'StorageAccountKey1'
-      queueEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName}', '2017-06-01').primaryEndpoints.queue
-      storageAccountName: supportLogStorageAccountName
-      tableEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName}', '2017-06-01').primaryEndpoints.table
+      queueEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName_var}', '2017-06-01').primaryEndpoints.queue
+      storageAccountName: supportLogStorageAccountName_var
+      tableEndpoint: reference('Microsoft.Storage/storageAccounts/${supportLogStorageAccountName_var}', '2017-06-01').primaryEndpoints.table
     }
     fabricSettings: [
       {
@@ -566,10 +561,10 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2017-07-01-previ
         name: 'Security'
       }
     ]
-    managementEndpoint: 'https://${reference('${lbIPName}-${vmNodeType0Name}').dnsSettings.fqdn}:${nt0fabricHttpGatewayPort}'
+    managementEndpoint: 'https://${reference('${lbIPName}-${vmNodeType0Name_var}').dnsSettings.fqdn}:${nt0fabricHttpGatewayPort}'
     nodeTypes: [
       {
-        name: vmNodeType0Name
+        name: vmNodeType0Name_var
         applicationPorts: {
           endPort: nt0applicationEndPort
           startPort: nt0applicationStartPort
@@ -595,7 +590,7 @@ resource clusterName_resource 'Microsoft.ServiceFabric/clusters@2017-07-01-previ
     clusterName: clusterName
   }
   dependsOn: [
-    supportLogStorageAccountName_resource
+    supportLogStorageAccountName
   ]
 }
 

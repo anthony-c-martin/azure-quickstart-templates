@@ -23,10 +23,10 @@ param backendPools2 object {
   }
 }
 
-var frontdoorref = frontDoorName_resource.id
+var frontdoorref = frontDoorName_res.id
 var frontdoorLocation = 'global'
 
-resource frontDoorName_resource 'Microsoft.Network/frontDoors@2018-08-01' = {
+resource frontDoorName_res 'Microsoft.Network/frontDoors@2018-08-01' = {
   name: frontDoorName
   location: frontdoorLocation
   tags: {}

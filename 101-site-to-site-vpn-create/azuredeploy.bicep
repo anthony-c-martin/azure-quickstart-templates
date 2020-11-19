@@ -97,7 +97,7 @@ param sharedKey string {
 
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, 'GatewaySubnet')
 
-resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2015-06-15' = {
+resource localGatewayName_res 'Microsoft.Network/localNetworkGateways@2015-06-15' = {
   name: localGatewayName
   location: resourceGroup().location
   properties: {
@@ -108,27 +108,23 @@ resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2015-
   }
 }
 
-resource connectionName_resource 'Microsoft.Network/connections@2015-06-15' = {
+resource connectionName_res 'Microsoft.Network/connections@2015-06-15' = {
   name: connectionName
   location: resourceGroup().location
   properties: {
     virtualNetworkGateway1: {
-      id: gatewayName_resource.id
+      id: gatewayName_res.id
     }
     localNetworkGateway2: {
-      id: localGatewayName_resource.id
+      id: localGatewayName_res.id
     }
     connectionType: 'IPsec'
     routingWeight: 10
     sharedKey: sharedKey
   }
-  dependsOn: [
-    gatewayName_resource
-    localGatewayName_resource
-  ]
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: virtualNetworkName
   location: resourceGroup().location
   properties: {
@@ -154,7 +150,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+resource gatewayPublicIPName_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: gatewayPublicIPName
   location: resourceGroup().location
   properties: {
@@ -162,7 +158,7 @@ resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-15' = {
+resource gatewayName_res 'Microsoft.Network/virtualNetworkGateways@2015-06-15' = {
   name: gatewayName
   location: resourceGroup().location
   properties: {
@@ -174,7 +170,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-
             id: gatewaySubnetRef
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName_res.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -189,7 +185,6 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-
     enableBgp: 'false'
   }
   dependsOn: [
-    gatewayPublicIPName_resource
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }

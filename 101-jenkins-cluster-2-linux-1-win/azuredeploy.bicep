@@ -78,7 +78,7 @@ var scriptUrlMaster = uri(artifactsLocation, 'scripts/install-jenkins.sh${artifa
 var scriptUrlNode1 = uri(artifactsLocation, 'scripts/install-slave.sh${artifactsLocationSasToken}')
 var scriptUrlNode2 = uri(artifactsLocation, 'win-slave.ps1${artifactsLocationSasToken}')
 
-resource storageName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: toLower(storageName)
   location: location
   tags: {
@@ -194,9 +194,7 @@ resource Master_NetworkInterface 'Microsoft.Network/networkInterfaces@2019-11-01
     ]
   }
   dependsOn: [
-    Master_PublicIP
     jenkins_cluster_VirtualNetwork
-    master_nsg
   ]
 }
 
@@ -238,13 +236,10 @@ resource Jenkins_Master 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageName_resource.properties.primaryEndpoints.blob
+        storageUri: storageName_res.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    Master_NetworkInterface
-  ]
 }
 
 resource node_1_PublicIP 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
@@ -311,9 +306,7 @@ resource node_1_NetworkInterface 'Microsoft.Network/networkInterfaces@2019-11-01
     ]
   }
   dependsOn: [
-    node_1_PublicIP
     jenkins_cluster_VirtualNetwork
-    node_1_nsg
   ]
 }
 
@@ -355,13 +348,10 @@ resource node_1 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageName_resource.properties.primaryEndpoints.blob
+        storageUri: storageName_res.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    node_1_NetworkInterface
-  ]
 }
 
 resource node_2_PublicIP 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
@@ -428,9 +418,7 @@ resource node_2_NetworkInterface 'Microsoft.Network/networkInterfaces@2019-11-01
     ]
   }
   dependsOn: [
-    node_2_PublicIP
     jenkins_cluster_VirtualNetwork
-    node_2_nsg
   ]
 }
 
@@ -472,14 +460,10 @@ resource node_2 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageName_resource.properties.primaryEndpoints.blob
+        storageUri: storageName_res.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageName_resource
-    node_2_NetworkInterface
-  ]
 }
 
 resource Jenkins_Master_installJenkins 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
@@ -557,4 +541,4 @@ resource node_1_installSlave 'Microsoft.Compute/virtualMachines/extensions@2019-
   ]
 }
 
-output jenkins_dns_output string = 'http://${reference('Master-PublicIP').dnsSettings.fqdn}'
+output jenkins_dns_out string = 'http://${reference('Master-PublicIP').dnsSettings.fqdn}'

@@ -78,17 +78,17 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var automationAccountName_variable = concat(automationAccountName, uniqueString(resourceGroup().id))
+var automationAccountName_var = concat(automationAccountName, uniqueString(resourceGroup().id))
 
-module ams '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'ams/ams.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module ams '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('ams/ams.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'ams'
   params: {}
 }
 
-module automationjob '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'ams/automationjob.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module automationjob '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('ams/automationjob.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'automationjob'
   params: {
-    automationAccountName: automationAccountName_variable
+    automationAccountName: automationAccountName_var
     jobId: jobId
     MediaServices_Name: reference('ams').outputs.MediaServices_Name.value
     MediaServices_Keys: reference('ams').outputs.MediaServices_Keys.value
@@ -106,7 +106,7 @@ module automationjob '<failed to parse [uri(parameters(\'_artifactsLocation\'), 
   ]
 }
 
-module desktop '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'desktop/desktop.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module desktop '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('desktop/desktop.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'desktop'
   params: {
     deploymentPrefix: deploymentPrefix
@@ -121,7 +121,7 @@ module desktop '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat
   ]
 }
 
-module aspera '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'aspera/aspera.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module aspera '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('aspera/aspera.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'aspera'
   params: {
     deploymentPrefix: deploymentPrefix
@@ -135,7 +135,7 @@ module aspera '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(
   ]
 }
 
-module wowza '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'wowza/wowza.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module wowza '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('wowza/wowza.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'wowza'
   params: {
     deploymentPrefix: deploymentPrefix
@@ -158,10 +158,10 @@ output Input_StorageAccounts_Keys string = reference('ams').outputs.Input_Storag
 output Ouput_StorageAccounts_Name string = reference('ams').outputs.Ouput_StorageAccounts_Name.value
 output Output_StorageAccounts_Keys string = reference('ams').outputs.Output_StorageAccounts_Keys.value
 output desktopURL string = reference('desktop').outputs.desktopURL.value
-output desktopUsername_output string = desktopUsername
-output desktopAdminPassword_output string = desktopAdminPassword
+output desktopUsername_out string = desktopUsername
+output desktopAdminPassword_out string = desktopAdminPassword
 output asperaURL string = reference('aspera').outputs.asperaURL.value
-output asperaUsername_output string = asperaUsername
-output asperaAdminPassword_output string = asperaAdminPassword
+output asperaUsername_out string = asperaUsername
+output asperaAdminPassword_out string = asperaAdminPassword
 output wowzaURL string = reference('wowza').outputs.wowzaURL.value
-output wowzaUsername_output string = wowzaUsername
+output wowzaUsername_out string = wowzaUsername

@@ -214,7 +214,7 @@ var templateAPIVersion = '2015-01-01'
 var resourceAPIVersion = '2015-06-15'
 var wpdbname = '${uniqueString(resourceGroup().id)}wordpress'
 
-module mysql '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/mysql-replication.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module mysql '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/mysql-replication.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'mysql'
   params: {
     dnsName: dnsName
@@ -247,7 +247,7 @@ module mysql '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\
   }
 }
 
-module website '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/website.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module website '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/website.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'website'
   params: {
     siteName: siteName

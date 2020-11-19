@@ -138,7 +138,7 @@ param azureMonitorFQDNs array {
 var subnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetResourceName, aseSubnetName)
 var nestedTemplateUri = uri(artifactsLocation, 'nestedtemplates/vnet.json${artifactsLocationSasToken}')
 
-module BuildOrUpdateASENetworking '<failed to parse [variables(\'nestedTemplateUri\')]>' = {
+module BuildOrUpdateASENetworking '?' /*TODO: replace with correct path to [variables('nestedTemplateUri')]*/ = {
   name: 'BuildOrUpdateASENetworking'
   params: {
     location: location
@@ -160,7 +160,7 @@ module BuildOrUpdateASENetworking '<failed to parse [variables(\'nestedTemplateU
   }
 }
 
-resource aseName_resource 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
+resource aseName_res 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
   name: aseName
   location: location
   kind: 'ASEV2'
@@ -170,10 +170,10 @@ resource aseName_resource 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
   properties: {
     name: aseName
     location: location
-    ipSslAddressCount: 0
+    ipsslAddressCount: 0
     internalLoadBalancingMode: internalLoadBalancingMode
     virtualNetwork: {
-      Id: subnetId
+      id: subnetId
     }
   }
   dependsOn: [
@@ -181,7 +181,7 @@ resource aseName_resource 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
   ]
 }
 
-resource serverFarmsAseAspName_resource 'Microsoft.web/serverfarms@2019-08-01' = {
+resource serverFarmsAseAspName_res 'Microsoft.web/serverfarms@2019-08-01' = {
   name: serverFarmsAseAspName
   location: location
   sku: {
@@ -201,11 +201,11 @@ resource serverFarmsAseAspName_resource 'Microsoft.web/serverfarms@2019-08-01' =
     hostingEnvironment: aseName
   }
   dependsOn: [
-    aseName_resource
+    aseName_res
   ]
 }
 
-resource applicationName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource applicationName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: applicationName
   location: location
   tags: {
@@ -214,11 +214,11 @@ resource applicationName_resource 'Microsoft.Web/sites@2019-08-01' = {
   kind: 'app'
   properties: {
     enabled: true
-    serverFarmId: serverFarmsAseAspName_resource.id
+    serverFarmId: serverFarmsAseAspName_res.id
     reserved: false
     scmSiteAlsoStopped: false
     hostingEnvironmentProfile: {
-      id: aseName_resource.id
+      id: aseName_res.id
     }
     clientAffinityEnabled: true
     clientCertEnabled: false
@@ -227,10 +227,6 @@ resource applicationName_resource 'Microsoft.Web/sites@2019-08-01' = {
     dailyMemoryTimeQuota: 0
     httpsOnly: false
   }
-  dependsOn: [
-    serverFarmsAseAspName_resource
-    aseName_resource
-  ]
 }
 
 resource microsoft_insights_components_applicationName 'microsoft.insights/components@2018-05-01-preview' = {

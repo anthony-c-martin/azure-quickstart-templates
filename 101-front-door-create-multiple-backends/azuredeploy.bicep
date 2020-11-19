@@ -16,7 +16,7 @@ param backendPools2 object {
 
 var frontdoorLocation = 'global'
 
-resource frontDoorName_resource 'Microsoft.Network/frontDoors@2019-04-01' = {
+resource frontDoorName_res 'Microsoft.Network/frontDoors@2019-04-01' = {
   name: frontDoorName
   location: frontdoorLocation
   properties: {

@@ -168,7 +168,7 @@ var kubernetesSettings = {
   containerRegistry: concat(containerRegistry, suffix)
 }
 var authenticationType = 'sshPublicKey'
-var resourceGroupName_variable = resourceGroup().name
+var resourceGroupName_var = resourceGroup().name
 var kubernetesDnsPrefix = 'kub'
 var containerRegistry = 'osscr'
 var azureSubscriptionId = subscription().subscriptionId
@@ -261,18 +261,15 @@ resource networkSettings_virtualNetworkName 'Microsoft.Network/virtualNetworks@2
       }
     ]
   }
-  dependsOn: [
-    jenkinsSettings_jenkinsfrontEndNSGName
-  ]
 }
 
-module Jenkins '<failed to parse [concat(parameters(\'_artifactsLocation\'),\'/nested/jenkins.json\', parameters(\'_artifactsLocationSasToken\'))]>' = {
+module Jenkins '?' /*TODO: replace with correct path to [concat(parameters('_artifactsLocation'),'/nested/jenkins.json', parameters('_artifactsLocationSasToken'))]*/ = {
   name: 'Jenkins'
   params: {
     kubernetesSettings: kubernetesSettings
     jenkinsSettings: jenkinsSettings
     networkSettings: networkSettings
-    resourceGroupName: resourceGroupName_variable
+    resourceGroupName: resourceGroupName_var
     AzureSubscriptionId: azureSubscriptionId
     AzureApplicationId: azureApplicationId
     AzureClientSecret: azureClientSecret
@@ -286,7 +283,7 @@ module Jenkins '<failed to parse [concat(parameters(\'_artifactsLocation\'),\'/n
   ]
 }
 
-module BuildInstance '<failed to parse [concat(parameters(\'_artifactsLocation\'),\'/nested/build-instance.json\', parameters(\'_artifactsLocationSasToken\'))]>' = {
+module BuildInstance '?' /*TODO: replace with correct path to [concat(parameters('_artifactsLocation'),'/nested/build-instance.json', parameters('_artifactsLocationSasToken'))]*/ = {
   name: 'BuildInstance'
   params: {
     buildInstanceSettings: buildInstanceSettings
@@ -300,11 +297,11 @@ module BuildInstance '<failed to parse [concat(parameters(\'_artifactsLocation\'
   ]
 }
 
-output ResourceGroupName string = resourceGroupName_variable
+output ResourceGroupName string = resourceGroupName_var
 output VirtualNetworkName string = networkSettings.virtualNetworkName
 output JenkinsFQDN string = reference('Jenkins').outputs.jenkinsDNS.value
 output JenkinsWebUIURL string = '${reference('Jenkins').outputs.jenkinsDNS.value}:8080'
-output KibanaWebUIUsername_output string = kibanaWebUIUsername
-output KibanaWebUIPassword_output string = kibanaWebUIPassword
+output KibanaWebUIUsername_out string = kibanaWebUIUsername
+output KibanaWebUIPassword_out string = kibanaWebUIPassword
 output BuildinstanceFQDN string = reference('BuildInstance').outputs.buildInstanceDNS.value
 output buildInstanceUsername string = buildInstanceSettings.adminUsername

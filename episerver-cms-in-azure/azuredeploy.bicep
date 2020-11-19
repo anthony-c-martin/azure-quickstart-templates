@@ -135,15 +135,15 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var defaultAuthRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceName, defaultSASKeyName)
 var storageAccountApiVersion = '2015-06-15'
 var serviceBusApiVersion = '2015-08-01'
-var storageId = StorageAccountName_resource.id
+var storageId = StorageAccountName_res.id
 var storageConnectionStringPrefix = 'DefaultEndpointsProtocol=https;AccountName=${StorageAccountName};AccountKey='
 
-resource WebApplication_HostingPlanNameName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
+resource WebApplication_HostingPlanNameName_res 'Microsoft.Web/serverfarms@2014-06-01' = {
   name: WebApplication_HostingPlanNameName
   location: location
   tags: {
@@ -157,7 +157,7 @@ resource WebApplication_HostingPlanNameName_resource 'Microsoft.Web/serverfarms@
   }
 }
 
-resource WebApplicationWebAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource WebApplicationWebAppName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: WebApplicationWebAppName
   location: location
   tags: {
@@ -166,15 +166,14 @@ resource WebApplicationWebAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
   }
   properties: {
     name: WebApplicationWebAppName
-    serverFarmId: WebApplication_HostingPlanNameName_resource.id
+    serverFarmId: WebApplication_HostingPlanNameName_res.id
     webSocketsEnabled: true
     alwaysOn: false
   }
   dependsOn: [
-    WebApplication_HostingPlanNameName_resource
-    StorageAccountName_resource
-    sqlserverName_resource
-    serviceBusNamespaceName_resource
+    StorageAccountName_res
+    sqlserverName_res
+    serviceBusNamespaceName_res
   ]
 }
 
@@ -198,7 +197,7 @@ resource WebApplicationWebAppName_connectionstrings 'Microsoft.Web/sites/config@
     }
   }
   dependsOn: [
-    WebApplicationWebAppName_resource
+    WebApplicationWebAppName_res
   ]
 }
 
@@ -211,7 +210,7 @@ resource WebApplicationWebAppName_appsettings 'Microsoft.Web/sites/config@2015-0
     'episerver:ReadOnlyConfigurationAPI': 'True'
   }
   dependsOn: [
-    WebApplicationWebAppName_resource
+    WebApplicationWebAppName_res
   ]
 }
 
@@ -225,11 +224,11 @@ resource WebApplicationWebAppName_web 'Microsoft.Web/sites/config@2015-08-01' = 
     alwaysOn: 'True'
   }
   dependsOn: [
-    WebApplicationWebAppName_resource
+    WebApplicationWebAppName_res
   ]
 }
 
-resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource StorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: StorageAccountName
   location: location
   tags: {
@@ -240,7 +239,7 @@ resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-
   }
 }
 
-resource sqlserverName_resource 'Microsoft.Sql/servers@2014-04-01' = {
+resource sqlserverName_res 'Microsoft.Sql/servers@2014-04-01' = {
   location: location
   name: sqlserverName
   properties: {
@@ -261,7 +260,7 @@ resource sqlserverName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallru
     endIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    sqlserverName_resource
+    sqlserverName_res
   ]
 }
 
@@ -278,13 +277,13 @@ resource sqlserverName_SQL_DatabaseName 'Microsoft.Sql/servers/databases@2014-04
     requestedServiceObjectiveName: SQL_DatabaseRequestedServiceObjectiveName
   }
   dependsOn: [
-    sqlserverName_resource
+    sqlserverName_res
   ]
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2015-08-01' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2015-08-01' = {
   name: serviceBusNamespaceName
-  location: location_variable
+  location: location_var
   kind: 'Messaging'
   tags: {
     displayName: 'ServiceBus'

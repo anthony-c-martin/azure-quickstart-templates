@@ -93,7 +93,7 @@ param networkInterfaceName string {
 param informaticaTags object
 param quickstartTags object
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   tags: {

@@ -69,7 +69,7 @@ param armRoleReceivers array {
   default: []
 }
 
-resource actionGroupName_resource 'Microsoft.Insights/actionGroups@2019-06-01' = {
+resource actionGroupName_res 'Microsoft.Insights/actionGroups@2019-06-01' = {
   name: actionGroupName
   location: 'Global'
   properties: {
@@ -88,4 +88,4 @@ resource actionGroupName_resource 'Microsoft.Insights/actionGroups@2019-06-01' =
   }
 }
 
-output actionGroupId string = actionGroupName_resource.id
+output actionGroupId string = actionGroupName_res.id

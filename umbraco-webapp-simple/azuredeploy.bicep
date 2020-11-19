@@ -98,10 +98,10 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}standardsa'
-var appServicePlanName = '${appName}serviceplan'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}standardsa'
+var appServicePlanName_var = '${appName}serviceplan'
 
-resource dbServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource dbServerName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   name: dbServerName
   location: location
   properties: {
@@ -123,7 +123,7 @@ resource dbServerName_dbName 'Microsoft.Sql/servers/databases@2020-02-02-preview
     collation: 'SQL_Latin1_General_CP1_CI_AS'
   }
   dependsOn: [
-    dbServerName_resource
+    dbServerName_res
   ]
 }
 
@@ -135,12 +135,12 @@ resource dbServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrul
     startIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    dbServerName_resource
+    dbServerName_res
   ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -148,30 +148,27 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'StorageV2'
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverFarms@2020-06-01' = {
-  name: appServicePlanName
+resource appServicePlanName 'Microsoft.Web/serverFarms@2020-06-01' = {
+  name: appServicePlanName_var
   location: location
   sku: {
-    Tier: servicePlanTier
-    Name: servicePlanSku
+    tier: servicePlanTier
+    name: servicePlanSku
   }
   kind: 'linux'
   properties: {}
 }
 
-resource appName_resource 'Microsoft.Web/Sites@2020-06-01' = {
+resource appName_res 'Microsoft.Web/Sites@2020-06-01' = {
   name: appName
   location: location
   tags: {
-    'hidden-related:${appServicePlanName_resource.id}': 'empty'
+    'hidden-related:${appServicePlanName.id}': 'empty'
   }
   properties: {
     name: appName
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName.id
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource appName_MSDeploy 'Microsoft.Web/Sites/Extensions@2020-06-01' = {
@@ -179,10 +176,10 @@ resource appName_MSDeploy 'Microsoft.Web/Sites/Extensions@2020-06-01' = {
   properties: {
     packageUri: uri(artifactsLocation, 'UmbracoCms.WebPI.7.4.3.zip${artifactsLocationSasToken}')
     dbType: 'SQL'
-    connectionString: 'Data Source=tcp:${dbServerName_resource.properties.fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
+    connectionString: 'Data Source=tcp:${dbServerName_res.properties.fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
     setParameters: {
       'Application Path': appName
-      'Database Server': dbServerName_resource.properties.fullyQualifiedDomainName
+      'Database Server': dbServerName_res.properties.fullyQualifiedDomainName
       'Database Name': dbName
       'Database Username': nonAdminDatabaseUserName
       'Database Password': nonAdminDatabasePassword
@@ -191,10 +188,10 @@ resource appName_MSDeploy 'Microsoft.Web/Sites/Extensions@2020-06-01' = {
     }
   }
   dependsOn: [
-    appName_resource
+    appName_res
     appName_web
     dbServerName_dbName
-    storageAccountName_resource
+    storageAccountName
   ]
 }
 
@@ -202,12 +199,12 @@ resource appName_connectionstrings 'Microsoft.Web/Sites/config@2020-06-01' = {
   name: '${appName}/connectionstrings'
   properties: {
     defaultConnection: {
-      value: 'Data Source=tcp:${dbServerName_resource.properties.fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
+      value: 'Data Source=tcp:${dbServerName_res.properties.fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
       type: 'SQLAzure'
     }
   }
   dependsOn: [
-    appName_resource
+    appName_res
     dbServerName_dbName
     appName_MSDeploy
   ]
@@ -225,15 +222,15 @@ resource appName_web 'Microsoft.Web/Sites/config@2020-06-01' = {
     logsDirectorySizeLimit: 40
   }
   dependsOn: [
-    appName_resource
+    appName_res
   ]
 }
 
 resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2015-04-01' = {
-  name: '${appServicePlanName}-scaleset'
+  name: '${appServicePlanName_var}-scaleset'
   location: location
   tags: {
-    'hidden-link:${appServicePlanName_resource.id}': 'Resource'
+    'hidden-link:${appServicePlanName.id}': 'Resource'
   }
   properties: {
     profiles: [
@@ -248,7 +245,7 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2015-
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: appServicePlanName_resource.id
+              metricResourceUri: appServicePlanName.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT10M'
@@ -266,7 +263,7 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2015-
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: appServicePlanName_resource.id
+              metricResourceUri: appServicePlanName.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT1H'
@@ -285,25 +282,19 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2015-
       }
     ]
     enabled: false
-    name: '${appServicePlanName}-scaleset'
-    targetResourceUri: appServicePlanName_resource.id
+    name: '${appServicePlanName_var}-scaleset'
+    targetResourceUri: appServicePlanName.id
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource appName_appin 'microsoft.insights/components@2020-02-02-preview' = {
   name: '${appName}-appin'
   location: location
   tags: {
-    'hidden-link:${appName_resource.id}': 'Resource'
+    'hidden-link:${appName_res.id}': 'Resource'
   }
   properties: {
-    applicationId: appName
+    ApplicationId: appName
     Application_Type: 'web'
   }
-  dependsOn: [
-    appName_resource
-  ]
 }

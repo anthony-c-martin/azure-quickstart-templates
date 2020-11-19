@@ -118,9 +118,9 @@ param location string {
 }
 
 var defaultSASKeyName = 'RootManageSharedAccessKey'
-var authRuleResourceId_variable = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubNamespaceName, defaultSASKeyName)
+var authRuleResourceId_var = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubNamespaceName, defaultSASKeyName)
 
-resource eventHubNamespaceName_resource 'Microsoft.EventHub/Namespaces@2018-01-01-preview' = {
+resource eventHubNamespaceName_res 'Microsoft.EventHub/Namespaces@2018-01-01-preview' = {
   name: eventHubNamespaceName
   location: location
   sku: {
@@ -160,8 +160,8 @@ resource eventHubNamespaceName_eventHubName 'Microsoft.EventHub/Namespaces/event
     }
   }
   dependsOn: [
-    eventHubNamespaceName_resource
+    eventHubNamespaceName_res
   ]
 }
 
-output authRuleResourceId string = authRuleResourceId_variable
+output authRuleResourceId string = authRuleResourceId_var

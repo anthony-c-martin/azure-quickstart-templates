@@ -99,10 +99,10 @@ param location string {
 
 var sqlSubnetRef = '${existingVirtualNetworkId}/subnets/${existingSqlSubnetName}'
 var deploySqlClusterTemplateURL = '${artifactsLocation}/nested/deploy-sql-cluster.json${artifactsLocationSasToken}'
-var deploySqlCluster = 'deploySqlCluster'
+var deploySqlCluster_var = 'deploySqlCluster'
 
-module deploySqlCluster_resource '<failed to parse [variables(\'deploySqlClusterTemplateURL\')]>' = {
-  name: deploySqlCluster
+module deploySqlCluster '?' /*TODO: replace with correct path to [variables('deploySqlClusterTemplateURL')]*/ = {
+  name: deploySqlCluster_var
   params: {
     namePrefix: namePrefix
     domainName: existingDomainName

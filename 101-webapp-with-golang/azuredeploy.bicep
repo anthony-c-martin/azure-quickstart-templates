@@ -47,7 +47,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   name: appServicePlanName
   location: location
   properties: {
@@ -60,7 +60,7 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   }
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: siteName
   location: location
   properties: {
@@ -68,7 +68,7 @@ resource siteName_resource 'Microsoft.Web/sites@2015-08-01' = {
     serverFarmId: appServicePlanName
   }
   dependsOn: [
-    appServicePlanName_resource
+    appServicePlanName_res
   ]
 }
 
@@ -85,7 +85,7 @@ resource siteName_web 'Microsoft.Web/sites/config@2015-08-01' = {
     scmType: 'LocalGit'
   }
   dependsOn: [
-    siteName_resource
+    siteName_res
   ]
 }
 
@@ -95,7 +95,7 @@ resource siteName_appsettings 'Microsoft.Web/sites/config@2015-08-01' = {
     SCM_SITEEXTENSIONS_FEED_URL: 'http://www.siteextensions.net/api/v2/'
   }
   dependsOn: [
-    siteName_resource
+    siteName_res
   ]
 }
 
@@ -103,7 +103,7 @@ resource siteName_GoLang 'Microsoft.Web/sites/siteextensions@2015-08-01' = {
   name: '${siteName}/GoLang'
   properties: {}
   dependsOn: [
-    siteName_resource
+    siteName_res
     siteName_web
   ]
 }

@@ -33,7 +33,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource profileName_resource 'Microsoft.Cdn/profiles@2020-04-15' = {
+resource profileName_res 'Microsoft.Cdn/profiles@2020-04-15' = {
   name: profileName
   location: location
   sku: {
@@ -103,6 +103,6 @@ resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2020-04-15' 
     ]
   }
   dependsOn: [
-    profileName_resource
+    profileName_res
   ]
 }

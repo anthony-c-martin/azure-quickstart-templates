@@ -58,20 +58,20 @@ param operatingSystem string {
 
 var azureCLI2DockerImage = 'azuresdk/azure-cli-python:latest'
 var vmPrefix = 'vm'
-var storageAccountName = concat(vmPrefix, uniqueString(resourceGroup().id))
-var networkSecurityGroupName = 'nsg'
+var storageAccountName_var = concat(vmPrefix, uniqueString(resourceGroup().id))
+var networkSecurityGroupName_var = 'nsg'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var vmName = concat(vmPrefix, uniqueString(resourceGroup().id))
-var virtualNetworkName = 'vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var containerName = 'msi'
 var createVMUrl = uri(artifactsLocation, 'nestedtemplates/createVM.json${artifactsLocationSasToken}')
 var createRBACUrl = uri(artifactsLocation, 'nestedtemplates/setUpRBAC.json${artifactsLocationSasToken}')
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -80,8 +80,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -100,8 +100,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -122,7 +122,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-module creatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
+module creatingVM '?' /*TODO: replace with correct path to [variables('createVMUrl')]*/ = {
   name: 'creatingVM'
   params: {
     '_artifactsLocation': artifactsLocation
@@ -134,33 +134,33 @@ module creatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
     containerName: containerName
     operatingSystem: operatingSystem
     location: location
-    nsgId: networkSecurityGroupName_resource.id
+    nsgId: networkSecurityGroupName.id
     provisionExtensions: false
-    storageAccountId: storageAccountName_resource.id
-    storageAccountName: storageAccountName
+    storageAccountId: storageAccountName.id
+    storageAccountName: storageAccountName_var
     subnetRef: subnetRef
     vmSize: vmSize
     vmName: vmName
   }
   dependsOn: [
-    virtualNetworkName_resource
-    storageAccountName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName
+    storageAccountName
+    networkSecurityGroupName
   ]
 }
 
-module creatingRBAC '<failed to parse [variables(\'createRBACUrl\')]>' = {
+module creatingRBAC '?' /*TODO: replace with correct path to [variables('createRBACUrl')]*/ = {
   name: 'creatingRBAC'
   params: {
     principalId: reference(creatingVM.id, '2019-09-01').outputs.principalId.value
-    storageAccountName: storageAccountName
+    storageAccountName: storageAccountName_var
   }
   dependsOn: [
     creatingVM
   ]
 }
 
-module updatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
+module updatingVM '?' /*TODO: replace with correct path to [variables('createVMUrl')]*/ = {
   name: 'updatingVM'
   params: {
     '_artifactsLocation': artifactsLocation
@@ -172,10 +172,10 @@ module updatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
     containerName: containerName
     operatingSystem: operatingSystem
     location: location
-    nsgId: networkSecurityGroupName_resource.id
+    nsgId: networkSecurityGroupName.id
     provisionExtensions: true
-    storageAccountId: storageAccountName_resource.id
-    storageAccountName: storageAccountName
+    storageAccountId: storageAccountName.id
+    storageAccountName: storageAccountName_var
     subnetRef: subnetRef
     vmSize: vmSize
     vmName: vmName

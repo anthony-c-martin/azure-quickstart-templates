@@ -15,7 +15,7 @@ param pricingTier string {
   default: 'S0'
 }
 
-resource accountName_resource 'Microsoft.Maps/accounts@2020-02-01-preview' = {
+resource accountName_res 'Microsoft.Maps/accounts@2020-02-01-preview' = {
   name: accountName
   location: 'global'
   tags: {}

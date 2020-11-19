@@ -63,12 +63,12 @@ param adminPasswordOrKey string {
 var location = resourceGroup().location
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${vmssName}vnet'
-var publicIPAddressName = '${vmssName}pip'
+var virtualNetworkName_var = '${vmssName}vnet'
+var publicIPAddressName_var = '${vmssName}pip'
 var subnetName = '${vmssName}subnet'
-var loadBalancerName = '${vmssName}lb'
-var publicIPAddressID = publicIPAddressName_resource.id
-var lbID = loadBalancerName_resource.id
+var loadBalancerName_var = '${vmssName}lb'
+var publicIPAddressID = publicIPAddressName.id
+var lbID = loadBalancerName.id
 var natPoolName = '${vmssName}natpool'
 var bePoolName = '${vmssName}bepool'
 var natStartPort = 50000
@@ -99,8 +99,8 @@ var linuxConfiguration = {
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-10-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-10-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -119,8 +119,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-10-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-10-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-10-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -130,8 +130,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2018-10-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2018-10-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -176,12 +176,9 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2018-10-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmssName
   location: location
   sku: {
@@ -219,19 +216,19 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName}/subnets/${subnetName}'
+                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName_var}/subnets/${subnetName}'
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatPools/${natPoolName}'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatPools/${natPoolName}'
                       }
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatPools/natpool2'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatPools/natpool2'
                       }
                     ]
                   }
@@ -263,7 +260,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
     }
   }
   dependsOn: [
-    loadBalancerName_resource
-    virtualNetworkName_resource
+    loadBalancerName
+    virtualNetworkName
   ]
 }

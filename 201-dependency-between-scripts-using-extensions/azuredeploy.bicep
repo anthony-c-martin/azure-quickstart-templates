@@ -49,12 +49,12 @@ var imageOffer = 'UbuntuServer'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
 var publicIPAddressType = 'Dynamic'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var storageAccountType = 'Standard_LRS'
-var vmName = 'myVM'
-var virtualNetworkName = 'myVNET'
-var nicName = 'myVMNic'
-var vnetID = virtualNetworkName_resource.id
+var vmName_var = 'myVM'
+var virtualNetworkName_var = 'myVNET'
+var nicName_var = 'myVMNic'
+var vnetID = virtualNetworkName.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var installMongoTemplateurl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-dependency-between-scripts-using-extensions/install-mongo.json'
 var linuxConfiguration = {
@@ -69,7 +69,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccountName
   location: location
   properties: {
@@ -77,8 +77,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -88,8 +88,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -108,8 +108,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -118,7 +118,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -127,21 +127,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -160,7 +156,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
@@ -172,13 +168,12 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
 resource vmName_configuremongo 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName}/configuremongo'
+  name: '${vmName_var}/configuremongo'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -193,14 +188,14 @@ resource vmName_configuremongo 'Microsoft.Compute/virtualMachines/extensions@201
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-module installmongo '<failed to parse [variables(\'installMongoTemplateurl\')]>' = {
+module installmongo '?' /*TODO: replace with correct path to [variables('installMongoTemplateurl')]*/ = {
   name: 'installmongo'
   params: {
-    vmName: vmName
+    vmName: vmName_var
   }
   dependsOn: [
     vmName_configuremongo

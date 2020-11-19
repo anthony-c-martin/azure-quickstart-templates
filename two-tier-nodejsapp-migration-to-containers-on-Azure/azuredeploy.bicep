@@ -51,13 +51,13 @@ param adminPasswordOrKey string {
 }
 
 var OSDiskName = 'osdiskfordockersimple'
-var nicName = 'nicCard'
-var publicIPAddressName = 'publicIP'
+var nicName_var = 'nicCard'
+var publicIPAddressName_var = 'publicIP'
 var publicIPAddressType = 'Dynamic'
-var nsgName = 'nsg'
+var nsgName_var = 'nsg'
 var vmStorageAccountContainerName = 'vhds'
-var virtualNetworkName = 'vnet'
-var newStorageAccountName = 'storage${uniqueString(resourceGroup().id)}'
+var virtualNetworkName_var = 'vnet'
+var newStorageAccountName_var = 'storage${uniqueString(resourceGroup().id)}'
 var dnsNameForPublicIP = 'pip${uniqueString(resourceGroup().id)}'
 var customExtensionScriptFileName = 'mongo_nodejs.sh'
 var todoAppTags = {
@@ -78,8 +78,8 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: newStorageAccountName
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: newStorageAccountName_var
   location: location
   tags: {
     displayName: 'Storage Account'
@@ -92,8 +92,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
     displayName: 'Public IP'
@@ -108,8 +108,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: nsgName_var
   location: location
   tags: {
     displayName: 'Network Security Group'
@@ -148,8 +148,8 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' =
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-04-01' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     displayName: 'Virtual Network'
@@ -168,19 +168,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-
         properties: {
           addressPrefix: '10.0.0.0/24'
           networkSecurityGroup: {
-            id: nsgName_resource.id
+            id: nsgName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    nsgName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-04-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-04-01' = {
+  name: nicName_var
   location: location
   tags: {
     displayName: 'Network Interface Card'
@@ -194,22 +191,21 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-04-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, 'subnet')
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, 'subnet')
           }
         }
       }
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: virtualMachineName
   location: location
   tags: {
@@ -243,14 +239,13 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName
   ]
 }
 
@@ -273,9 +268,9 @@ resource virtualMachineName_customExtension 'Microsoft.Compute/virtualMachines/e
     }
   }
   dependsOn: [
-    virtualMachineName_resource
+    virtualMachineName_res
   ]
 }
 
-output adminUsername_output string = adminUsername
-output publicIP string = publicIPAddressName_resource.properties.dnsSettings.fqdn
+output adminUsername_out string = adminUsername
+output publicIP string = publicIPAddressName.properties.dnsSettings.fqdn

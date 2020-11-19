@@ -17,14 +17,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var virtualNetworkName = 'virtualNetwork1'
+var virtualNetworkName_var = 'virtualNetwork1'
 var subnetName = 'subnet1'
-var loadBalancerName = 'loadBalancer1'
-var nicName = 'networkInterface1'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var loadBalancerName_var = 'loadBalancer1'
+var nicName_var = 'networkInterface1'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -43,8 +43,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -57,7 +57,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, 'loadBalancerBackEnd')
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, 'loadBalancerBackEnd')
             }
           ]
         }
@@ -65,12 +65,12 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    loadBalancerName_resource
+    loadBalancerName
   ]
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -92,13 +92,13 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
       {
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadBalancerName, 'loadBalancerFrontEnd')
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, 'loadBalancerBackEnd')
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, 'loadBalancerBackEnd')
           }
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName, 'lbprobe')
+            id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName_var, 'lbprobe')
           }
           protocol: 'Tcp'
           frontendPort: 80
@@ -121,6 +121,6 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }

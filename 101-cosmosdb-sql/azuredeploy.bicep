@@ -80,7 +80,7 @@ param throughput int {
   default: 400
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -113,8 +113,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-06-01-preview' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-06-01-preview' = {
+  name: accountName_var
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
@@ -126,19 +126,19 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-06-01-
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2020-06-01-preview' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
     }
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
   ]
 }
 
 resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2020-06-01-preview' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}'
+  name: '${accountName_var}/${databaseName}/${containerName}'
   properties: {
     resource: {
       id: containerName

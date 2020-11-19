@@ -61,7 +61,7 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
   name: workspaceName
   location: location
   properties: {
@@ -76,7 +76,7 @@ resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-0
   }
 }
 
-resource automationAccountName_resource 'Microsoft.Automation/automationAccounts@2020-01-13-preview' = {
+resource automationAccountName_res 'Microsoft.Automation/automationAccounts@2020-01-13-preview' = {
   name: automationAccountName
   location: automationAccountLocation
   properties: {
@@ -85,7 +85,7 @@ resource automationAccountName_resource 'Microsoft.Automation/automationAccounts
     }
   }
   dependsOn: [
-    workspaceName_resource
+    workspaceName_res
   ]
 }
 
@@ -103,7 +103,7 @@ resource automationAccountName_sampleGraphicalRunbookName 'Microsoft.Automation/
     }
   }
   dependsOn: [
-    automationAccountName_resource
+    automationAccountName_res
   ]
 }
 
@@ -121,7 +121,7 @@ resource automationAccountName_samplePowerShellRunbookName 'Microsoft.Automation
     }
   }
   dependsOn: [
-    automationAccountName_resource
+    automationAccountName_res
   ]
 }
 
@@ -139,7 +139,7 @@ resource automationAccountName_samplePython2RunbookName 'Microsoft.Automation/au
     }
   }
   dependsOn: [
-    automationAccountName_resource
+    automationAccountName_res
   ]
 }
 
@@ -147,10 +147,9 @@ resource workspaceName_Automation 'Microsoft.OperationalInsights/workspaces/link
   name: '${workspaceName}/Automation'
   location: location
   properties: {
-    resourceId: automationAccountName_resource.id
+    resourceId: automationAccountName_res.id
   }
   dependsOn: [
-    workspaceName_resource
-    automationAccountName_resource
+    workspaceName_res
   ]
 }

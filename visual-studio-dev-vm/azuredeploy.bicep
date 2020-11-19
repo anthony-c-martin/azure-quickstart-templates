@@ -45,20 +45,20 @@ param vmSize string {
   default: 'Standard_D2s_v3'
 }
 
-var vmName = '${substring(vmVisualStudioVersion, 0, 8)}vm'
+var vmName_var = '${substring(vmVisualStudioVersion, 0, 8)}vm'
 var vnet01Prefix = '10.0.0.0/16'
 var vnet01Subnet1Name = 'Subnet-1'
-var vnetName = 'vnet'
+var vnetName_var = 'vnet'
 var vnet01Subnet1Prefix = '10.0.0.0/24'
 var vmImagePublisher = 'MicrosoftVisualStudio'
 var vmImageOffer = 'VisualStudio'
-var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, vnet01Subnet1Name)
-var vmNicName = '${vmName}-nic'
-var vmIP01Name = 'VMIP01'
-var networkSecurityGroupName = '${vnet01Subnet1Name}-nsg'
+var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, vnet01Subnet1Name)
+var vmNicName_var = '${vmName_var}-nic'
+var vmIP01Name_var = 'VMIP01'
+var networkSecurityGroupName_var = '${vnet01Subnet1Name}-nsg'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -79,8 +79,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+  name: vnetName_var
   location: location
   tags: {
     displayName: 'VNet01'
@@ -97,19 +97,16 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         properties: {
           addressPrefix: vnet01Subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2020-03-01' = {
+  name: vmNicName_var
   location: location
   tags: {
     displayName: 'VMNic01'
@@ -124,20 +121,19 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' = {
             id: vmSubnetRef
           }
           publicIPAddress: {
-            id: vmIP01Name_resource.id
+            id: vmIP01Name.id
           }
         }
       }
     ]
   }
   dependsOn: [
-    vnetName_resource
-    vmIP01Name_resource
+    vnetName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   tags: {
     displayName: 'VM01'
@@ -147,7 +143,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmAdminUserName
       adminPassword: vmAdminPassword
     }
@@ -169,18 +165,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vmNicName_resource
-  ]
 }
 
-resource vmIP01Name_resource 'Microsoft.Network/publicIPAddresses@2020-03-01' = {
-  name: vmIP01Name
+resource vmIP01Name 'Microsoft.Network/publicIPAddresses@2020-03-01' = {
+  name: vmIP01Name_var
   location: location
   tags: {
     displayName: 'VMIP01'
@@ -193,4 +186,4 @@ resource vmIP01Name_resource 'Microsoft.Network/publicIPAddresses@2020-03-01' = 
   }
 }
 
-output vm_fqdn string = reference(vmIP01Name).dnsSettings.fqdn
+output vm_fqdn string = reference(vmIP01Name_var).dnsSettings.fqdn

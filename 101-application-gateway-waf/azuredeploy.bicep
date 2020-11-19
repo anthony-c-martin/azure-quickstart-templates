@@ -91,15 +91,15 @@ param wafRuleSetVersion string {
   default: '3.0'
 }
 
-var applicationGatewayName = 'applicationGateway1'
-var publicIPAddressName = 'publicIp1'
-var virtualNetworkName = 'virtualNetwork1'
+var applicationGatewayName_var = 'applicationGateway1'
+var publicIPAddressName_var = 'publicIp1'
+var virtualNetworkName_var = 'virtualNetwork1'
 var subnetName = 'appGatewaySubnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, subnetName)
-var publicIPRef = publicIPAddressName_resource.id
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, subnetName)
+var publicIPRef = publicIPAddressName.id
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   sku: {
     name: 'Standard'
@@ -109,8 +109,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -129,8 +129,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-01' = {
-  name: applicationGatewayName
+resource applicationGatewayName 'Microsoft.Network/applicationGateways@2020-05-01' = {
+  name: applicationGatewayName_var
   location: location
   properties: {
     sku: {
@@ -152,7 +152,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: publicIPRef
           }
         }
@@ -162,7 +162,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendPort'
         properties: {
-          Port: 80
+          port: 80
         }
       }
     ]
@@ -170,12 +170,12 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: backendIpAddress1
+              ipAddress: backendIpAddress1
             }
             {
-              IpAddress: backendIpAddress2
+              ipAddress: backendIpAddress2
             }
           ]
         }
@@ -185,9 +185,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
         }
       }
     ]
@@ -195,29 +195,29 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName_var, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendPort')
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName_var, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
+          protocol: 'Http'
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'appGatewayHttpListener')
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName_var, 'appGatewayHttpListener')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'appGatewayBackendPool')
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName_var, 'appGatewayBackendPool')
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'appGatewayBackendHttpSettings')
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName_var, 'appGatewayBackendHttpSettings')
           }
         }
       }
@@ -230,7 +230,6 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
+    virtualNetworkName
   ]
 }

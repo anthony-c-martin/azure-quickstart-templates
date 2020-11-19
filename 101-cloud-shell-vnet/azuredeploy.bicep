@@ -59,16 +59,16 @@ param location string {
   default: resourceGroup().location
 }
 
-var networkProfileName = 'aci-networkProfile-${location}'
-var networkProfileRef = networkProfileName_resource.id
+var networkProfileName_var = 'aci-networkProfile-${location}'
+var networkProfileRef = networkProfileName.id
 var containerSubnetRef = existingVNETName_containerSubnetName.id
-var relayNamespaceRef = relayNamespaceName_resource.id
+var relayNamespaceRef = relayNamespaceName_res.id
 var relaySubnetRef = existingVNETName_relaySubnetName.id
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var networkRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')
-var privateDnsZoneName = ((toLower(environment().name) == 'azureusgovernment') ? 'privatelink.servicebus.usgovcloudapi.net' : 'privatelink.servicebus.windows.net')
+var privateDnsZoneName_var = ((toLower(environment().name) == 'azureusgovernment') ? 'privatelink.servicebus.usgovcloudapi.net' : 'privatelink.servicebus.windows.net')
 var networkRef = resourceId('Microsoft.Network/virtualNetworks', existingVNETName)
-var privateEndpointRef = privateEndpointName_resource.id
+var privateEndpointRef = privateEndpointName_res.id
 
 resource existingVNETName_containerSubnetName 'Microsoft.Network/virtualNetworks/subnets@2020-04-01' = {
   name: '${existingVNETName}/${containerSubnetName}'
@@ -94,8 +94,8 @@ resource existingVNETName_containerSubnetName 'Microsoft.Network/virtualNetworks
   }
 }
 
-resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2019-11-01' = {
-  name: networkProfileName
+resource networkProfileName 'Microsoft.Network/networkProfiles@2019-11-01' = {
+  name: networkProfileName_var
   location: location
   properties: {
     containerNetworkInterfaceConfigurations: [
@@ -122,7 +122,7 @@ resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2019-11-
 }
 
 resource networkProfileName_Microsoft_Authorization_networkRoleDefinitionId_azureContainerInstanceOID_networkProfileName 'Microsoft.Network/networkProfiles/providers/roleAssignments@2018-09-01-preview' = {
-  name: '${networkProfileName}/Microsoft.Authorization/${guid(networkRoleDefinitionId, azureContainerInstanceOID, networkProfileName)}'
+  name: '${networkProfileName_var}/Microsoft.Authorization/${guid(networkRoleDefinitionId, azureContainerInstanceOID, networkProfileName_var)}'
   properties: {
     roleDefinitionId: networkRoleDefinitionId
     principalId: azureContainerInstanceOID
@@ -133,7 +133,7 @@ resource networkProfileName_Microsoft_Authorization_networkRoleDefinitionId_azur
   ]
 }
 
-resource relayNamespaceName_resource 'Microsoft.Relay/namespaces@2018-01-01-preview' = {
+resource relayNamespaceName_res 'Microsoft.Relay/namespaces@2018-01-01-preview' = {
   name: relayNamespaceName
   location: location
   sku: {
@@ -167,7 +167,7 @@ resource existingVNETName_relaySubnetName 'Microsoft.Network/virtualNetworks/sub
   ]
 }
 
-resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-04-01' = {
+resource privateEndpointName_res 'Microsoft.Network/privateEndpoints@2020-04-01' = {
   name: privateEndpointName
   location: location
   properties: {
@@ -211,8 +211,8 @@ resource existingVNETName_storageSubnetName 'Microsoft.Network/virtualNetworks/s
   ]
 }
 
-resource privateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020-01-01' = {
-  name: privateDnsZoneName
+resource privateDnsZoneName 'Microsoft.Network/privateDnsZones@2020-01-01' = {
+  name: privateDnsZoneName_var
   location: 'global'
   properties: {
     maxNumberOfRecordSets: 25000
@@ -225,7 +225,7 @@ resource privateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020-01-
 }
 
 resource privateDnsZoneName_relayNamespaceName 'Microsoft.Network/privateDnsZones/A@2020-01-01' = {
-  name: '${privateDnsZoneName}/${relayNamespaceName}'
+  name: '${privateDnsZoneName_var}/${relayNamespaceName}'
   properties: {
     ttl: 3600
     aRecords: [
@@ -235,13 +235,13 @@ resource privateDnsZoneName_relayNamespaceName 'Microsoft.Network/privateDnsZone
     ]
   }
   dependsOn: [
-    privateDnsZoneName_resource
+    privateDnsZoneName
     privateEndpointRef
   ]
 }
 
 resource Microsoft_Network_privateDnsZones_virtualNetworkLinks_privateDnsZoneName_relayNamespaceName 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-01-01' = {
-  name: '${privateDnsZoneName}/${relayNamespaceName}'
+  name: '${privateDnsZoneName_var}/${relayNamespaceName}'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -250,10 +250,10 @@ resource Microsoft_Network_privateDnsZones_virtualNetworkLinks_privateDnsZoneNam
     }
   }
   dependsOn: [
-    privateDnsZoneName_resource
+    privateDnsZoneName
   ]
 }
 
 output vnetName string = existingVNETName
-output containerSubnetName_output string = containerSubnetName
-output storageSubnetName_output string = storageSubnetName
+output containerSubnetName_out string = containerSubnetName
+output storageSubnetName_out string = storageSubnetName

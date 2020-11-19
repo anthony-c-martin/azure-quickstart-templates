@@ -12,15 +12,15 @@ param skuTier string = 'Standard'
 param subnetName string = 'subnet'
 param virtualNetworkName string = 'vnet'
 
-var dataManagementPublicIpId = dataManagementPublicIpName_resource.id
-var enginePublicIpId = enginePublicIpName_resource.id
-var nsgId = nsgName_resource.id
-var nsgName = 'azureDataExplorerNsg'
+var dataManagementPublicIpId = dataManagementPublicIpName_res.id
+var enginePublicIpId = enginePublicIpName_res.id
+var nsgId = nsgName.id
+var nsgName_var = 'azureDataExplorerNsg'
 var publicIpAllocationMethod = 'Static'
 var subnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var vnetId = virtualNetworkName_resource.id
+var vnetId = virtualNetworkName_res.id
 
-resource clusterName_resource 'Microsoft.Kusto/Clusters@2020-06-14' = {
+resource clusterName_res 'Microsoft.Kusto/Clusters@2020-06-14' = {
   sku: {
     name: skuName
     tier: skuTier
@@ -41,7 +41,7 @@ resource clusterName_resource 'Microsoft.Kusto/Clusters@2020-06-14' = {
   ]
 }
 
-resource dataManagementPublicIpName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource dataManagementPublicIpName_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: dataManagementPublicIpName
   sku: {
     name: 'Standard'
@@ -53,7 +53,7 @@ resource dataManagementPublicIpName_resource 'Microsoft.Network/publicIPAddresse
   }
 }
 
-resource enginePublicIpName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource enginePublicIpName_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: enginePublicIpName
   sku: {
     name: 'Standard'
@@ -65,7 +65,7 @@ resource enginePublicIpName_resource 'Microsoft.Network/publicIPAddresses@2020-0
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -91,8 +91,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2019-07-01' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2019-07-01' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [

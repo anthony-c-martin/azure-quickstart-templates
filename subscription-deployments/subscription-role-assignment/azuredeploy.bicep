@@ -11,10 +11,10 @@ param roleDefinitionId string {
   default: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 }
 
-var roleAssignmentName = guid(subscription().id, principalId, roleDefinitionId)
+var roleAssignmentName_var = guid(subscription().id, principalId, roleDefinitionId)
 
-resource roleAssignmentName_resource 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: roleAssignmentName
+resource roleAssignmentName 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: roleAssignmentName_var
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
     principalId: principalId

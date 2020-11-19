@@ -43,7 +43,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource sqlServerName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   name: sqlServerName
   location: location
   properties: {
@@ -67,7 +67,7 @@ resource sqlServerName_dataWarehouseName 'Microsoft.Sql/servers/databases@2020-0
     isUpgradeRequested: false
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName_res
   ]
 }
 

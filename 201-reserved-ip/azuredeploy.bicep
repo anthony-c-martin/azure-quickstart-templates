@@ -20,27 +20,27 @@ param location string {
   default: resourceGroup().location
 }
 
-var network_LB_Public_Name = 'publicLB'
-var network_LB_Public_Id = network_LB_Public_Name_resource.id
+var network_LB_Public_Name_var = 'publicLB'
+var network_LB_Public_Id = network_LB_Public_Name.id
 var network_LB_Public_FEName = 'publicLBFE'
 var network_LB_Public_FEId = '${network_LB_Public_Id}/frontendIPConfigurations/${network_LB_Public_FEName}'
 var network_LB_Public_BEPoolName = 'publicLBBEPool'
 var network_LB_Public_NatRule_SSH_vm_Name = 'fg1SSHNat'
 var network_LB_Public_NatRule_SSH_vm_PublicPort = '50101'
-var network_LB_Public_Name2 = 'publicLB2'
-var network_LB_Public_Id2 = network_LB_Public_Name2_resource.id
+var network_LB_Public_Name2_var = 'publicLB2'
+var network_LB_Public_Id2 = network_LB_Public_Name2.id
 var network_LB_Public_FEName2 = 'publicLBFE2'
 var network_LB_Public_FEId2 = '${network_LB_Public_Id2}/frontendIPConfigurations/${network_LB_Public_FEName2}'
 var network_LB_Public_BEPoolName2 = 'publicLBBEPool2'
 var network_LB_Public_NatRule_SSH_vm_Name2 = 'fg1SSHNat2'
 var network_LB_Public_NatRule_SSH_vm_PublicPort2 = '50101'
-var network_PIP_Reserved_Name = 'goliveARMPIP'
-var network_PIP_Reserved_Id = network_PIP_Reserved_Name_resource.id
+var network_PIP_Reserved_Name_var = 'goliveARMPIP'
+var network_PIP_Reserved_Id = network_PIP_Reserved_Name.id
 var network_PIP_Reserved_FQDN = 'golivereservedip'
 var network_PIP_Reserved_Id2 = '/subscriptions/${existingRIPSubId}/resourceGroups/${existingRIPResourceGroupName}/providers/Microsoft.Network/publicIPAddresses/${existingRIPName}'
 
-resource network_PIP_Reserved_Name_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: network_PIP_Reserved_Name
+resource network_PIP_Reserved_Name 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: network_PIP_Reserved_Name_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -50,8 +50,8 @@ resource network_PIP_Reserved_Name_resource 'Microsoft.Network/publicIPAddresses
   }
 }
 
-resource network_LB_Public_Name_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
-  name: network_LB_Public_Name
+resource network_LB_Public_Name 'Microsoft.Network/loadBalancers@2015-06-15' = {
+  name: network_LB_Public_Name_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -89,8 +89,8 @@ resource network_LB_Public_Name_resource 'Microsoft.Network/loadBalancers@2015-0
   ]
 }
 
-resource network_LB_Public_Name2_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
-  name: network_LB_Public_Name2
+resource network_LB_Public_Name2 'Microsoft.Network/loadBalancers@2015-06-15' = {
+  name: network_LB_Public_Name2_var
   location: location
   properties: {
     frontendIPConfigurations: [

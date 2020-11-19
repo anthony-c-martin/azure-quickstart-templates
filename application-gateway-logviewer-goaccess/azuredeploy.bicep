@@ -62,15 +62,15 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var vmName = dnsNameForPublicIP
-var nicName = '${dnsNameForPublicIP}_vmnic'
+var vmName_var = dnsNameForPublicIP
+var nicName_var = '${dnsNameForPublicIP}_vmnic'
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
 var subnetName = 'DefaultSubnet'
-var publicIPAddressName = '${dnsNameForPublicIP}_publicip'
-var virtualNetworkName = '${dnsNameForPublicIP}_vnet'
-var networkSecurityGroupName = '${dnsNameForPublicIP}_nsg'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var publicIPAddressName_var = '${dnsNameForPublicIP}_publicip'
+var virtualNetworkName_var = '${dnsNameForPublicIP}_vnet'
+var networkSecurityGroupName_var = '${dnsNameForPublicIP}_nsg'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var scriptFileUri = uri(artifactsLocation, 'scripts/setup_vm.sh${artifactsLocationSasToken}')
 var appGatewayLogProcessorArtifactUri = uri(artifactsLocation, 'scripts/AppGatewayLogProcessor.zip${artifactsLocationSasToken}')
 var appGwAccessLogsBlobSasUriVar = '"${appGwAccessLogsBlobSasUri}"'
@@ -87,8 +87,8 @@ var linuxConfiguration = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-08-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-08-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -98,8 +98,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2018-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2018-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -173,8 +173,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   dependsOn: []
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-08-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-08-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -193,8 +193,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-08-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-08-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-08-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -203,7 +203,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-08-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -212,25 +212,23 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-08-01' = {
       }
     ]
     networkSecurityGroup: {
-      id: networkSecurityGroupName_resource.id
+      id: networkSecurityGroupName.id
     }
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2018-06-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -243,7 +241,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-06-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_osdisk'
+        name: '${vmName_var}_osdisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -252,7 +250,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-06-01' = {
       }
       dataDisks: [
         {
-          name: '${vmName}_datadisk1'
+          name: '${vmName_var}_datadisk1'
           diskSizeGB: 1023
           lun: 0
           createOption: 'Empty'
@@ -265,18 +263,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2018-06-01' = {
-  name: '${vmName}/newuserscript'
+  name: '${vmName_var}/newuserscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -292,9 +287,9 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2018
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output goAccessReportUrl string = '${reference(publicIPAddressName).dnsSettings.fqdn}/report.html'
-output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
+output goAccessReportUrl string = '${reference(publicIPAddressName_var).dnsSettings.fqdn}/report.html'
+output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'

@@ -64,7 +64,7 @@ resource workspaceName_datastoreName 'Microsoft.MachineLearningServices/workspac
   name: '${workspaceName}/${datastoreName}'
   location: location
   properties: {
-    DataStoreType: 'psqldb'
+    dataStoreType: 'psqldb'
     SkipValidation: skipValidation
     DatabaseName: databaseName
     Password: password

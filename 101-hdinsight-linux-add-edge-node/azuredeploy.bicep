@@ -34,7 +34,7 @@ var applicationName = 'new-edgenode'
 resource clusterName_applicationName 'Microsoft.HDInsight/clusters/applications@2015-03-01-preview' = {
   name: '${clusterName}/${applicationName}'
   properties: {
-    marketPlaceIdentifier: 'EmptyNode'
+    marketplaceIdentifier: 'EmptyNode'
     computeProfile: {
       roles: [
         {

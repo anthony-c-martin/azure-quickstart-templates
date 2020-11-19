@@ -83,7 +83,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageName = '${uniqueString(resourceGroup().id)}standardsa'
+var storageName_var = '${uniqueString(resourceGroup().id)}standardsa'
 var vnet01Prefix = '10.0.0.0/16'
 var vnet01Subnet1Name = 'Subnet-1'
 var vnet01Subnet1Prefix = '10.0.0.0/24'
@@ -92,11 +92,11 @@ var vmImageOffer = 'VisualStudio'
 var vmOSDiskName = 'VMOSDisk'
 var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', 'Vnet01', vnet01Subnet1Name)
 var vmStorageAccountContainerName = 'vhds'
-var vmNicName = '${vmName}NetworkInterface'
-var vmIP01Name = 'VMIP01'
+var vmNicName_var = '${vmName}NetworkInterface'
+var vmIP01Name_var = 'VMIP01'
 
-resource storageName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageName
+resource storageName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageName_var
   location: location
   tags: {
     displayName: 'Storage01'
@@ -131,8 +131,8 @@ resource VNet01 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   dependsOn: []
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: vmNicName_var
   location: location
   tags: {
     displayName: 'VMNic01'
@@ -147,7 +147,7 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
             id: vmSubnetRef
           }
           publicIPAddress: {
-            id: vmIP01Name_resource.id
+            id: vmIP01Name.id
           }
         }
       }
@@ -155,11 +155,10 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
   }
   dependsOn: [
     VNet01
-    vmIP01Name_resource
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   tags: {
@@ -190,14 +189,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
   }
   dependsOn: [
-    storageName_resource
-    vmNicName_resource
+    storageName
   ]
 }
 
@@ -220,12 +218,12 @@ resource vmName_SetupChocolatey 'Microsoft.Compute/virtualMachines/extensions@20
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 
-resource vmIP01Name_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: vmIP01Name
+resource vmIP01Name 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: vmIP01Name_var
   location: location
   tags: {
     displayName: 'VMIP01'

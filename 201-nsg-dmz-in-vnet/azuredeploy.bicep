@@ -53,7 +53,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource FENSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+resource FENSGName_res 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   name: FENSGName
   location: location
   properties: {
@@ -90,7 +90,7 @@ resource FENSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01'
   }
 }
 
-resource AppNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+resource AppNSGName_res 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   name: AppNSGName
   location: location
   properties: {
@@ -141,7 +141,7 @@ resource AppNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01
   }
 }
 
-resource DBNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+resource DBNSGName_res 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   name: DBNSGName
   location: location
   properties: {
@@ -206,7 +206,7 @@ resource DBNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01'
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -221,7 +221,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: FESubnetPrefix
           networkSecurityGroup: {
-            id: FENSGName_resource.id
+            id: FENSGName_res.id
           }
         }
       }
@@ -230,7 +230,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: AppSubnetPrefix
           networkSecurityGroup: {
-            id: AppNSGName_resource.id
+            id: AppNSGName_res.id
           }
         }
       }
@@ -239,15 +239,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: DBSubnetPrefix
           networkSecurityGroup: {
-            id: DBNSGName_resource.id
+            id: DBNSGName_res.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    FENSGName_resource
-    AppNSGName_resource
-    DBNSGName_resource
-  ]
 }

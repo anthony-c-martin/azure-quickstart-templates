@@ -41,7 +41,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource namespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+resource namespaceName_res 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
   name: namespaceName
   location: location
   sku: {
@@ -60,7 +60,7 @@ resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@201
   name: '${namespaceName}/${eventHubName}'
   properties: {}
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 

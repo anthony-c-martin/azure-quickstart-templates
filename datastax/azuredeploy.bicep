@@ -80,9 +80,9 @@ param artifactsLocationSasToken string {
 
 var nodesTemplateUrl = uri(artifactsLocation, 'nested/nodes.json${artifactsLocationSasToken}')
 var opsCenterTemplateUrl = uri(artifactsLocation, 'nested/opscenter.json${artifactsLocationSasToken}')
-var location_variable = location
+var location_var = location
 var uniqueString = uniqueString(resourceGroup().id, deployment().name)
-var vnetName = 'vnet'
+var vnetName_var = 'vnet'
 var subnetName = 'subnet'
 var osSettings = {
   imageReference: {
@@ -97,9 +97,9 @@ var osSettings = {
   ]
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: vnetName
-  location: location_variable
+resource vnetName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: vnetName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -117,41 +117,41 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   }
 }
 
-module nodes '<failed to parse [variables(\'nodesTemplateUrl\')]>' = {
+module nodes '?' /*TODO: replace with correct path to [variables('nodesTemplateUrl')]*/ = {
   name: 'nodes'
   params: {
-    location: location_variable
+    location: location_var
     uniqueString: uniqueString
     adminUsername: adminUsername
     nodeCount: nodeCount
     vmSize: vmSize
     osSettings: osSettings
-    vnetName: vnetName
+    vnetName: vnetName_var
     subnetName: subnetName
     namespace: 'dc0'
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
   }
   dependsOn: [
-    vnetName_resource
+    vnetName
   ]
 }
 
-module opsCenter '<failed to parse [variables(\'opsCenterTemplateUrl\')]>' = {
+module opsCenter '?' /*TODO: replace with correct path to [variables('opsCenterTemplateUrl')]*/ = {
   name: 'opsCenter'
   params: {
-    location: location_variable
+    location: location_var
     uniqueString: uniqueString
     adminUsername: adminUsername
     osSettings: osSettings
-    vnetName: vnetName
+    vnetName: vnetName_var
     subnetName: subnetName
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
   }
   dependsOn: [
-    vnetName_resource
+    vnetName
   ]
 }
 
-output opsCenterURL string = 'http://opscenter${uniqueString}.${location_variable}.cloudapp.azure.com:8888'
+output opsCenterURL string = 'http://opscenter${uniqueString}.${location_var}.cloudapp.azure.com:8888'

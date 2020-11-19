@@ -50,17 +50,17 @@ param adminPasswordOrKey string {
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'myVMNicD'
+var nicName_var = 'myVMNicD'
 var extensionName = 'DockerExtension'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var diskStorageType = 'Standard_LRS'
-var publicIPAddressName = 'myPublicIPD'
+var publicIPAddressName_var = 'myPublicIPD'
 var publicIPAddressType = 'Dynamic'
-var vmName = 'MyDockerVM'
-var virtualNetworkName = 'MyVNETD'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = 'MyDockerVM'
+var virtualNetworkName_var = 'MyVNETD'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -72,10 +72,10 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -85,8 +85,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -107,8 +107,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -122,19 +122,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -143,7 +140,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -153,20 +150,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -179,7 +175,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -190,18 +186,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_extensionName 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${vmName}/${extensionName}'
+  name: '${vmName_var}/${extensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -210,6 +203,6 @@ resource vmName_extensionName 'Microsoft.Compute/virtualMachines/extensions@2019
     autoUpgradeMinorVersion: true
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

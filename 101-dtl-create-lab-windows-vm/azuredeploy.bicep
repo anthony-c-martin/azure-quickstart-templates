@@ -36,7 +36,7 @@ var labSubnetName = '${labVirtualNetworkName}Subnet'
 var labVirtualNetworkId = labName_labVirtualNetworkName.id
 var labVirtualNetworkName = 'Dtl${labName}'
 
-resource labName_resource 'Microsoft.DevTestLab/labs@2018-10-15-preview' = {
+resource labName_res 'Microsoft.DevTestLab/labs@2018-10-15-preview' = {
   name: labName
   location: location
 }
@@ -44,7 +44,7 @@ resource labName_resource 'Microsoft.DevTestLab/labs@2018-10-15-preview' = {
 resource labName_labVirtualNetworkName 'Microsoft.DevTestLab/labs/virtualNetworks@2018-10-15-preview' = {
   name: '${labName}/${labVirtualNetworkName}'
   dependsOn: [
-    labName_resource
+    labName_res
   ]
 }
 
@@ -67,9 +67,8 @@ resource labName_vmName 'Microsoft.DevTestLab/labs/virtualMachines@2018-10-15-pr
     }
   }
   dependsOn: [
-    labName_resource
-    labName_labVirtualNetworkName
+    labName_res
   ]
 }
 
-output labId string = labName_resource.id
+output labId string = labName_res.id

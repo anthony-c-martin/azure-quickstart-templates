@@ -17,7 +17,7 @@ param queryDescription string {
   default: 'This shared query counts all virtual machine resources and summarizes by the OS type.'
 }
 
-resource queryName_resource 'Microsoft.ResourceGraph/queries@2018-09-01-preview' = {
+resource queryName_res 'Microsoft.ResourceGraph/queries@2018-09-01-preview' = {
   name: queryName
   location: 'global'
   properties: {

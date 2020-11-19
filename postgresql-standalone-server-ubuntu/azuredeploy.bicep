@@ -63,15 +63,15 @@ param artifactsLocationSasToken string {
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'myVMNic'
+var nicName_var = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
-var vmName = 'MyubuntuVM'
-var virtualNetworkName = 'MyVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = 'MyubuntuVM'
+var virtualNetworkName_var = 'MyVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -84,8 +84,8 @@ var linuxConfiguration = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-11-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-11-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -95,8 +95,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-11-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-11-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -115,8 +115,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-11-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-11-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-11-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -125,7 +125,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-11-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -135,20 +135,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-11-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-10-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2018-10-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: VmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -161,7 +160,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-10-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -169,18 +168,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-10-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2019-07-01' = {
-  name: '${vmName}/newuserscript'
+  name: '${vmName_var}/newuserscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -195,6 +191,6 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2019
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

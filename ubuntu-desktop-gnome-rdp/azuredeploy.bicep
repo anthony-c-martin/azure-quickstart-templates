@@ -61,13 +61,13 @@ param artifactsLocationSasToken string {
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'myVMNic'
-var nsgName = 'myNSG'
+var nicName_var = 'myVMNic'
+var nsgName_var = 'myNSG'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = 'myPublicIP'
-var virtualNetworkName = 'MyVNET'
+var publicIPAddressName_var = 'myPublicIP'
+var virtualNetworkName_var = 'MyVNET'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -80,8 +80,8 @@ var linuxConfiguration = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
+  name: publicIPAddressName_var
   location: location
   sku: {
     name: 'Basic'
@@ -91,8 +91,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -111,8 +111,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2019-06-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -121,27 +121,25 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: nsgName_resource.id
+      id: nsgName.id
     }
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-    nsgName_resource
+    virtualNetworkName
   ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -162,7 +160,7 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' =
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   name: vmName
   location: location
   properties: {
@@ -195,14 +193,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_installscript 'Microsoft.Compute/virtualMachines/extensions@2019-07-01' = {
@@ -221,6 +216,6 @@ resource vmName_installscript 'Microsoft.Compute/virtualMachines/extensions@2019
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

@@ -43,25 +43,25 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var vmName = 'jumpbox'
-var availabilitySetNodes = 'avail-set'
+var vmName_var = 'jumpbox'
+var availabilitySetNodes_var = 'avail-set'
 var osImagePublisher = 'Canonical'
 var osImageOffer = 'UbuntuServer'
 var osImageSKU = '18.04-LTS'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
 var customScriptLocation = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ubuntu-desktop-gnome/'
 var wgetCommandPrefix = 'wget --tries 20 --retry-connrefused --waitretry=15 -qO- ${customScriptLocation}configure-ubuntu.sh | nohup /bin/bash -s '
 var wgetCommandPostfix = ' > /var/log/azure/firstinstall.log 2>&1 &\''
 var commandPrefix = '/bin/bash -c \''
-var virtualNetworkName = 'VNET'
+var virtualNetworkName_var = 'VNET'
 var subnetName = 'Subnet'
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var nsgName = 'node-nsg'
-var nsgID = nsgName_resource.id
+var nsgName_var = 'node-nsg'
+var nsgID = nsgName.id
 var storageAccountType = 'Standard_LRS'
-var nodesLbName = 'nodeslb'
+var nodesLbName_var = 'nodeslb'
 var nodesLbBackendPoolName = 'node-pool'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -75,7 +75,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: newStorageAccountName
   location: location
   sku: {
@@ -84,8 +84,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-
   kind: 'StorageV2'
 }
 
-resource availabilitySetNodes_resource 'Microsoft.Compute/availabilitySets@2019-12-01' = {
-  name: availabilitySetNodes
+resource availabilitySetNodes 'Microsoft.Compute/availabilitySets@2019-12-01' = {
+  name: availabilitySetNodes_var
   location: location
   properties: {
     platformFaultDomainCount: 2
@@ -96,8 +96,8 @@ resource availabilitySetNodes_resource 'Microsoft.Compute/availabilitySets@2019-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -107,8 +107,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -133,8 +133,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -157,7 +157,7 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' =
 }
 
 resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: '${vmName}-nic'
+  name: '${vmName_var}-nic'
   location: location
   properties: {
     ipConfigurations: [
@@ -167,16 +167,16 @@ resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAllocationMethod: 'Static'
           privateIPAddress: '${split(subnetPrefix, '0/24')[0]}100'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nodesLbName, nodesLbBackendPoolName)
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', nodesLbName_var, nodesLbBackendPoolName)
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', nodesLbName, 'SSH-${vmName}')
+              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', nodesLbName_var, 'SSH-${vmName_var}')
             }
           ]
         }
@@ -184,13 +184,13 @@ resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    nodesLbName_resource
-    virtualNetworkName_resource
+    nodesLbName
+    virtualNetworkName
   ]
 }
 
-resource nodesLbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: nodesLbName
+resource nodesLbName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: nodesLbName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -198,7 +198,7 @@ resource nodesLbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
         name: 'NodesLBFrontEnd'
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -210,10 +210,10 @@ resource nodesLbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
     ]
     inboundNatRules: [
       {
-        name: 'SSH-${vmName}'
+        name: 'SSH-${vmName_var}'
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', nodesLbName, 'NodesLBFrontEnd')
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', nodesLbName_var, 'NodesLBFrontEnd')
           }
           protocol: 'Tcp'
           frontendPort: 22
@@ -223,23 +223,20 @@ resource nodesLbName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     availabilitySet: {
-      id: availabilitySetNodes_resource.id
+      id: availabilitySetNodes.id
     }
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -252,7 +249,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -266,14 +263,12 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    vmName_nic
-    availabilitySetNodes_resource
+    newStorageAccountName_res
   ]
 }
 
 resource vmName_configuremaster 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${vmName}/configuremaster'
+  name: '${vmName_var}/configuremaster'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -285,6 +280,6 @@ resource vmName_configuremaster 'Microsoft.Compute/virtualMachines/extensions@20
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

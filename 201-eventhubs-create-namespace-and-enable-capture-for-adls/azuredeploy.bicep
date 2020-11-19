@@ -84,7 +84,7 @@ param dataLakeFolderPath string {
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var authRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubNamespaceName, defaultSASKeyName)
 
-resource eventHubNamespaceName_resource 'Microsoft.EventHub/Namespaces@2017-04-01' = {
+resource eventHubNamespaceName_res 'Microsoft.EventHub/Namespaces@2017-04-01' = {
   name: eventHubNamespaceName
   location: resourceGroup().location
   sku: {
@@ -109,13 +109,13 @@ resource eventHubNamespaceName_eventHubName 'Microsoft.EventHub/Namespaces/event
           DataLakeSubscriptionId: subscriptionId
           DataLakeAccountName: dataLakeAccountName
           DataLakeFolderPath: dataLakeFolderPath
-          ArchiveNameFormat: captureNameFormat
+          archiveNameFormat: captureNameFormat
         }
       }
     }
   }
   dependsOn: [
-    eventHubNamespaceName_resource
+    eventHubNamespaceName_res
   ]
 }
 

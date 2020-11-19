@@ -60,23 +60,23 @@ param octopusAdminPassword string {
   secure: true
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}storage'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
 var vmImagePublisher = 'MicrosoftWindowsServer'
 var vmImageOffer = 'WindowsServer'
 var vmOSDiskName = 'osdiskforwindowssimple'
 var vmWindowsOSVersion = '2012-R2-Datacenter'
 var vmStorageAccountType = 'Standard_LRS'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = 'OctopusDeploy'
+var vmName_var = 'OctopusDeploy'
 var vmSize = 'Standard_D2'
-var networkNicName = 'OctopusDeployNIC'
+var networkNicName_var = 'OctopusDeployNIC'
 var networkAddressPrefix = '10.0.0.0/16'
 var networkSubnetName = 'OctopusDeploySubnet'
 var networkSubnetPrefix = '10.0.0.0/24'
-var networkPublicIPAddressName = 'OctopusDeployPublicIP'
+var networkPublicIPAddressName_var = 'OctopusDeployPublicIP'
 var networkPublicIPAddressType = 'Dynamic'
-var networkVNetName = 'OctopusDeployVNET'
-var networkSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', networkVNetName, networkSubnetName)
+var networkVNetName_var = 'OctopusDeployVNET'
+var networkSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', networkVNetName_var, networkSubnetName)
 var sqlDbName = 'OctopusDeploy'
 var sqlDbEdition = 'Standard'
 var sqlDbCollation = 'SQL_Latin1_General_CP1_CI_AS'
@@ -86,8 +86,8 @@ var sqlDbConnectionString = 'Data Source=tcp:${sqlServerName}.database.windows.n
 var installerUri = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/octopusdeploy3-single-vm-windows/Install-OctopusDeploy.ps1'
 var installerCommand = 'powershell.exe -File Install-OctopusDeploy.ps1 ${base64(sqlDbConnectionString)} ${base64(licenseFullName)} ${base64(licenseOrganisationName)} ${base64(licenseEmailAddress)} ${base64(octopusAdminUsername)} ${base64(octopusAdminPassword)} 2>&1 > D:\\Install-OctopusDeploy.ps1.log '
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+  name: storageAccountName_var
   location: resourceGroup().location
   tags: {
     env: 'trial'
@@ -98,8 +98,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-
   }
 }
 
-resource networkPublicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: networkPublicIPAddressName
+resource networkPublicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: networkPublicIPAddressName_var
   location: resourceGroup().location
   tags: {
     env: 'trial'
@@ -113,8 +113,8 @@ resource networkPublicIPAddressName_resource 'Microsoft.Network/publicIPAddresse
   }
 }
 
-resource networkVNetName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: networkVNetName
+resource networkVNetName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: networkVNetName_var
   location: resourceGroup().location
   tags: {
     env: 'trial'
@@ -137,8 +137,8 @@ resource networkVNetName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-
   }
 }
 
-resource networkNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: networkNicName
+resource networkNicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: networkNicName_var
   location: resourceGroup().location
   tags: {
     env: 'trial'
@@ -151,7 +151,7 @@ resource networkNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: networkPublicIPAddressName_resource.id
+            id: networkPublicIPAddressName.id
           }
           subnet: {
             id: networkSubnetRef
@@ -161,13 +161,12 @@ resource networkNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01
     ]
   }
   dependsOn: [
-    networkPublicIPAddressName_resource
-    networkVNetName_resource
+    networkVNetName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: resourceGroup().location
   tags: {
     env: 'trial'
@@ -178,7 +177,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmAdminUsername
       adminPassword: vmAdminPassword
     }
@@ -190,7 +189,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -198,19 +197,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkNicName_resource.id
+          id: networkNicName.id
         }
       ]
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    networkNicName_resource
+    storageAccountName
   ]
 }
 
 resource vmName_OctopusDeployInstaller 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName}/OctopusDeployInstaller'
+  name: '${vmName_var}/OctopusDeployInstaller'
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Compute'
@@ -225,12 +223,12 @@ resource vmName_OctopusDeployInstaller 'Microsoft.Compute/virtualMachines/extens
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
     sqlServerName_sqlDbName
   ]
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
+resource sqlServerName_res 'Microsoft.Sql/servers@2014-04-01-preview' = {
   name: sqlServerName
   location: resourceGroup().location
   tags: {
@@ -258,7 +256,7 @@ resource sqlServerName_sqlDbName 'Microsoft.Sql/servers/databases@2014-04-01-pre
     requestedServiceObjectiveId: sqldbEditionPerformanceLevel
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName_res
   ]
 }
 
@@ -270,9 +268,9 @@ resource sqlServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallru
     startIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName_res
   ]
 }
 
-output octopusServerName string = reference(networkPublicIPAddressName).dnsSettings.fqdn
-output sqlServerName_output string = reference('Microsoft.Sql/servers/${sqlServerName}').fullyQualifiedDomainName
+output octopusServerName string = reference(networkPublicIPAddressName_var).dnsSettings.fqdn
+output sqlServerName_out string = reference('Microsoft.Sql/servers/${sqlServerName}').fullyQualifiedDomainName

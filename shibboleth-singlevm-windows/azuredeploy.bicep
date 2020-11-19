@@ -58,35 +58,35 @@ param location string {
   default: resourceGroup().location
 }
 
-var newStorageAccountName = '${uniqueString(resourceGroup().id)}shs'
+var newStorageAccountName_var = '${uniqueString(resourceGroup().id)}shs'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
 var OSDiskName = '${uniqueNamePrefix}Disk'
-var nicName = '${uniqueNamePrefix}Nic'
+var nicName_var = '${uniqueNamePrefix}Nic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = '${uniqueNamePrefix}IP'
+var publicIPAddressName_var = '${uniqueNamePrefix}IP'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = '${uniqueNamePrefix}VM'
-var virtualNetworkName = '${uniqueNamePrefix}VNet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = '${uniqueNamePrefix}VM'
+var virtualNetworkName_var = '${uniqueNamePrefix}VNet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var installScriptName = 'install_shibboleth_idp.ps1'
 var installScriptUri = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/shibboleth-singlevm-windows/${installScriptName}'
 var installCommand = 'powershell.exe -File ${installScriptName} ${uniqueNamePrefix} ${location}'
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   location: location
-  name: newStorageAccountName
+  name: newStorageAccountName_var
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -96,8 +96,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -116,8 +116,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -126,7 +126,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -136,20 +136,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -161,7 +160,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -169,19 +168,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName
   ]
 }
 
 resource vmName_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/CustomScriptExtension'
+  name: '${vmName_var}/CustomScriptExtension'
   location: location
   properties: {
     publisher: 'Microsoft.Compute'
@@ -196,6 +194,6 @@ resource vmName_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensi
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

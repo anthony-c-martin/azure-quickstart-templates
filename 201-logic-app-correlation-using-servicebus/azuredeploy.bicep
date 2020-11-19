@@ -59,7 +59,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource backendLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
+resource backendLogicApp_res 'Microsoft.Logic/workflows@2017-07-01' = {
   name: backendLogicApp
   location: location
   tags: {}
@@ -166,7 +166,7 @@ resource backendLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
       '$connections': {
         value: {
           servicebus: {
-            connectionId: serviceBusConnection_resource.id
+            connectionId: serviceBusConnection_res.id
             connectionName: 'servicebus'
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/servicebus'
           }
@@ -174,12 +174,9 @@ resource backendLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
       }
     }
   }
-  dependsOn: [
-    serviceBusConnection_resource
-  ]
 }
 
-resource clientLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
+resource clientLogicApp_res 'Microsoft.Logic/workflows@2017-07-01' = {
   name: clientLogicApp
   location: location
   tags: {}
@@ -356,7 +353,7 @@ resource clientLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
       '$connections': {
         value: {
           servicebus: {
-            connectionId: serviceBusConnection_resource.id
+            connectionId: serviceBusConnection_res.id
             connectionName: 'servicebus'
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/servicebus'
           }
@@ -364,12 +361,9 @@ resource clientLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
       }
     }
   }
-  dependsOn: [
-    serviceBusConnection_resource
-  ]
 }
 
-resource transformationLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' = {
+resource transformationLogicApp_res 'Microsoft.Logic/workflows@2017-07-01' = {
   name: transformationLogicApp
   location: location
   tags: {}
@@ -498,7 +492,7 @@ resource transformationLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' 
       '$connections': {
         value: {
           servicebus: {
-            connectionId: serviceBusConnection_resource.id
+            connectionId: serviceBusConnection_res.id
             connectionName: 'servicebus'
             id: '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/servicebus'
           }
@@ -506,12 +500,9 @@ resource transformationLogicApp_resource 'Microsoft.Logic/workflows@2017-07-01' 
       }
     }
   }
-  dependsOn: [
-    serviceBusConnection_resource
-  ]
 }
 
-resource serviceBusNamespace_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource serviceBusNamespace_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   sku: {
     name: 'Standard'
     tier: 'Standard'
@@ -528,7 +519,7 @@ resource serviceBusNamespace_resource 'Microsoft.ServiceBus/namespaces@2017-04-0
   }
 }
 
-resource serviceBusConnection_resource 'Microsoft.Web/connections@2016-06-01' = {
+resource serviceBusConnection_res 'Microsoft.Web/connections@2016-06-01' = {
   name: serviceBusConnection
   location: location
   properties: {
@@ -541,9 +532,6 @@ resource serviceBusConnection_resource 'Microsoft.Web/connections@2016-06-01' = 
       connectionString: listKeys(serviceBusNamespace_RootManageSharedAccessKey.id, '2015-08-01').primaryConnectionString
     }
   }
-  dependsOn: [
-    serviceBusNamespace_RootManageSharedAccessKey
-  ]
 }
 
 resource serviceBusNamespace_RootManageSharedAccessKey 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2017-04-01' = {
@@ -557,7 +545,7 @@ resource serviceBusNamespace_RootManageSharedAccessKey 'Microsoft.ServiceBus/nam
     ]
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
   ]
 }
 
@@ -577,7 +565,7 @@ resource serviceBusNamespace_messageRoutingTopic 'Microsoft.ServiceBus/namespace
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
   ]
 }
 
@@ -596,7 +584,7 @@ resource serviceBusNamespace_messageRoutingTopic_backendLogicAppSubscription 'Mi
     autoDeleteOnIdle: 'P10675199DT2H48M5.4775807S'
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
   ]
 }
@@ -616,7 +604,7 @@ resource serviceBusNamespace_messageRoutingTopic_clientLogicAppSubscription 'Mic
     autoDeleteOnIdle: 'P10675199DT2H48M5.4775807S'
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
   ]
 }
@@ -636,7 +624,7 @@ resource serviceBusNamespace_messageRoutingTopic_transformationLogicAppSubscript
     autoDeleteOnIdle: 'P10675199DT2H48M5.4775807S'
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
   ]
 }
@@ -652,7 +640,7 @@ resource serviceBusNamespace_messageRoutingTopic_backendLogicAppSubscription_Rou
     }
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
     serviceBusNamespace_messageRoutingTopic_backendLogicAppSubscription
   ]
@@ -669,7 +657,7 @@ resource serviceBusNamespace_messageRoutingTopic_clientLogicAppSubscription_Rout
     }
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
     serviceBusNamespace_messageRoutingTopic_clientLogicAppSubscription
   ]
@@ -686,7 +674,7 @@ resource serviceBusNamespace_messageRoutingTopic_transformationLogicAppSubscript
     }
   }
   dependsOn: [
-    serviceBusNamespace_resource
+    serviceBusNamespace_res
     serviceBusNamespace_messageRoutingTopic
     serviceBusNamespace_messageRoutingTopic_transformationLogicAppSubscription
   ]

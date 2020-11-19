@@ -46,7 +46,7 @@ param publicSubnetCidr string {
   default: '10.179.64.0/18'
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   location: location
   name: vnetName
   properties: {

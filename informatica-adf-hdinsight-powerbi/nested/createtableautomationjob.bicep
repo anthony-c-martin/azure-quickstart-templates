@@ -51,7 +51,7 @@ param sku string = 'Basic'
 param informaticaTags object
 param quickstartTags object
 
-resource accountName_resource 'Microsoft.Automation/automationAccounts@2015-01-01-preview' = {
+resource accountName_res 'Microsoft.Automation/automationAccounts@2015-01-01-preview' = {
   name: accountName
   location: location
   tags: {
@@ -83,7 +83,7 @@ resource accountName_runbookName 'Microsoft.Automation/automationAccounts/runboo
     }
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
   ]
 }
 
@@ -99,7 +99,7 @@ resource accountName_credentialName 'Microsoft.Automation/automationAccounts/cre
     password: sqlDWAdminPassword
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
   ]
 }
 
@@ -124,7 +124,7 @@ resource accountName_jobId 'Microsoft.Automation/automationAccounts/jobs@2015-10
     }
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
     accountName_credentialName
     accountName_runbookName
   ]

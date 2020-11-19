@@ -11,10 +11,10 @@ param roleDefinitionId string {
   default: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
 }
 
-var roleAssignmentName = guid('/', principalId, roleDefinitionId)
+var roleAssignmentName_var = guid('/', principalId, roleDefinitionId)
 
-resource roleAssignmentName_resource 'Microsoft.Authorization/roleAssignments@2020-03-01-preview' = {
-  name: roleAssignmentName
+resource roleAssignmentName 'Microsoft.Authorization/roleAssignments@2020-03-01-preview' = {
+  name: roleAssignmentName_var
   properties: {
     roleDefinitionId: tenantResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
     principalId: principalId

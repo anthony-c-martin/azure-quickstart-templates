@@ -59,12 +59,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var clusterStorageAccountName = '${clusterName}store'
+var clusterStorageAccountName_var = '${clusterName}store'
 var storageAccountType = 'Standard_LRS'
 var applicationName = 'new-edgenode'
 
-resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: clusterStorageAccountName
+resource clusterStorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: clusterStorageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -73,7 +73,7 @@ resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
   name: clusterName
   location: location
   tags: {}
@@ -93,10 +93,10 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' 
     storageProfile: {
       storageaccounts: [
         {
-          name: replace(replace(reference(clusterStorageAccountName_resource.id, '2016-01-01').primaryEndpoints.blob, 'https://', ''), '/', '')
+          name: replace(replace(reference(clusterStorageAccountName.id, '2016-01-01').primaryEndpoints.blob, 'https://', ''), '/', '')
           isDefault: true
           container: clusterName
-          key: listKeys(clusterStorageAccountName_resource.id, '2016-01-01').keys[0].value
+          key: listKeys(clusterStorageAccountName.id, '2016-01-01').keys[0].value
         }
       ]
     }
@@ -131,15 +131,12 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    clusterStorageAccountName_resource
-  ]
 }
 
 resource clusterName_applicationName 'Microsoft.HDInsight/clusters/applications@2015-03-01-preview' = {
   name: '${clusterName}/${applicationName}'
   properties: {
-    marketPlaceIdentifier: 'EmptyNode'
+    marketplaceIdentifier: 'EmptyNode'
     computeProfile: {
       roles: [
         {
@@ -165,10 +162,10 @@ resource clusterName_applicationName 'Microsoft.HDInsight/clusters/applications@
     applicationType: 'CustomApplication'
   }
   dependsOn: [
-    clusterName_resource
+    clusterName_res
   ]
 }
 
-output storage object = clusterStorageAccountName_resource.properties
-output cluster object = clusterName_resource.properties
+output storage object = clusterStorageAccountName.properties
+output cluster object = clusterName_res.properties
 output application object = clusterName_applicationName.properties

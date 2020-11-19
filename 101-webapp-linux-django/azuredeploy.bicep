@@ -14,10 +14,10 @@ param location string {
 var sku = 'Free'
 var skuCode = 'F1'
 var workerSize = '0'
-var appInsights = '${webAppName}-insights'
-var hostingPlanName = 'hpn-${resourceGroup().name}'
+var appInsights_var = '${webAppName}-insights'
+var hostingPlanName_var = 'hpn-${resourceGroup().name}'
 
-resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: webAppName
   location: location
   properties: {
@@ -29,7 +29,7 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsights_resource.properties.InstrumentationKey
+          value: appInsights.properties.InstrumentationKey
         }
         {
           name: 'XDT_MicrosoftApplicationInsights_Mode'
@@ -44,32 +44,28 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
     }
     name: webAppName
     clientAffinityEnabled: false
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
   }
-  dependsOn: [
-    hostingPlanName_resource
-    appInsights_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
-    Tier: sku
-    Name: skuCode
+    tier: sku
+    name: skuCode
   }
   kind: 'linux'
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSizeId: workerSize
     reserved: true
     numberOfWorkers: '1'
   }
 }
 
-resource appInsights_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: appInsights
+resource appInsights 'microsoft.insights/components@2020-02-02-preview' = {
+  name: appInsights_var
   location: location
   properties: {
     ApplicationId: webAppName

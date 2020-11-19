@@ -43,7 +43,7 @@ param backupBlobContainerUri string {
   default: ''
 }
 
-resource serverName_resource 'Microsoft.AnalysisServices/servers@2017-08-01' = {
+resource serverName_res 'Microsoft.AnalysisServices/servers@2017-08-01' = {
   name: serverName
   location: location
   sku: {

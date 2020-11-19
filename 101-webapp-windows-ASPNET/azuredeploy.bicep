@@ -19,10 +19,10 @@ var workerSizeId = 0
 var numberOfWorkers = '1'
 var currentStack = 'dotnet'
 var netFrameworkVersion = 'v4.0'
-var hostingPlanName = 'hpn-${resourceGroup().name}'
-var appInsight = 'insights-${webAppName}'
+var hostingPlanName_var = 'hpn-${resourceGroup().name}'
+var appInsight_var = 'insights-${webAppName}'
 
-resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: webAppName
   location: location
   properties: {
@@ -31,7 +31,7 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference(appInsight_resource.id, '2018-05-01-preview').InstrumentationKey
+          value: reference(appInsight.id, '2018-05-01-preview').InstrumentationKey
         }
         {
           name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
@@ -75,32 +75,28 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
       netFrameworkVersion: netFrameworkVersion
       alwaysOn: alwaysOn
     }
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     clientAffinityEnabled: true
   }
-  dependsOn: [
-    appInsight_resource
-    hostingPlanName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSize: workerSize
     workerSizeId: workerSizeId
     numberOfWorkers: numberOfWorkers
   }
   sku: {
-    Tier: sku
-    Name: skuCode
+    tier: sku
+    name: skuCode
   }
 }
 
-resource appInsight_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: appInsight
+resource appInsight 'microsoft.insights/components@2020-02-02-preview' = {
+  name: appInsight_var
   location: location
   properties: {
     ApplicationId: webAppName

@@ -92,33 +92,33 @@ param databaseSkuFamily string {
 }
 
 var databaseName = '${siteName}database'
-var serverName = '${siteName}myserver'
-var hostingPlanName = '${siteName}serviceplan'
+var serverName_var = '${siteName}myserver'
+var hostingPlanName_var = '${siteName}serviceplan'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSizeId: '1'
     reserved: true
     numberOfWorkers: 0
   }
   sku: {
-    Tier: 'Standard'
-    Name: 'S1'
+    tier: 'Standard'
+    name: 'S1'
   }
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource siteName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: siteName
   location: location
   properties: {
     name: siteName
-    serverFarmId: hostingPlanName
+    serverFarmId: hostingPlanName_var
   }
   dependsOn: [
-    hostingPlanName_resource
+    hostingPlanName
   ]
 }
 
@@ -126,18 +126,18 @@ resource siteName_connectionstrings 'Microsoft.Web/sites/config@2020-06-01' = {
   name: '${siteName}/connectionstrings'
   properties: {
     defaultConnection: {
-      value: 'Database=${databaseName};Data Source=${serverName_resource.properties.fullyQualifiedDomainName};User Id=${administratorLogin}@${serverName};Password=${administratorLoginPassword}'
+      value: 'Database=${databaseName};Data Source=${serverName.properties.fullyQualifiedDomainName};User Id=${administratorLogin}@${serverName_var};Password=${administratorLoginPassword}'
       type: 'MySql'
     }
   }
   dependsOn: [
-    siteName_resource
+    siteName_res
   ]
 }
 
-resource serverName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
+resource serverName 'Microsoft.DBforMySQL/servers@2017-12-01' = {
   location: location
-  name: serverName
+  name: serverName_var
   sku: {
     name: databaseSkuName
     tier: databaseSkuTier
@@ -161,24 +161,24 @@ resource serverName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
 
 resource serverName_AllowAzureIPs 'Microsoft.DBforMySQL/servers/firewallrules@2017-12-01' = {
   location: location
-  name: '${serverName}/AllowAzureIPs'
+  name: '${serverName_var}/AllowAzureIPs'
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '0.0.0.0'
   }
   dependsOn: [
     serverName_databaseName
-    serverName_resource
+    serverName
   ]
 }
 
 resource serverName_databaseName 'Microsoft.DBforMySQL/servers/databases@2017-12-01' = {
-  name: '${serverName}/${databaseName}'
+  name: '${serverName_var}/${databaseName}'
   properties: {
     charset: 'utf8'
     collation: 'utf8_general_ci'
   }
   dependsOn: [
-    serverName_resource
+    serverName
   ]
 }

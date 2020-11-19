@@ -31,7 +31,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource eventhubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+resource eventhubNamespaceName_res 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
   name: eventhubNamespaceName
   location: location
   sku: {
@@ -49,6 +49,6 @@ resource eventhubNamespaceName_ipFilterRuleName 'Microsoft.EventHub/namespaces/I
     IpMask: IpMask
   }
   dependsOn: [
-    eventhubNamespaceName_resource
+    eventhubNamespaceName_res
   ]
 }

@@ -121,7 +121,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: newStorageAccountName
   location: location
   sku: {
@@ -130,7 +130,7 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-
   kind: 'StorageV2'
 }
 
-resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource publicIPName_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: publicIPName
   location: location
   properties: {
@@ -138,7 +138,7 @@ resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' 
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+resource nicName_res 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   name: nicName
   location: location
   properties: {
@@ -148,7 +148,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPName_resource.id
+            id: publicIPName_res.id
           }
           subnet: {
             id: resourceId(virtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnet1Name)
@@ -157,12 +157,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -194,7 +191,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName_res.id
         }
       ]
     }
@@ -206,7 +203,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }

@@ -51,7 +51,7 @@ param subnet1Prefix string {
 param informaticaTags object
 param quickstartTags object
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: vnetName
   location: location
   tags: {

@@ -37,7 +37,7 @@ param capacity int {
   default: 1
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: appServicePlanName
   location: location
   properties: {
@@ -55,17 +55,14 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource siteName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: siteName
   location: location
   properties: {
     name: siteName
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName_res.id
     hostingEnvironmentProfile: {
       id: resourceId('Microsoft.Web/hostingEnvironments', appServiceEnvironmentName)
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }

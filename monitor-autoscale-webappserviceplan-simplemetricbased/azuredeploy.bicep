@@ -74,10 +74,10 @@ param autoscaleEnabled bool {
   }
 }
 
-var settingName = '${toLower(svcPlanName)}-setting'
-var targetResourceId = svcPlanName_resource.id
+var settingName_var = '${toLower(svcPlanName)}-setting'
+var targetResourceId = svcPlanName_res.id
 
-resource svcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource svcPlanName_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   name: svcPlanName
   location: resourceGroup().location
   sku: {
@@ -87,8 +87,8 @@ resource svcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   }
 }
 
-resource settingName_resource 'Microsoft.Insights/autoscalesettings@2014-04-01' = {
-  name: settingName
+resource settingName 'Microsoft.Insights/autoscalesettings@2014-04-01' = {
+  name: settingName_var
   location: resourceGroup().location
   properties: {
     profiles: [
@@ -144,7 +144,4 @@ resource settingName_resource 'Microsoft.Insights/autoscalesettings@2014-04-01' 
     enabled: autoscaleEnabled
     targetResourceUri: targetResourceId
   }
-  dependsOn: [
-    svcPlanName_resource
-  ]
 }

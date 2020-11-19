@@ -62,18 +62,18 @@ var script2Command = (isWindowsOs ? 'powershell -ExecutionPolicy Unrestricted -F
 var script1File = (isWindowsOs ? 'script-1.ps1' : 'script-1.sh')
 var script2File = (isWindowsOs ? 'script-2.ps1' : 'script-2.sh')
 var vmName = 'vm'
-var storageAccountName = concat(vmName, uniqueString(resourceGroup().id))
-var networkSecurityGroupName = 'nsg'
+var storageAccountName_var = concat(vmName, uniqueString(resourceGroup().id))
+var networkSecurityGroupName_var = 'nsg'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = 'vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var createVMUrl = uri(artifactsLocation, 'nestedtemplates/vm.json${artifactsLocationSasToken}')
 var extensionUrl = uri(artifactsLocation, 'nestedtemplates/customScriptExtension.json${artifactsLocationSasToken}')
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-02-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2018-02-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -82,8 +82,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-02-
   properties: {}
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-07-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-07-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -102,8 +102,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-07-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2018-07-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2018-07-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -124,7 +124,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-module creatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
+module creatingVM '?' /*TODO: replace with correct path to [variables('createVMUrl')]*/ = {
   name: 'creatingVM'
   params: {
     adminPasswordOrKey: adminPasswordOrKey
@@ -132,20 +132,20 @@ module creatingVM '<failed to parse [variables(\'createVMUrl\')]>' = {
     authenticationType: authenticationType
     operatingSystem: operatingSystem
     location: location
-    nsgId: networkSecurityGroupName_resource.id
-    storageAccountId: storageAccountName_resource.id
+    nsgId: networkSecurityGroupName.id
+    storageAccountId: storageAccountName.id
     subnetRef: subnetRef
     vmSize: vmSize
     vmName: vmName
   }
   dependsOn: [
-    virtualNetworkName_resource
-    storageAccountName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName
+    storageAccountName
+    networkSecurityGroupName
   ]
 }
 
-module firstExtensionRun '<failed to parse [variables(\'extensionUrl\')]>' = {
+module firstExtensionRun '?' /*TODO: replace with correct path to [variables('extensionUrl')]*/ = {
   name: 'firstExtensionRun'
   params: {
     location: location
@@ -162,7 +162,7 @@ module firstExtensionRun '<failed to parse [variables(\'extensionUrl\')]>' = {
   ]
 }
 
-module secondExtensionRun '<failed to parse [variables(\'extensionUrl\')]>' = {
+module secondExtensionRun '?' /*TODO: replace with correct path to [variables('extensionUrl')]*/ = {
   name: 'secondExtensionRun'
   params: {
     location: location

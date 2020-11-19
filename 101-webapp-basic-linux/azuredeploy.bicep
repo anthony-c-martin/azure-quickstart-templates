@@ -24,11 +24,11 @@ param location string {
   default: resourceGroup().location
 }
 
-var webAppPortalName = '${webAppName}-webapp'
-var appServicePlanName = 'AppServicePlan-${webAppName}'
+var webAppPortalName_var = '${webAppName}-webapp'
+var appServicePlanName_var = 'AppServicePlan-${webAppName}'
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: appServicePlanName
+resource appServicePlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: appServicePlanName_var
   location: location
   sku: {
     name: sku
@@ -39,17 +39,14 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource webAppPortalName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webAppPortalName
+resource webAppPortalName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webAppPortalName_var
   location: location
   kind: 'app'
   properties: {
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName.id
     siteConfig: {
       linuxFxVersion: linuxFxVersion
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }

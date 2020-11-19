@@ -60,7 +60,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource policyName_resource 'Microsoft.Cdn/CdnWebApplicationFirewallPolicies@2019-06-15-preview' = {
+resource policyName_res 'Microsoft.Cdn/CdnWebApplicationFirewallPolicies@2019-06-15-preview' = {
   name: policyName
   location: 'Global'
   sku: {
@@ -151,7 +151,7 @@ resource policyName_resource 'Microsoft.Cdn/CdnWebApplicationFirewallPolicies@20
   }
 }
 
-resource profileName_resource 'Microsoft.Cdn/profiles@2019-06-15-preview' = {
+resource profileName_res 'Microsoft.Cdn/profiles@2019-06-15-preview' = {
   name: profileName
   location: location
   sku: {
@@ -184,11 +184,10 @@ resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2019-06-15-p
       }
     ]
     webApplicationFirewallPolicyLink: {
-      id: policyName_resource.id
+      id: policyName_res.id
     }
   }
   dependsOn: [
-    profileName_resource
-    policyName_resource
+    profileName_res
   ]
 }

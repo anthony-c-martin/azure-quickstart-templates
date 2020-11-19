@@ -46,20 +46,20 @@ param targetSQLTable string {
   }
 }
 
-var dataFactoryName = 'AzureBlobToAzureSQLDatabaseDF${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'AzureBlobToAzureSQLDatabaseDF${uniqueString(resourceGroup().id)}'
 var azureSqlLinkedServiceName = 'AzureSqlLinkedService'
 var azureStorageLinkedServiceName = 'AzureStorageLinkedService'
 var blobInputDatasetName = 'BlobInputDataset'
 var sqlOutputDatasetName = 'SQLOutputDataset'
 var pipelineName = 'Blob2SQLPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: 'West US'
 }
 
 resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureStorageLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureStorageLinkedServiceName}'
   properties: {
     type: 'AzureStorage'
     description: 'Azure Storage linked service'
@@ -68,12 +68,12 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/da
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
   ]
 }
 
 resource dataFactoryName_azureSqlLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureSqlLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureSqlLinkedServiceName}'
   properties: {
     type: 'AzureSqlDatabase'
     description: 'Azure SQL linked service'
@@ -82,12 +82,12 @@ resource dataFactoryName_azureSqlLinkedServiceName 'Microsoft.DataFactory/datafa
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
   ]
 }
 
 resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${blobInputDatasetName}'
+  name: '${dataFactoryName_var}/${blobInputDatasetName}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: azureStorageLinkedServiceName
@@ -116,13 +116,13 @@ resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactori
     external: true
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
 
 resource dataFactoryName_sqlOutputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlOutputDatasetName}'
+  name: '${dataFactoryName_var}/${sqlOutputDatasetName}'
   properties: {
     type: 'AzureSqlTable'
     linkedServiceName: azureSqlLinkedServiceName
@@ -145,13 +145,13 @@ resource dataFactoryName_sqlOutputDatasetName 'Microsoft.DataFactory/datafactori
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureSqlLinkedServiceName
   ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datapipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${pipelineName}'
+  name: '${dataFactoryName_var}/${pipelineName}'
   properties: {
     activities: [
       {
@@ -193,7 +193,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datap
     end: '10/4/2016 12:00:00 AM'
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
     dataFactoryName_azureSqlLinkedServiceName
     dataFactoryName_blobInputDatasetName

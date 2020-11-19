@@ -38,7 +38,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource twilioConnectionName_resource 'Microsoft.Web/connections@2016-06-01' = {
+resource twilioConnectionName_res 'Microsoft.Web/connections@2016-06-01' = {
   location: location
   name: twilioConnectionName
   properties: {
@@ -53,7 +53,7 @@ resource twilioConnectionName_resource 'Microsoft.Web/connections@2016-06-01' = 
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2016-06-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -151,15 +151,12 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
         value: {
           twilio: {
             id: '${subscription().id}/providers/Microsoft.Web/locations/${location}/managedApis/twilio'
-            connectionId: twilioConnectionName_resource.id
+            connectionId: twilioConnectionName_res.id
           }
         }
       }
     }
   }
-  dependsOn: [
-    twilioConnectionName_resource
-  ]
 }
 
-output WebHookURI string = listCallbackURL('${logicAppName_resource.id}/triggers/manual', '2016-06-01').value
+output WebHookURI string = listCallbackURL('${logicAppName_res.id}/triggers/manual', '2016-06-01').value

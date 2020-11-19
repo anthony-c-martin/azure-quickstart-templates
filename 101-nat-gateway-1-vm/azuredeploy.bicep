@@ -88,7 +88,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource nsgname_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource nsgname_res 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
   name: nsgname
   location: location
   properties: {
@@ -110,7 +110,7 @@ resource nsgname_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' =
   }
 }
 
-resource publicipname_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource publicipname_res 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: publicipname
   location: location
   sku: {
@@ -123,7 +123,7 @@ resource publicipname_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' 
   }
 }
 
-resource publicipvmname_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource publicipvmname_res 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: publicipvmname
   location: location
   sku: {
@@ -136,7 +136,7 @@ resource publicipvmname_resource 'Microsoft.Network/publicIPAddresses@2020-06-01
   }
 }
 
-resource publicipprefixname_resource 'Microsoft.Network/publicIPPrefixes@2020-06-01' = {
+resource publicipprefixname_res 'Microsoft.Network/publicIPPrefixes@2020-06-01' = {
   name: publicipprefixname
   location: location
   sku: {
@@ -148,7 +148,7 @@ resource publicipprefixname_resource 'Microsoft.Network/publicIPPrefixes@2020-06
   }
 }
 
-resource vmname_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmname_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmname
   location: location
   properties: {
@@ -186,17 +186,14 @@ resource vmname_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkinterfacename_resource.id
+          id: networkinterfacename_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkinterfacename_resource
-  ]
 }
 
-resource vnetname_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource vnetname_res 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnetname
   location: location
   properties: {
@@ -211,7 +208,7 @@ resource vnetname_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
         properties: {
           addressPrefix: vnetsubnetprefix
           natGateway: {
-            id: natgatewayname_resource.id
+            id: natgatewayname_res.id
           }
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
@@ -221,12 +218,9 @@ resource vnetname_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     enableDdosProtection: false
     enableVmProtection: false
   }
-  dependsOn: [
-    natgatewayname_resource
-  ]
 }
 
-resource natgatewayname_resource 'Microsoft.Network/natGateways@2020-06-01' = {
+resource natgatewayname_res 'Microsoft.Network/natGateways@2020-06-01' = {
   name: natgatewayname
   location: location
   sku: {
@@ -236,19 +230,15 @@ resource natgatewayname_resource 'Microsoft.Network/natGateways@2020-06-01' = {
     idleTimeoutInMinutes: 4
     publicIpAddresses: [
       {
-        id: publicipname_resource.id
+        id: publicipname_res.id
       }
     ]
     publicIpPrefixes: [
       {
-        id: publicipprefixname_resource.id
+        id: publicipprefixname_res.id
       }
     ]
   }
-  dependsOn: [
-    publicipname_resource
-    publicipprefixname_resource
-  ]
 }
 
 resource vnetname_mySubnet 'Microsoft.Network/virtualNetworks/subnets@2020-05-01' = {
@@ -256,18 +246,17 @@ resource vnetname_mySubnet 'Microsoft.Network/virtualNetworks/subnets@2020-05-01
   properties: {
     addressPrefix: vnetsubnetprefix
     natGateway: {
-      id: natgatewayname_resource.id
+      id: natgatewayname_res.id
     }
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
   }
   dependsOn: [
-    vnetname_resource
-    natgatewayname_resource
+    vnetname_res
   ]
 }
 
-resource networkinterfacename_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+resource networkinterfacename_res 'Microsoft.Network/networkInterfaces@2020-06-01' = {
   name: networkinterfacename
   location: location
   properties: {
@@ -278,7 +267,7 @@ resource networkinterfacename_resource 'Microsoft.Network/networkInterfaces@2020
           privateIPAddress: '192.168.0.4'
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicipvmname_resource.id
+            id: publicipvmname_res.id
           }
           subnet: {
             id: vnetname_mySubnet.id
@@ -291,12 +280,7 @@ resource networkinterfacename_resource 'Microsoft.Network/networkInterfaces@2020
     enableAcceleratedNetworking: false
     enableIPForwarding: false
     networkSecurityGroup: {
-      id: nsgname_resource.id
+      id: nsgname_res.id
     }
   }
-  dependsOn: [
-    publicipvmname_resource
-    vnetname_mySubnet
-    nsgname_resource
-  ]
 }

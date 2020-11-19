@@ -69,7 +69,7 @@ var ftpisssl = true
 var ftpisBinaryTransportftpisssl = true
 var ftpdisableCertificateValidation = true
 
-resource ftpConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource ftpConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: ftpConnectionName
   properties: {
@@ -89,7 +89,7 @@ resource ftpConnectionName_resource 'Microsoft.Web/connections@2018-07-01-previe
   }
 }
 
-resource azureBlobConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource azureBlobConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: azureBlobConnectionName
   properties: {
@@ -104,7 +104,7 @@ resource azureBlobConnectionName_resource 'Microsoft.Web/connections@2018-07-01-
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -167,18 +167,14 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
         value: {
           azureblob: {
             id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureblob')
-            connectionId: azureBlobConnectionName_resource.id
+            connectionId: azureBlobConnectionName_res.id
           }
           ftp: {
             id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'ftp')
-            connectionId: ftpConnectionName_resource.id
+            connectionId: ftpConnectionName_res.id
           }
         }
       }
     }
   }
-  dependsOn: [
-    azureBlobConnectionName_resource
-    ftpConnectionName_resource
-  ]
 }

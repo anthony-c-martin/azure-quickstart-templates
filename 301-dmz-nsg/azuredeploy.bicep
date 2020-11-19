@@ -23,26 +23,26 @@ param location string {
   default: resourceGroup().location
 }
 
-var NSGName = 'myVNetNSG'
-var VM01Name = 'IIS01'
-var VM02Name = 'AppVM01'
-var VM03Name = 'AppVM02'
-var VM04Name = 'DNS01'
-var VNetName = 'VNet01'
+var NSGName_var = 'myVNetNSG'
+var VM01Name_var = 'IIS01'
+var VM02Name_var = 'AppVM01'
+var VM03Name_var = 'AppVM02'
+var VM04Name_var = 'DNS01'
+var VNetName_var = 'VNet01'
 var Subnet1Name = 'FrontEnd'
 var Subnet1Prefix = '10.0.1.0/24'
 var Subnet2Name = 'BackEnd'
 var Subnet2Prefix = '10.0.2.0/24'
-var NIC01SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName, Subnet1Name)
-var NIC02SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName, Subnet2Name)
-var NIC03SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName, Subnet2Name)
-var NIC04SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName, Subnet2Name)
+var NIC01SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName_var, Subnet1Name)
+var NIC02SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName_var, Subnet2Name)
+var NIC03SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName_var, Subnet2Name)
+var NIC04SubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', VNetName_var, Subnet2Name)
 var imageOffer = 'WindowsServer'
 var imagePublisher = 'MicrosoftWindowsServer'
 var windowsOSVersion = '2019-Datacenter'
 
-resource VNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: VNetName
+resource VNetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: VNetName_var
   location: location
   tags: {
     displayName: 'VNet01'
@@ -60,7 +60,7 @@ resource VNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: Subnet1Prefix
           networkSecurityGroup: {
-            id: NSGName_resource.id
+            id: NSGName.id
           }
         }
       }
@@ -69,20 +69,19 @@ resource VNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: Subnet2Prefix
           networkSecurityGroup: {
-            id: NSGName_resource.id
+            id: NSGName.id
           }
         }
       }
     ]
   }
   dependsOn: [
-    NSGName_resource
     VM01Name_NIC_PIP
   ]
 }
 
 resource VM01Name_NIC_PIP 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: '${VM01Name}_NIC_PIP'
+  name: '${VM01Name_var}_NIC_PIP'
   location: location
   tags: {
     displayName: 'IIS01 NIC PIP'
@@ -94,7 +93,7 @@ resource VM01Name_NIC_PIP 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
 }
 
 resource VM01Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: '${VM01Name}_NIC'
+  name: '${VM01Name_var}_NIC'
   location: location
   tags: {
     displayName: 'IIS01 NIC'
@@ -117,12 +116,12 @@ resource VM01Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    VNetName_resource
+    VNetName
   ]
 }
 
 resource VM02Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: '${VM02Name}_NIC'
+  name: '${VM02Name_var}_NIC'
   location: location
   tags: {
     displayName: 'AppVM01 NIC'
@@ -142,12 +141,12 @@ resource VM02Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    VNetName_resource
+    VNetName
   ]
 }
 
 resource VM03Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: '${VM03Name}_NIC'
+  name: '${VM03Name_var}_NIC'
   location: location
   tags: {
     displayName: 'AppVM02 NIC'
@@ -167,12 +166,12 @@ resource VM03Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    VNetName_resource
+    VNetName
   ]
 }
 
 resource VM04Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: '${VM04Name}_NIC'
+  name: '${VM04Name_var}_NIC'
   location: location
   tags: {
     displayName: 'DNS01 NIC'
@@ -192,12 +191,12 @@ resource VM04Name_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    VNetName_resource
+    VNetName
   ]
 }
 
-resource VM01Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: VM01Name
+resource VM01Name 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: VM01Name_var
   location: location
   tags: {
     displayName: 'IIS01'
@@ -207,7 +206,7 @@ resource VM01Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: VM01Name
+      computerName: VM01Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -234,13 +233,10 @@ resource VM01Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    VM01Name_NIC
-  ]
 }
 
-resource VM02Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: VM02Name
+resource VM02Name 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: VM02Name_var
   location: location
   tags: {
     displayName: 'AppVM01'
@@ -250,7 +246,7 @@ resource VM02Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: VM02Name
+      computerName: VM02Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -277,13 +273,10 @@ resource VM02Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    VM02Name_NIC
-  ]
 }
 
-resource VM03Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: VM03Name
+resource VM03Name 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: VM03Name_var
   location: location
   tags: {
     displayName: 'AppVM02'
@@ -293,7 +286,7 @@ resource VM03Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: VM03Name
+      computerName: VM03Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -320,13 +313,10 @@ resource VM03Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    VM03Name_NIC
-  ]
 }
 
-resource VM04Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: VM04Name
+resource VM04Name 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: VM04Name_var
   location: location
   tags: {
     displayName: 'DNS01'
@@ -336,7 +326,7 @@ resource VM04Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: VM04Name
+      computerName: VM04Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -363,13 +353,10 @@ resource VM04Name_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    VM04Name_NIC
-  ]
 }
 
-resource NSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: NSGName
+resource NSGName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: NSGName_var
   location: location
   tags: {
     displayName: 'myVNetNSG'

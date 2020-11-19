@@ -22,7 +22,7 @@ var extensionName = 'AzureDiskEncryptionForLinux'
 var extensionVersion = '1.1'
 var encryptionOperation = 'DisableEncryption'
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@[variables(\'computeApiVersion\')]' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@[variables(\'computeApiVersion\')]' = {
   name: vmssName
   location: resourceGroup().location
   sku: {

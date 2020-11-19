@@ -83,7 +83,7 @@ var sku = 'rs5-pro'
 var scriptFolder = '.'
 var setupScriptLocation = uri(artifactsLocation, concat(setupChocolateyScriptFileName, artifactsLocationSasToken))
 
-resource networkSecurityGroup_name_resource 'Microsoft.Network/networkSecurityGroups@2019-07-01' = {
+resource networkSecurityGroup_name_res 'Microsoft.Network/networkSecurityGroups@2019-07-01' = {
   name: networkSecurityGroup_name
   location: location
   properties: {
@@ -113,11 +113,11 @@ resource virtualNetwork_name_default 'Microsoft.Network/virtualNetworks/subnets@
     privateLinkServiceNetworkPolicies: 'Enabled'
   }
   dependsOn: [
-    virtualNetwork_name_resource
+    virtualNetwork_name_res
   ]
 }
 
-resource virtualNetwork_name_resource 'Microsoft.Network/virtualNetworks@2019-07-01' = {
+resource virtualNetwork_name_res 'Microsoft.Network/virtualNetworks@2019-07-01' = {
   name: virtualNetwork_name
   location: location
   properties: {
@@ -141,7 +141,7 @@ resource virtualNetwork_name_resource 'Microsoft.Network/virtualNetworks@2019-07
   }
 }
 
-resource publicIPAddress_name_resource 'Microsoft.Network/publicIPAddresses@2019-07-01' = {
+resource publicIPAddress_name_res 'Microsoft.Network/publicIPAddresses@2019-07-01' = {
   name: publicIPAddress_name
   location: location
   sku: {
@@ -157,7 +157,7 @@ resource publicIPAddress_name_resource 'Microsoft.Network/publicIPAddresses@2019
   }
 }
 
-resource nic_name_resource 'Microsoft.Network/networkInterfaces@2019-07-01' = {
+resource nic_name_res 'Microsoft.Network/networkInterfaces@2019-07-01' = {
   name: nic_name
   location: location
   properties: {
@@ -168,7 +168,7 @@ resource nic_name_resource 'Microsoft.Network/networkInterfaces@2019-07-01' = {
           privateIPAddress: '10.0.4.4'
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddress_name_resource.id
+            id: publicIPAddress_name_res.id
           }
           subnet: {
             id: virtualNetwork_name_default.id
@@ -181,17 +181,12 @@ resource nic_name_resource 'Microsoft.Network/networkInterfaces@2019-07-01' = {
     enableAcceleratedNetworking: false
     enableIPForwarding: false
     networkSecurityGroup: {
-      id: networkSecurityGroup_name_resource.id
+      id: networkSecurityGroup_name_res.id
     }
   }
-  dependsOn: [
-    publicIPAddress_name_resource
-    virtualNetwork_name_default
-    networkSecurityGroup_name_resource
-  ]
 }
 
-resource vm_name_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vm_name_res 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   name: vm_name
   location: location
   properties: {
@@ -220,14 +215,11 @@ resource vm_name_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nic_name_resource.id
+          id: nic_name_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    nic_name_resource
-  ]
 }
 
 resource vm_name_GPUDrivers 'Microsoft.Compute/virtualMachines/extensions@2019-07-01' = {
@@ -243,7 +235,7 @@ resource vm_name_GPUDrivers 'Microsoft.Compute/virtualMachines/extensions@2019-0
     autoUpgradeMinorVersion: true
   }
   dependsOn: [
-    vm_name_resource
+    vm_name_res
   ]
 }
 

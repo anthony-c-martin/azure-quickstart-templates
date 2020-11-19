@@ -61,20 +61,20 @@ param location string {
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'myVMNic1'
+var nicName_var = 'myVMNic1'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
-var vmName = 'MyUbuntuVM'
-var virtualNetworkName = 'MyVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = 'MyUbuntuVM'
+var virtualNetworkName_var = 'MyVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var filesToDownload = uri(artifactsLocation, 'script/install.sh')
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -84,8 +84,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -104,8 +104,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-06-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-06-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -114,7 +114,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-06-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -127,8 +127,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-06-01' = {
     }
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
@@ -167,21 +166,21 @@ resource mysg 'Microsoft.Network/networkSecurityGroups@2017-06-01' = {
     ]
     networkInterfaces: [
       {
-        id: nicName_resource.id
+        id: nicName.id
       }
     ]
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -217,18 +216,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
-  name: '${vmName}/CustomScript'
+  name: '${vmName_var}/CustomScript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -240,14 +236,14 @@ resource vmName_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2017-
       ]
     }
     protectedSettings: {
-      commandToExecute: 'export TERM=xterm && bash install.sh -u ${adminEmail} -d ${reference(publicIPAddressName).dnsSettings.fqdn} -p "${adminPass}"'
+      commandToExecute: 'export TERM=xterm && bash install.sh -u ${adminEmail} -d ${reference(publicIPAddressName_var).dnsSettings.fqdn} -p "${adminPass}"'
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output hostname string = reference(publicIPAddressName).dnsSettings.fqdn
-output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
+output hostname string = reference(publicIPAddressName_var).dnsSettings.fqdn
+output sshCommand string = 'ssh ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
 output extensionOutput string = reference('Microsoft.Compute/virtualMachines/MyUbuntuVM/extensions/CustomScript').instanceView.statuses[0].message

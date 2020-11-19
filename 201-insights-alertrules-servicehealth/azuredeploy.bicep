@@ -27,7 +27,7 @@ param emailName string {
   default: 'Example'
 }
 
-resource alertName_resource 'Microsoft.Insights/activityLogAlerts@2017-04-01' = {
+resource alertName_res 'Microsoft.Insights/activityLogAlerts@2017-04-01' = {
   name: alertName
   location: 'global'
   properties: {

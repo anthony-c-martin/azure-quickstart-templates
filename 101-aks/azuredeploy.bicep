@@ -69,7 +69,7 @@ param osType string {
   default: 'Linux'
 }
 
-resource clusterName_resource 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
+resource clusterName_res 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
   name: clusterName
   location: location
   properties: {
@@ -96,7 +96,7 @@ resource clusterName_resource 'Microsoft.ContainerService/managedClusters@2020-0
     }
     servicePrincipalProfile: {
       clientId: servicePrincipalClientId
-      Secret: servicePrincipalClientSecret
+      secret: servicePrincipalClientSecret
     }
   }
 }

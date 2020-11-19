@@ -11,7 +11,7 @@ param rgLocation string {
   default: deployment().location
 }
 
-resource rgName_resource 'Microsoft.Resources/resourceGroups@2020-06-01' = {
+resource rgName_res 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   name: rgName
   location: rgLocation
   tags: {

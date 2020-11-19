@@ -72,21 +72,21 @@ param operatingSystem string {
 
 var azureCLI2DockerImage = 'azuresdk/azure-cli-python:latest'
 var vmssPrefix = 'vmss'
-var storageAccountName = concat(vmssPrefix, uniqueString(resourceGroup().id))
+var storageAccountName_var = concat(vmssPrefix, uniqueString(resourceGroup().id))
 var nicName = 'nic'
-var networkSecurityGroupName = 'nsg'
+var networkSecurityGroupName_var = 'nsg'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var vmssName = concat(vmssPrefix, uniqueString(resourceGroup().id))
-var virtualNetworkName = 'vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var containerName = 'msi'
 var createVMSSUrl = uri(artifactsLocation, 'nestedtemplates/createVMSS.json${artifactsLocationSasToken}')
 var createRBACUrl = uri(artifactsLocation, 'nestedtemplates/setUpRBAC.json${artifactsLocationSasToken}')
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -95,8 +95,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -115,8 +115,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-11-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-11-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -137,7 +137,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-module creatingVMSS '<failed to parse [variables(\'createVMSSUrl\')]>' = {
+module creatingVMSS '?' /*TODO: replace with correct path to [variables('createVMSSUrl')]*/ = {
   name: 'creatingVMSS'
   params: {
     '_artifactsLocation': artifactsLocation
@@ -150,36 +150,36 @@ module creatingVMSS '<failed to parse [variables(\'createVMSSUrl\')]>' = {
     operatingSystem: operatingSystem
     instanceCount: 0
     location: location
-    networkSecurityGroupName: networkSecurityGroupName
+    networkSecurityGroupName: networkSecurityGroupName_var
     nicName: nicName
     overProvision: overProvision
     provisionExtensions: false
-    storageAccountId: storageAccountName_resource.id
-    storageAccountName: storageAccountName
+    storageAccountId: storageAccountName.id
+    storageAccountName: storageAccountName_var
     subnetRef: subnetRef
     vmSize: vmSize
     vmssName: vmssName
     vmssPrefix: vmssPrefix
   }
   dependsOn: [
-    virtualNetworkName_resource
-    storageAccountName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName
+    storageAccountName
+    networkSecurityGroupName
   ]
 }
 
-module creatingRBAC '<failed to parse [variables(\'createRBACUrl\')]>' = {
+module creatingRBAC '?' /*TODO: replace with correct path to [variables('createRBACUrl')]*/ = {
   name: 'creatingRBAC'
   params: {
     principalId: reference(creatingVMSS.id, '2019-09-01').outputs.principalId.value
-    storageAccountName: storageAccountName
+    storageAccountName: storageAccountName_var
   }
   dependsOn: [
     creatingVMSS
   ]
 }
 
-module updatingVMSS '<failed to parse [variables(\'createVMSSUrl\')]>' = {
+module updatingVMSS '?' /*TODO: replace with correct path to [variables('createVMSSUrl')]*/ = {
   name: 'updatingVMSS'
   params: {
     '_artifactsLocation': artifactsLocation
@@ -192,12 +192,12 @@ module updatingVMSS '<failed to parse [variables(\'createVMSSUrl\')]>' = {
     operatingSystem: operatingSystem
     instanceCount: instanceCount
     location: location
-    networkSecurityGroupName: networkSecurityGroupName
+    networkSecurityGroupName: networkSecurityGroupName_var
     nicName: nicName
     overProvision: overProvision
     provisionExtensions: true
-    storageAccountId: storageAccountName_resource.id
-    storageAccountName: storageAccountName
+    storageAccountId: storageAccountName.id
+    storageAccountName: storageAccountName_var
     subnetRef: subnetRef
     vmSize: vmSize
     vmssName: vmssName

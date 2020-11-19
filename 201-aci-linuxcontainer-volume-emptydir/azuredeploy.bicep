@@ -49,7 +49,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroups@2017-10-01-preview' = {
+resource containergroupname_res 'Microsoft.ContainerInstance/containerGroups@2017-10-01-preview' = {
   name: containergroupname
   location: location
   properties: {
@@ -67,7 +67,7 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
           volumeMounts: [
@@ -91,7 +91,7 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
           volumeMounts: [
@@ -123,4 +123,4 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
   }
 }
 
-output containerIPv4Address string = containergroupname_resource.properties.ipAddress.ip
+output containerIPv4Address string = containergroupname_res.properties.ipAddress.ip

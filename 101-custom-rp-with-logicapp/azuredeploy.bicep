@@ -34,7 +34,7 @@ param customResourceName string {
   default: 'myDemoCustomResource'
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -128,7 +128,7 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
   }
 }
 
-resource customResourceProviderName_resource 'Microsoft.CustomProviders/resourceProviders@2018-09-01-preview' = {
+resource customResourceProviderName_res 'Microsoft.CustomProviders/resourceProviders@2018-09-01-preview' = {
   name: customResourceProviderName
   location: location
   properties: {
@@ -142,7 +142,7 @@ resource customResourceProviderName_resource 'Microsoft.CustomProviders/resource
     ]
   }
   dependsOn: [
-    logicAppName_resource
+    logicAppName_res
   ]
 }
 
@@ -156,7 +156,7 @@ resource customResourceProviderName_customResourceName 'Microsoft.CustomProvider
     }
   }
   dependsOn: [
-    customResourceProviderName_resource
+    customResourceProviderName_res
   ]
 }
 

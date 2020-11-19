@@ -100,7 +100,7 @@ param location string {
 
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -120,7 +120,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-01' = {
+resource applicationGatewayName_res 'Microsoft.Network/applicationGateways@2020-05-01' = {
   name: applicationGatewayName
   location: location
   properties: {
@@ -153,7 +153,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendPort'
         properties: {
-          Port: frontendPort
+          port: frontendPort
         }
       }
     ]
@@ -161,7 +161,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool'
         properties: {
-          BackendAddresses: backendIPAddresses
+          backendAddresses: backendIPAddresses
         }
       }
     ]
@@ -169,9 +169,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: backendPort
-          Protocol: 'Http'
-          CookieBasedAffinity: cookieBasedAffinity
+          port: backendPort
+          protocol: 'Http'
+          cookieBasedAffinity: cookieBasedAffinity
         }
       }
     ]
@@ -179,21 +179,21 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener'
         properties: {
-          FrontendIpConfiguration: {
+          frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
+          frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
+          protocol: 'Http'
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'appGatewayHttpListener')
           }
@@ -208,6 +208,6 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }
