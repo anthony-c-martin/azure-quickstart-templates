@@ -1,0 +1,349 @@
+param accountPrefix string {
+  metadata: {
+    description: 'Unique prefix for your Storage Account and VM name. Must be all lower case letters or numbers. No spaces or special characters.'
+  }
+}
+param adminUsername string {
+  metadata: {
+    description: 'Username for the VM. This value is ignored.'
+  }
+}
+param vmSize string {
+  allowed: [
+    'Standard_DS3_v2'
+    'Standard_DS4_v2'
+    'Standard_DS12_v2'
+    'Standard_DS13_v2'
+    'Standard_DS14_v2'
+    'Standard_DS15_v2'
+  ]
+  metadata: {
+    description: 'VM Size. Select a DS v2 Series VM with at least 14 GB of RAM. Default value: Standard_DS3_v2'
+  }
+  default: 'Standard_DS3_v2'
+}
+param storageDiskSizeGB string {
+  metadata: {
+    description: 'Select a Premium Storage disk capacity for your source code, in GB. Default value: 512.'
+  }
+  default: '512'
+}
+param authenticationType string {
+  allowed: [
+    'sshPublicKey'
+    'password'
+  ]
+  metadata: {
+    description: 'Type of authentication to use on the Virtual Machine. SSH key is recommended.'
+  }
+  default: 'sshPublicKey'
+}
+param adminPasswordOrKey string {
+  metadata: {
+    description: 'SSH Key or password for the Virtual Machine. SSH key is recommended.'
+  }
+  secure: true
+}
+param location string {
+  metadata: {
+    description: 'Location for all resources.'
+  }
+  default: resourceGroup().location
+}
+
+var imagePublisher = 'GitHub'
+var imageOffer = 'GitHub-Enterprise'
+var OSDiskName = 'osdiskforlinuxsimple'
+var nicName = '${replace(replace(accountPrefix, '.', ''), '_', '-')}-nic'
+var addressPrefix = '10.0.0.0/16'
+var subnetName = 'Subnet'
+var subnetPrefix = '10.0.0.0/24'
+var storageAccountType = 'Premium_LRS'
+var storageAccountName = '${replace(replace(replace(accountPrefix, '.', ''), '_', ''), '-', '')}data'
+var publicIPAddressName = '${replace(replace(accountPrefix, '.', ''), '_', '-')}-pub-ip'
+var publicIPAddressType = 'Dynamic'
+var dnsNameForPublicIP = '${accountPrefix}-ghe'
+var vmName = '${replace(replace(accountPrefix, '.', ''), '_', '-')}-ghe-vm'
+var virtualNetworkName = '${replace(replace(accountPrefix, '.', ''), '_', '-')}-vnet'
+var networkSecurityGroupName = '${replace(replace(accountPrefix, '.', ''), '_', '-')}-nsg'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var dataDiskName = 'ghe-data'
+var linuxConfiguration = {
+  disablePasswordAuthentication: true
+  ssh: {
+    publicKeys: [
+      {
+        path: '/home/${adminUsername}/.ssh/authorized_keys'
+        keyData: adminPasswordOrKey
+      }
+    ]
+  }
+}
+
+resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: storageAccountType
+  }
+  kind: 'StorageV2'
+}
+
+resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName
+  location: location
+  properties: {
+    publicIPAllocationMethod: publicIPAddressType
+    dnsSettings: {
+      domainNameLabel: dnsNameForPublicIP
+    }
+  }
+}
+
+resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        addressPrefix
+      ]
+    }
+    subnets: [
+      {
+        name: subnetName
+        properties: {
+          addressPrefix: subnetPrefix
+          networkSecurityGroup: {
+            id: networkSecurityGroupName_resource.id
+          }
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    networkSecurityGroupName_resource
+  ]
+}
+
+resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'ipconfig1'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIPAddressName_resource.id
+          }
+          subnet: {
+            id: subnetRef
+          }
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    publicIPAddressName_resource
+    virtualNetworkName_resource
+  ]
+}
+
+resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName
+  location: location
+  properties: {
+    hardwareProfile: {
+      vmSize: vmSize
+    }
+    osProfile: {
+      computerName: vmName
+      adminUsername: adminUsername
+      adminPassword: adminPasswordOrKey
+      linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
+    }
+    storageProfile: {
+      imageReference: {
+        publisher: imagePublisher
+        offer: imageOffer
+        sku: imageOffer
+        version: 'latest'
+      }
+      osDisk: {
+        name: '${OSDiskName}_OSDisk'
+        caching: 'ReadWrite'
+        createOption: 'FromImage'
+      }
+      dataDisks: [
+        {
+          name: '${dataDiskName}_DataDisk1'
+          diskSizeGB: storageDiskSizeGB
+          createOption: 'Empty'
+          lun: 0
+        }
+      ]
+    }
+    networkProfile: {
+      networkInterfaces: [
+        {
+          id: nicName_resource.id
+        }
+      ]
+    }
+  }
+  dependsOn: [
+    storageAccountName_resource
+    nicName_resource
+  ]
+}
+
+resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'https_8443'
+        properties: {
+          description: 'https'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '8443'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'http_8080'
+        properties: {
+          description: 'http plain text'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '8080'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 101
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'ssh_port_122'
+        properties: {
+          description: 'Allow admin SSH'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '122'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 102
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'vpn_1194'
+        properties: {
+          description: 'Allow VPN'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '1194'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 103
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'snmp_161'
+        properties: {
+          description: 'Allow SNMP'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '161'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 104
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'https_443'
+        properties: {
+          description: 'Allow HTTPS'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '443'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 105
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'http_80'
+        properties: {
+          description: 'Allow HTTP'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '80'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 106
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'ssh_22'
+        properties: {
+          description: 'Allow Git SSH'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '22'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 107
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'git_9418'
+        properties: {
+          description: 'Allow Git'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '9418'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 108
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'smtp_25'
+        properties: {
+          description: 'Allow SMTP'
+          protocol: '*'
+          sourcePortRange: '*'
+          destinationPortRange: '25'
+          sourceAddressPrefix: 'Internet'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 109
+          direction: 'Inbound'
+        }
+      }
+    ]
+  }
+}

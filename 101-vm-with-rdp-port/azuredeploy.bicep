@@ -1,0 +1,234 @@
+param dnsLabelPrefix string {
+  metadata: {
+    description: 'Unique public DNS prefix for the deployment. The fqdn will look something like \'<dnsname>.westus.cloudapp.azure.com\'. Up to 62 chars, digits or dashes, lowercase, should start with a letter: must conform to \'^[a-z][a-z0-9-]{1,61}[a-z0-9]$\'.'
+  }
+}
+param vmName string {
+  metadata: {
+    description: 'The name of the VM'
+  }
+  default: 'vm'
+}
+param adminUsername string {
+  metadata: {
+    description: 'The name of the administrator of the new VM. Exclusion list: \'admin\',\'administrator\''
+  }
+  default: 'azureUser'
+}
+param adminPassword string {
+  metadata: {
+    description: 'The password for the administrator account of the new VM'
+  }
+  secure: true
+}
+param rdpPort int {
+  metadata: {
+    description: 'Public port number for RDP'
+  }
+  default: 50001
+}
+param location string {
+  metadata: {
+    description: 'Location for all resources.'
+  }
+  default: resourceGroup().location
+}
+param vmSize string {
+  metadata: {
+    description: 'Size of the virtual machine'
+  }
+  default: 'Standard_DS1_v2'
+}
+
+var storageAccountName = '${uniqueString(resourceGroup().id)}sardpvm'
+var virtualNetworkName = 'rdpVNET'
+var vnetAddressRange = '10.0.0.0/16'
+var subnetAddressRange = '10.0.0.0/24'
+var subnetName = 'Subnet'
+var subnet_id = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var imagePublisher = 'MicrosoftWindowsServer'
+var imageOffer = 'WindowsServer'
+var imageSku = '2019-Datacenter'
+var networkSecurityGroupName = 'Subnet-nsg'
+
+resource publicIp 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: 'publicIp'
+  location: location
+  properties: {
+    publicIPAllocationMethod: 'Dynamic'
+    dnsSettings: {
+      domainNameLabel: dnsLabelPrefix
+    }
+  }
+}
+
+resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+}
+
+resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'default-allow-3389'
+        properties: {
+          priority: 1000
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '3389'
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
+    ]
+  }
+}
+
+resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        vnetAddressRange
+      ]
+    }
+    subnets: [
+      {
+        name: 'Subnet'
+        properties: {
+          addressPrefix: subnetAddressRange
+          networkSecurityGroup: {
+            id: networkSecurityGroupName_resource.id
+          }
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    networkSecurityGroupName_resource
+  ]
+}
+
+resource loadBalancer 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: 'loadBalancer'
+  location: location
+  properties: {
+    frontendIPConfigurations: [
+      {
+        name: 'LBFE'
+        properties: {
+          publicIPAddress: {
+            id: publicIp.id
+          }
+        }
+      }
+    ]
+    backendAddressPools: [
+      {
+        name: 'LBBAP'
+      }
+    ]
+    inboundNatRules: [
+      {
+        name: 'rdp'
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', 'loadBalancer', 'LBFE')
+          }
+          protocol: 'Tcp'
+          frontendPort: rdpPort
+          backendPort: 3389
+          enableFloatingIP: false
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    publicIp
+  ]
+}
+
+resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: '${vmName}-nic'
+  location: location
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'ipconfig'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          subnet: {
+            id: subnet_id
+          }
+          loadBalancerBackendAddressPools: [
+            {
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', 'loadBalancer', 'LBBAP')
+            }
+          ]
+          loadBalancerInboundNatRules: [
+            {
+              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', 'loadBalancer', 'rdp')
+            }
+          ]
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    virtualNetworkName_resource
+    loadBalancer
+  ]
+}
+
+resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName
+  location: location
+  properties: {
+    hardwareProfile: {
+      vmSize: vmSize
+    }
+    osProfile: {
+      computerName: vmName
+      adminUsername: adminUsername
+      adminPassword: adminPassword
+    }
+    storageProfile: {
+      imageReference: {
+        publisher: imagePublisher
+        offer: imageOffer
+        sku: imageSku
+        version: 'latest'
+      }
+      osDisk: {
+        createOption: 'FromImage'
+      }
+    }
+    networkProfile: {
+      networkInterfaces: [
+        {
+          id: vmName_nic.id
+        }
+      ]
+    }
+    diagnosticsProfile: {
+      bootDiagnostics: {
+        enabled: true
+        storageUri: reference(storageAccountName, '2019-06-01').primaryEndpoints.blob
+      }
+    }
+  }
+  dependsOn: [
+    storageAccountName_resource
+    vmName_nic
+  ]
+}
