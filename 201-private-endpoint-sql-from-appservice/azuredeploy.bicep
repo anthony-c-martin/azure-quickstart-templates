@@ -29,25 +29,25 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-var vnetName = 'myVirtualNetwork'
+var vnetName_var = 'myVirtualNetwork'
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnet1Prefix = '10.0.0.0/24'
 var subnet1Name = 'mySubnet'
 var subnetAppServicePrefix = '10.0.1.0/24'
 var subnetAppServiceName = 'subnetAppService'
-var sqlServerName = 'sqlserver${uniqueString(resourceGroup().id)}'
-var databaseName = '${sqlServerName}/sample-db'
-var privateEndpointName = 'myPrivateEndpoint'
-var privateDnsZoneName = 'privatelink.database.windows.net'
-var pvtendpointdnsgroupname = '${privateEndpointName}/mydnsgroupname'
-var websitename = take('webapppvl${uniqueString(resourceGroup().id)}', 15)
-var appServicePlanName = take('appSrvPln${uniqueString(resourceGroup().id)}', 15)
+var sqlServerName_var = 'sqlserver${uniqueString(resourceGroup().id)}'
+var databaseName_var = '${sqlServerName_var}/sample-db'
+var privateEndpointName_var = 'myPrivateEndpoint'
+var privateDnsZoneName_var = 'privatelink.database.windows.net'
+var pvtendpointdnsgroupname_var = '${privateEndpointName_var}/mydnsgroupname'
+var websitename_var = take('webapppvl${uniqueString(resourceGroup().id)}', 15)
+var appServicePlanName_var = take('appSrvPln${uniqueString(resourceGroup().id)}', 15)
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2019-06-01-preview' = {
-  name: sqlServerName
+resource sqlServerName 'Microsoft.Sql/servers@2019-06-01-preview' = {
+  name: sqlServerName_var
   location: location
   tags: {
-    displayName: sqlServerName
+    displayName: sqlServerName_var
   }
   kind: 'v12.0'
   properties: {
@@ -58,11 +58,11 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2019-06-01-preview' = {
   }
 }
 
-resource databaseName_resource 'Microsoft.Sql/servers/databases@2019-06-01-preview' = {
-  name: databaseName
+resource databaseName 'Microsoft.Sql/servers/databases@2019-06-01-preview' = {
+  name: databaseName_var
   location: location
   tags: {
-    displayName: databaseName
+    displayName: databaseName_var
   }
   sku: {
     name: 'Basic'
@@ -76,13 +76,10 @@ resource databaseName_resource 'Microsoft.Sql/servers/databases@2019-06-01-previ
     requestedServiceObjectiveName: 'Basic'
     sampleName: 'AdventureWorksLT'
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2018-10-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2018-10-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -116,18 +113,18 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2018-10-01' = {
   }
 }
 
-resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-04-01' = {
-  name: privateEndpointName
+resource privateEndpointName 'Microsoft.Network/privateEndpoints@2019-04-01' = {
+  name: privateEndpointName_var
   location: location
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnet1Name)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnet1Name)
     }
     privateLinkServiceConnections: [
       {
-        name: privateEndpointName
+        name: privateEndpointName_var
         properties: {
-          privateLinkServiceId: sqlServerName_resource.id
+          privateLinkServiceId: sqlServerName.id
           groupIds: [
             'sqlServer'
           ]
@@ -135,95 +132,77 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-0
       }
     ]
   }
-  dependsOn: [
-    vnetName_resource
-    sqlServerName_resource
-  ]
 }
 
-resource privateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2018-09-01' = {
-  name: privateDnsZoneName
+resource privateDnsZoneName 'Microsoft.Network/privateDnsZones@2018-09-01' = {
+  name: privateDnsZoneName_var
   location: 'global'
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
 resource privateDnsZoneName_privateDnsZoneName_link 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {
-  name: '${privateDnsZoneName}/${privateDnsZoneName}-link'
+  name: '${privateDnsZoneName_var}/${privateDnsZoneName_var}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: vnetName_resource.id
+      id: vnetName.id
     }
   }
-  dependsOn: [
-    privateDnsZoneName_resource
-    vnetName_resource
-  ]
 }
 
-resource pvtendpointdnsgroupname_resource 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
-  name: pvtendpointdnsgroupname
+resource pvtendpointdnsgroupname 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
+  name: pvtendpointdnsgroupname_var
   location: location
   properties: {
     privateDnsZoneConfigs: [
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: privateDnsZoneName_resource.id
+          privateDnsZoneId: privateDnsZoneName.id
         }
       }
     ]
   }
-  dependsOn: [
-    privateDnsZoneName_resource
-    privateEndpointName_resource
-  ]
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: appServicePlanName
+resource appServicePlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: appServicePlanName_var
   location: location
   sku: {
     name: 'P1v2'
     capacity: 1
   }
   tags: {
-    displayName: appServicePlanName
+    displayName: appServicePlanName_var
   }
   properties: {
-    name: appServicePlanName
+    name: appServicePlanName_var
   }
 }
 
-resource websitename_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: websitename
+resource websitename 'Microsoft.Web/sites@2019-08-01' = {
+  name: websitename_var
   location: location
   tags: {
-    displayName: websitename
+    displayName: websitename_var
   }
   properties: {
-    name: websitename
-    serverFarmId: appServicePlanName_resource.id
+    name: websitename_var
+    serverFarmId: appServicePlanName.id
     siteConfig: {
       connectionStrings: [
         {
           name: 'sampledbContext'
-          connectionString: 'Server=tcp:${reference(sqlServerName).fullyQualifiedDomainName},1433;Initial Catalog=sample-db;Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          connectionString: 'Server=tcp:${reference(sqlServerName_var).fullyQualifiedDomainName},1433;Initial Catalog=sample-db;Persist Security Info=False;User ID=${sqlAdministratorLogin};Password=${sqlAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
           type: 'SQLAzure'
         }
       ]
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource websitename_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${websitename}/appsettings'
+  name: '${websitename_var}/appsettings'
   tags: {
     displayName: 'WebAppSettings'
   }
@@ -231,14 +210,10 @@ resource websitename_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
     WEBSITE_VNET_ROUTE_ALL: '1'
     WEBSITE_DNS_SERVER: '168.63.129.16'
   }
-  dependsOn: [
-    websitename_resource
-    websitename_MSDeploy
-  ]
 }
 
 resource websitename_MSDeploy 'Microsoft.Web/sites/extensions@2019-08-01' = {
-  name: '${websitename}/MSDeploy'
+  name: '${websitename_var}/MSDeploy'
   location: location
   tags: {
     displayName: 'Web Deploy for webapppvtlink'
@@ -247,23 +222,16 @@ resource websitename_MSDeploy 'Microsoft.Web/sites/extensions@2019-08-01' = {
     packageUri: uri(artifactsLocation, 'artifacts/AdventureWorks.Web.zip${artifactsLocationSasToken}')
     dbType: 'None'
     setParameters: {
-      'IIS Web Application Name': websitename
+      'IIS Web Application Name': websitename_var
     }
   }
-  dependsOn: [
-    websitename_resource
-  ]
 }
 
 resource websitename_virtualNetwork 'Microsoft.Web/sites/networkConfig@2019-08-01' = {
-  name: '${websitename}/virtualNetwork'
+  name: '${websitename_var}/virtualNetwork'
   location: location
   properties: {
-    subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetAppServiceName)
+    subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetAppServiceName)
     swiftSupported: true
   }
-  dependsOn: [
-    websitename_resource
-    websitename_MSDeploy
-  ]
 }

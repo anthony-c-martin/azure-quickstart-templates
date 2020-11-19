@@ -268,7 +268,7 @@ var sidlower = toLower(sapSystemId)
 var vmName = '${sidlower}-servercs'
 var vnetName = '${sidlower}-vnet'
 var publicIpName = '${sidlower}-pip'
-var nicName = '${sidlower}-nic'
+var nicName_var = '${sidlower}-nic'
 var nsgName = '${sidlower}-nsg-cs'
 var storageTypes = {
   Premium: 'Premium_LRS'
@@ -279,16 +279,16 @@ var publicIPAddressType = 'Dynamic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var nestedDeploymentName = 'nestedTemplate'
-var nestedDeploymentNameProf = '${nestedDeploymentName}prof'
-var nestedDeploymentNameVnet = '${nestedDeploymentName}vnet'
-var nestedDeploymentNameNSG = '${nestedDeploymentName}nsg'
-var nestedDeploymentNameNIC = '${nestedDeploymentName}nic'
-var nestedDeploymentNamePIP = '${nestedDeploymentName}pip'
+var nestedDeploymentName_var = 'nestedTemplate'
+var nestedDeploymentNameProf_var = '${nestedDeploymentName_var}prof'
+var nestedDeploymentNameVnet_var = '${nestedDeploymentName_var}vnet'
+var nestedDeploymentNameNSG_var = '${nestedDeploymentName_var}nsg'
+var nestedDeploymentNameNIC_var = '${nestedDeploymentName_var}nic'
+var nestedDeploymentNamePIP_var = '${nestedDeploymentName_var}pip'
 var osDiskType = 'userImage'
 
-module nestedDeploymentNameVnet_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'vnet.json\')]>' = {
-  name: nestedDeploymentNameVnet
+module nestedDeploymentNameVnet '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'vnet.json')]*/ = {
+  name: nestedDeploymentNameVnet_var
   params: {
     vnetName: vnetName
     addressPrefix: addressPrefix
@@ -297,8 +297,8 @@ module nestedDeploymentNameVnet_resource '<failed to parse [concat(variables(\'g
   }
 }
 
-module nestedDeploymentNameNIC_resource '<failed to parse [concat(variables(\'github\'), \'nic-config.json\')]>' = {
-  name: nestedDeploymentNameNIC
+module nestedDeploymentNameNIC '?' /*TODO: replace with correct path to [concat(variables('github'), 'nic-config.json')]*/ = {
+  name: nestedDeploymentNameNIC_var
   params: {
     vnetName: vnetName
     subnetName: subnetName
@@ -309,8 +309,8 @@ module nestedDeploymentNameNIC_resource '<failed to parse [concat(variables(\'gi
   }
 }
 
-module nestedDeploymentNameProf_resource '<failed to parse [concat(variables(\'github\'), \'os-disk-parts-md.json\')]>' = {
-  name: nestedDeploymentNameProf
+module nestedDeploymentNameProf '?' /*TODO: replace with correct path to [concat(variables('github'), 'os-disk-parts-md.json')]*/ = {
+  name: nestedDeploymentNameProf_var
   params: {
     imageSku: ''
     imagePublisher: ''
@@ -324,51 +324,45 @@ module nestedDeploymentNameProf_resource '<failed to parse [concat(variables(\'g
   }
 }
 
-module nestedDeploymentNamePIP_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'pip.json\')]>' = {
-  name: nestedDeploymentNamePIP
+module nestedDeploymentNamePIP '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'pip.json')]*/ = {
+  name: nestedDeploymentNamePIP_var
   params: {
     publicIpName: publicIpName
     publicIPAddressType: publicIPAddressType
   }
 }
 
-module nestedDeploymentNameNSG_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'nsg.json\')]>' = {
-  name: nestedDeploymentNameNSG
+module nestedDeploymentNameNSG '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'nsg.json')]*/ = {
+  name: nestedDeploymentNameNSG_var
   params: {
     nsgName: nsgName
     osType: internalOsType
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-06-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-06-01' = {
+  name: nicName_var
   location: location
   properties: {
-    networkSecurityGroup: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.networkSecurityGroup
+    networkSecurityGroup: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.networkSecurityGroup
     ipConfigurations: [
       {
         name: 'ipconfig1'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.publicIPAddress
-          subnet: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.subnet
+          publicIPAddress: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.publicIPAddress
+          subnet: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.subnet
         }
       }
     ]
   }
-  dependsOn: [
-    nestedDeploymentNameVnet_resource
-    nestedDeploymentNameNIC_resource
-    nestedDeploymentNamePIP_resource
-    nestedDeploymentNameNSG_resource
-  ]
 }
 
-module nestedDeploymentName_resource '<failed to parse [concat(variables(\'github\'), \'server-md.json\')]>' = {
-  name: nestedDeploymentName
+module nestedDeploymentName '?' /*TODO: replace with correct path to [concat(variables('github'), 'server-md.json')]*/ = {
+  name: nestedDeploymentName_var
   params: {
-    imageReference: reference(nestedDeploymentNameProf).outputs.imageReference.value
-    osDisk: reference(nestedDeploymentNameProf).outputs.osDisk.value
+    imageReference: reference(nestedDeploymentNameProf_var).outputs.imageReference.value
+    osDisk: reference(nestedDeploymentNameProf_var).outputs.osDisk.value
     osDiskType: osDiskType
     vmName: vmName
     vmSize: vmSize
@@ -378,7 +372,7 @@ module nestedDeploymentName_resource '<failed to parse [concat(variables(\'githu
     csExtensionscriptCall: internalExtensionScriptCall
     csExtensionscriptArgs: internalExtensionScriptCallArgs
     avSetObj: {}
-    nicName: nicName
+    nicName: nicName_var
     dataDisksObj: {
       copy: [
         {
@@ -395,7 +389,7 @@ module nestedDeploymentName_resource '<failed to parse [concat(variables(\'githu
     osType: internalOsType
   }
   dependsOn: [
-    nestedDeploymentNameProf_resource
-    nicName_resource
+    nestedDeploymentNameProf
+    nicName
   ]
 }

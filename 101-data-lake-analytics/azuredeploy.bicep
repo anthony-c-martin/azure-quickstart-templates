@@ -15,13 +15,13 @@ param location string {
   default: resourceGroup().location
 }
 
-resource adlStoreName_resource 'Microsoft.DataLakeStore/accounts@2016-11-01' = {
+resource adlStoreName_res 'Microsoft.DataLakeStore/accounts@2016-11-01' = {
   name: adlStoreName
   location: location
   properties: {}
 }
 
-resource adlAnalyticsName_resource 'Microsoft.DataLakeAnalytics/accounts@2016-11-01' = {
+resource adlAnalyticsName_res 'Microsoft.DataLakeAnalytics/accounts@2016-11-01' = {
   name: adlAnalyticsName
   location: location
   properties: {
@@ -32,10 +32,7 @@ resource adlAnalyticsName_resource 'Microsoft.DataLakeAnalytics/accounts@2016-11
       }
     ]
   }
-  dependsOn: [
-    adlStoreName_resource
-  ]
 }
 
-output adlAnalyticsAccount object = adlAnalyticsName_resource.properties
-output adlStoreAccount object = adlStoreName_resource.properties
+output adlAnalyticsAccount object = adlAnalyticsName_res.properties
+output adlStoreAccount object = adlStoreName_res.properties

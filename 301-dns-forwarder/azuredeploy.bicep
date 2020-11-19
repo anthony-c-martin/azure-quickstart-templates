@@ -63,16 +63,16 @@ param artifactsLocationSasToken string {
 }
 
 var ubuntuOSVersion = '18.04-LTS'
-var asetName = 'dnsproxy-avail'
-var nsgName = 'dnsproxy-nsg'
-var vnetName = 'dnsproxy-vnet'
+var asetName_var = 'dnsproxy-avail'
+var nsgName_var = 'dnsproxy-nsg'
+var vnetName_var = 'dnsproxy-vnet'
 var vnetAddressPrefix = '10.0.0.0/8'
 var subNet1Name = 'subnet1'
 var subNet1Prefix = '10.1.0.0/16'
 var storType = 'Standard_LRS'
-var location_variable = location
-var nicName = '${vmName}-nic'
-var pipName = '${vmName}-pip'
+var location_var = location
+var nicName_var = '${vmName}-nic'
+var pipName_var = '${vmName}-pip'
 var scriptUrl = uri(artifactsLocation, 'forwarderSetup.sh${artifactsLocationSasToken}')
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -86,18 +86,18 @@ var linuxConfiguration = {
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/StorageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/StorageAccounts@2019-06-01' = {
   name: storageAccountName
-  location: location_variable
+  location: location_var
   sku: {
     name: storType
   }
   kind: 'StorageV2'
 }
 
-resource asetName_resource 'Microsoft.Compute/availabilitySets@2019-12-01' = {
-  name: asetName
-  location: location_variable
+resource asetName 'Microsoft.Compute/availabilitySets@2019-12-01' = {
+  name: asetName_var
+  location: location_var
   sku: {
     name: 'Aligned'
   }
@@ -107,9 +107,9 @@ resource asetName_resource 'Microsoft.Compute/availabilitySets@2019-12-01' = {
   }
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: nsgName
-  location: location_variable
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: nsgName_var
+  location: location_var
   properties: {
     securityRules: [
       {
@@ -130,9 +130,9 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' =
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vnetName
-  location: location_variable
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vnetName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -150,20 +150,20 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   }
 }
 
-resource pipName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: pipName
-  location: location_variable
+resource pipName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: pipName_var
+  location: location_var
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
-  location: location_variable
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
+  location: location_var
   properties: {
     networkSecurityGroup: {
-      id: nsgName_resource.id
+      id: nsgName.id
     }
     ipConfigurations: [
       {
@@ -171,28 +171,23 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: pipName_resource.id
+            id: pipName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subNet1Name)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subNet1Name)
           }
         }
       }
     ]
   }
-  dependsOn: [
-    pipName_resource
-    vnetName_resource
-    nsgName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-12-01' = {
   name: vmName
-  location: location_variable
+  location: location_var
   properties: {
     availabilitySet: {
-      id: asetName_resource.id
+      id: asetName.id
     }
     hardwareProfile: {
       vmSize: vmSize
@@ -218,7 +213,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
@@ -229,16 +224,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       }
     }
   }
-  dependsOn: [
-    nicName_resource
-    storageAccountName_resource
-    asetName_resource
-  ]
 }
 
 resource vmName_setupdnsfirewall 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
   name: '${vmName}/setupdnsfirewall'
-  location: location_variable
+  location: location_var
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
     type: 'CustomScript'
@@ -251,7 +241,4 @@ resource vmName_setupdnsfirewall 'Microsoft.Compute/virtualMachines/extensions@2
       commandToExecute: 'sh forwarderSetup.sh ${forwardIP} ${vnetAddressPrefix}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

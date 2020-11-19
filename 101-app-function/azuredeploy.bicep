@@ -12,10 +12,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var hostingPlanName = 'hpn-${resourceGroup().name}'
-var storageAccountid = storageAccountName_resource.id
+var hostingPlanName_var = 'hpn-${resourceGroup().name}'
+var storageAccountid = storageAccountName_res.id
 
-resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: siteName
   kind: 'functionapp,linux'
   location: location
@@ -37,29 +37,25 @@ resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
       ]
     }
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     clientAffinityEnabled: false
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   kind: 'linux'
   properties: {
     reserved: true
   }
   sku: {
-    Tier: 'Dynamic'
-    Name: 'Y1'
+    tier: 'Dynamic'
+    name: 'Y1'
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   kind: 'StorageV2'

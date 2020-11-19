@@ -81,7 +81,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource circuitName_resource 'Microsoft.Network/expressRouteCircuits@2015-05-01-preview' = {
+resource circuitName_res 'Microsoft.Network/expressRouteCircuits@2015-05-01-preview' = {
   name: circuitName
   location: location
   tags: {

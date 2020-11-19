@@ -55,7 +55,7 @@ param autoscaleMaxThroughput int {
   default: 4000
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var locations = [
   {
     locationName: location
@@ -63,7 +63,7 @@ var locations = [
     isZoneRedundant: false
   }
 ]
-var throughputPolicy_variable = {
+var throughputPolicy_var = {
   Manual: {
     Throughput: manualProvisionedThroughput
   }
@@ -74,8 +74,8 @@ var throughputPolicy_variable = {
   }
 }
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: accountName_var
   location: location
   properties: {
     consistencyPolicy: {
@@ -88,19 +88,16 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01'
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2020-04-01' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
     }
   }
-  dependsOn: [
-    accountName_resource
-  ]
 }
 
 resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2020-04-01' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}'
+  name: '${accountName_var}/${databaseName}/${containerName}'
   properties: {
     resource: {
       id: containerName
@@ -112,9 +109,6 @@ resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAc
       }
       analyticalStorageTtl: -1
     }
-    options: throughputPolicy_variable[throughputPolicy]
+    options: throughputPolicy_var[throughputPolicy]
   }
-  dependsOn: [
-    accountName_databaseName
-  ]
 }

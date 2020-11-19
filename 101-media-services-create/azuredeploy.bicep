@@ -10,26 +10,23 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageName = 'storage${uniqueString(resourceGroup().id)}'
+var storageName_var = 'storage${uniqueString(resourceGroup().id)}'
 
-resource mediaServiceName_resource 'Microsoft.Media/mediaServices@2018-07-01' = {
+resource mediaServiceName_res 'Microsoft.Media/mediaServices@2018-07-01' = {
   name: mediaServiceName
   location: location
   properties: {
     storageAccounts: [
       {
-        id: storageName_resource.id
+        id: storageName.id
         type: 'Primary'
       }
     ]
   }
-  dependsOn: [
-    storageName_resource
-  ]
 }
 
-resource storageName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageName
+resource storageName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageName_var
   kind: 'StorageV2'
   location: location
   sku: {

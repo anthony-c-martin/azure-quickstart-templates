@@ -30,7 +30,7 @@ var vNet2 = {
 var vNet1tovNet2PeeringName = '${vNet1Name}-${vNet2Name}'
 var vNet2tovNet1PeeringName = '${vNet2Name}-${vNet1Name}'
 
-resource vNet1Name_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vNet1Name_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: vNet1Name
   location: location
   properties: {
@@ -59,16 +59,12 @@ resource vNet1Name_vNet1tovNet2PeeringName 'Microsoft.Network/virtualNetworks/vi
     allowGatewayTransit: false
     useRemoteGateways: false
     remoteVirtualNetwork: {
-      id: vNet2Name_resource.id
+      id: vNet2Name_res.id
     }
   }
-  dependsOn: [
-    vNet1Name_resource
-    vNet2Name_resource
-  ]
 }
 
-resource vNet2Name_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vNet2Name_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: vNet2Name
   location: location
   properties: {
@@ -97,11 +93,7 @@ resource vNet2Name_vNet2tovNet1PeeringName 'Microsoft.Network/virtualNetworks/vi
     allowGatewayTransit: false
     useRemoteGateways: false
     remoteVirtualNetwork: {
-      id: vNet1Name_resource.id
+      id: vNet1Name_res.id
     }
   }
-  dependsOn: [
-    vNet1Name_resource
-    vNet2Name_resource
-  ]
 }

@@ -9,10 +9,10 @@ param principalId string {
   }
 }
 
-var roleAssignmentName = guid(principalId, roleDefinitionID, resourceGroup().id)
+var roleAssignmentName_var = guid(principalId, roleDefinitionID, resourceGroup().id)
 
-resource roleAssignmentName_resource 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: roleAssignmentName
+resource roleAssignmentName 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: roleAssignmentName_var
   properties: {
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionID)
     principalId: principalId

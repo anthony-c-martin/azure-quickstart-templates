@@ -80,7 +80,7 @@ var vmStorageAccountContainerName = 'vhds'
 var frontEndSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName, frontEndSubnetName)
 var webVMSetting = webVMSettings[osType]
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: vnetName
   location: location
   tags: {
@@ -137,10 +137,6 @@ resource webVMSetting_nicName 'Microsoft.Network/networkInterfaces@2015-06-15' =
       }
     ]
   }
-  dependsOn: [
-    webVMSetting_pipName
-    vnetName_resource
-  ]
 }
 
 resource webVMSetting_vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
@@ -179,7 +175,4 @@ resource webVMSetting_vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
   }
-  dependsOn: [
-    webVMSetting_nicName
-  ]
 }

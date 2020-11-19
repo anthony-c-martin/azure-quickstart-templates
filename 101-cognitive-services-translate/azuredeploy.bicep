@@ -18,7 +18,7 @@ param SKU string {
   default: 'F0'
 }
 
-resource accountName_resource 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
+resource accountName_res 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   name: accountName
   location: 'global'
   kind: 'TextTranslation'

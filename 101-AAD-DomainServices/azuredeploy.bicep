@@ -34,9 +34,9 @@ param domainServicesSubnetAddressPrefix string {
   default: '10.0.0.0/24'
 }
 
-var domainServicesNSGName = '${domainServicesSubnetName}-nsg'
-var nsgRefId = domainServicesNSGName_resource.id
-var vnetRefId = domainServicesVnetName_resource.id
+var domainServicesNSGName_var = '${domainServicesSubnetName}-nsg'
+var nsgRefId = domainServicesNSGName.id
+var vnetRefId = domainServicesVnetName_res.id
 var subnetRefId = domainServicesVnetName_domainServicesSubnetName.id
 var PSRemotingSlicePIPAddresses = [
   '52.180.179.108'
@@ -85,8 +85,8 @@ var PSRemotingSliceTIPAddresses = [
   '23.99.93.197'
 ]
 
-resource domainServicesNSGName_resource 'Microsoft.Network/networkSecurityGroups@2018-10-01' = {
-  name: domainServicesNSGName
+resource domainServicesNSGName 'Microsoft.Network/networkSecurityGroups@2018-10-01' = {
+  name: domainServicesNSGName_var
   location: location
   properties: {
     securityRules: [
@@ -146,7 +146,7 @@ resource domainServicesNSGName_resource 'Microsoft.Network/networkSecurityGroups
   }
 }
 
-resource domainServicesVnetName_resource 'Microsoft.Network/virtualNetworks@2018-10-01' = {
+resource domainServicesVnetName_res 'Microsoft.Network/virtualNetworks@2018-10-01' = {
   name: domainServicesVnetName
   location: location
   properties: {
@@ -156,9 +156,6 @@ resource domainServicesVnetName_resource 'Microsoft.Network/virtualNetworks@2018
       ]
     }
   }
-  dependsOn: [
-    domainServicesNSGName_resource
-  ]
 }
 
 resource domainServicesVnetName_domainServicesSubnetName 'Microsoft.Network/virtualNetworks/subnets@2018-10-01' = {
@@ -170,20 +167,14 @@ resource domainServicesVnetName_domainServicesSubnetName 'Microsoft.Network/virt
       id: nsgRefId
     }
   }
-  dependsOn: [
-    domainServicesVnetName_resource
-  ]
 }
 
-resource domainName_resource 'Microsoft.AAD/DomainServices@2017-06-01' = {
+resource domainName_res 'Microsoft.AAD/DomainServices@2017-06-01' = {
   name: domainName
   location: location
   properties: {
     domainName: domainName
-    vnetSiteID: vnetRefId
+    vnetSiteId: vnetRefId
     subnetId: subnetRefId
   }
-  dependsOn: [
-    domainServicesVnetName_resource
-  ]
 }

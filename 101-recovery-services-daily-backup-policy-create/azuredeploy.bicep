@@ -68,7 +68,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource vaultName_resource 'Microsoft.RecoveryServices/vaults@2015-11-10' = {
+resource vaultName_res 'Microsoft.RecoveryServices/vaults@2015-11-10' = {
   name: vaultName
   location: location
   sku: {
@@ -145,7 +145,4 @@ resource vaultName_policyName 'Microsoft.RecoveryServices/vaults/backupPolicies@
     }
     timeZone: timeZone
   }
-  dependsOn: [
-    vaultName_resource
-  ]
 }

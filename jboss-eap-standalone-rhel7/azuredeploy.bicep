@@ -81,21 +81,21 @@ var imagePublisher = 'redhat'
 var imageOffer = 'rhel'
 var imageSKU = '7.2'
 var baseName = uniqueString(dnsLabelPrefix, resourceGroup().id)
-var nicName = 'myNic8${baseName}'
+var nicName_var = 'myNic8${baseName}'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
-var publicIPAddressName = 'myIP8${baseName}'
+var publicIPAddressName_var = 'myIP8${baseName}'
 var publicIPAddressType = 'Dynamic'
-var vmName = dnsLabelPrefix
+var vmName_var = dnsLabelPrefix
 var vmSize = 'Standard_F1'
-var virtualNetworkName = 'MyVNET8'
-var frontEndNSGName = '${dnsLabelPrefix}-nsg8'
+var virtualNetworkName_var = 'MyVNET8'
+var frontEndNSGName_var = '${dnsLabelPrefix}-nsg8'
 var storageAccountType = 'Standard_LRS'
-var storageAccountName = 'vsts8${baseName}'
+var storageAccountName_var = 'vsts8${baseName}'
 var ScriptFolder = 'scripts'
 var ScriptFileName = 'eap-setup-redhat.sh'
-var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnet1Name)
+var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnet1Name)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -108,8 +108,8 @@ var linuxConfiguration = {
   }
 }
 
-resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource StorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -118,8 +118,8 @@ resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-10-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-10-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -129,8 +129,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2017-10-01' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2017-10-01' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'Custom Network Security Group'
@@ -183,8 +183,8 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2017-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-10-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-10-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -198,23 +198,20 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-10-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: frontEndNSGName_resource.id
+            id: frontEndNSGName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    frontEndNSGName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-10-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-10-01' = {
+  name: nicName_var
   location: location
   properties: {
     networkSecurityGroup: {
-      id: frontEndNSGName_resource.id
+      id: frontEndNSGName.id
     }
     ipConfigurations: [
       {
@@ -222,7 +219,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-10-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -231,25 +228,20 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-10-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-    frontEndNSGName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
-      customData: base64(publicIPAddressName)
+      customData: base64(publicIPAddressName_var)
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
     }
     storageProfile: {
@@ -260,7 +252,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -268,19 +260,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    StorageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2017-12-01' = {
-  name: '${vmName}/newuserscript'
+  name: '${vmName_var}/newuserscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -294,7 +282,4 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2017
       commandToExecute: 'sh eap-setup-redhat.sh ${adminUsername} ${eapUserName} ${eapPassword} ${rhsmUserName} ${rhsmPassword} ${rhsmPool} ${sshPassPhrase}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

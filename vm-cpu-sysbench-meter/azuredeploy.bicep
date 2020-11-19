@@ -75,18 +75,18 @@ var osVersion = '14.04.5-LTS'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var OSDiskName = 'osdiskforwindowssimple'
-var nicName = 'testVMNic'
+var nicName_var = 'testVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = 'publicIP'
+var publicIPAddressName_var = 'publicIP'
 var vmStorageAccountContainerName = 'vhds'
-var virtualNetworkName = 'testVNET'
+var virtualNetworkName_var = 'testVNET'
 var scriptFolder = 'scripts'
-var vhdStorageAccountName = '${uniqueString(resourceGroup().id)}storage'
-var frontEndNSGName = 'webtestnsg-${uniqueString(resourceGroup().id)}'
-var vmName = 'testVM'
+var vhdStorageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
+var frontEndNSGName_var = 'webtestnsg-${uniqueString(resourceGroup().id)}'
+var vmName_var = 'testVM'
 var testScriptFileName = 'cputest.sh'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -100,8 +100,8 @@ var linuxConfiguration = {
   }
 }
 
-resource vhdStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: vhdStorageAccountName
+resource vhdStorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: vhdStorageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -109,16 +109,16 @@ resource vhdStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-
   kind: 'Storage'
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -137,8 +137,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -147,23 +147,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
         }
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'NSG'
@@ -186,20 +182,17 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -212,7 +205,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -220,19 +213,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vhdStorageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/CustomScriptExtension'
+  name: '${vmName_var}/CustomScriptExtension'
   location: location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
@@ -246,9 +235,6 @@ resource vmName_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensi
       commandToExecute: 'sudo bash ${testScriptFileName} ${threadsToRunTest} ${maxPrimeNumberForTest}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
 output totaltime string = split(split(reference('CustomScriptExtension').instanceView.statuses[0].message, '\n')[2], ' ')[0]

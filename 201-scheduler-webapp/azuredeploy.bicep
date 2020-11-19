@@ -46,7 +46,7 @@ param sku object {
   }
 }
 
-resource appSvcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource appSvcPlanName_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   name: appSvcPlanName
   location: resourceGroup().location
   sku: {
@@ -56,19 +56,16 @@ resource appSvcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: webAppName
   location: resourceGroup().location
   properties: {
     name: webAppName
     serverFarmId: appSvcPlanName
   }
-  dependsOn: [
-    appSvcPlanName_resource
-  ]
 }
 
-resource jobCollectionName_resource 'Microsoft.Scheduler/jobCollections@2016-03-01' = {
+resource jobCollectionName_res 'Microsoft.Scheduler/jobCollections@2016-03-01' = {
   name: jobCollectionName
   location: resourceGroup().location
   properties: {
@@ -83,7 +80,7 @@ resource jobCollectionName_jobName 'Microsoft.Scheduler/jobCollections/jobs@2016
     action: {
       type: 'Http'
       request: {
-        uri: 'http://${webAppName_resource.properties.hostNames[0]}'
+        uri: 'http://${webAppName_res.properties.hostNames[0]}'
         method: 'GET'
         retryPolicy: {
           retryType: 'None'
@@ -112,7 +109,4 @@ resource jobCollectionName_jobName 'Microsoft.Scheduler/jobCollections/jobs@2016
       }
     }
   }
-  dependsOn: [
-    jobCollectionName_resource
-  ]
 }

@@ -28,25 +28,25 @@ param location string {
   default: resourceGroup().location
 }
 
-var hostingPlanName = '${uniqueString(resourceGroup().id)}hostingplan'
-var siteName = '${uniqueString(resourceGroup().id)}website'
+var hostingPlanName_var = '${uniqueString(resourceGroup().id)}hostingplan'
+var siteName_var = '${uniqueString(resourceGroup().id)}website'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
   sku: {
     name: sku
     capacity: 1
   }
-  name: hostingPlanName
+  name: hostingPlanName_var
   location: location
   properties: {}
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2020-06-01' = {
-  name: siteName
+resource siteName 'Microsoft.Web/sites@2020-06-01' = {
+  name: siteName_var
   location: location
   properties: {
-    name: siteName
-    serverFarmId: hostingPlanName
+    name: siteName_var
+    serverFarmId: hostingPlanName_var
     siteConfig: {
       localMySqlEnabled: true
       appSettings: [
@@ -69,29 +69,20 @@ resource siteName_resource 'Microsoft.Web/sites@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
 resource siteName_web 'Microsoft.Web/sites/sourcecontrols@2020-06-01' = {
-  name: '${siteName}/web'
+  name: '${siteName_var}/web'
   properties: {
-    RepoUrl: repoUrl
+    repoUrl: repoUrl
     branch: branch
-    IsManualIntegration: true
+    isManualIntegration: true
   }
-  dependsOn: [
-    siteName_resource
-  ]
 }
 
 resource Microsoft_Web_sites_config_siteName_web 'Microsoft.Web/sites/config@2020-06-01' = {
-  name: '${siteName}/web'
+  name: '${siteName_var}/web'
   properties: {
     phpVersion: '7.0'
   }
-  dependsOn: [
-    siteName_resource
-  ]
 }

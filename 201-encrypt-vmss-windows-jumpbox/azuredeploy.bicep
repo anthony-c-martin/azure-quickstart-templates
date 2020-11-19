@@ -89,18 +89,18 @@ param forceUpdateTag string {
 
 var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
 var longNamingInfix = toLower(vmssName)
-var jumpBoxName = '${namingInfix}jbox'
-var jumpBoxSAName = 'jumpboxsa${uniqueString(resourceGroup().id)}'
-var jumpBoxOSDiskName = '${jumpBoxName}osdisk'
-var jumpBoxIPConfigName = '${jumpBoxName}ipconfig'
-var jumpBoxNicName = '${jumpBoxName}nic'
+var jumpBoxName_var = '${namingInfix}jbox'
+var jumpBoxSAName_var = 'jumpboxsa${uniqueString(resourceGroup().id)}'
+var jumpBoxOSDiskName = '${jumpBoxName_var}osdisk'
+var jumpBoxIPConfigName = '${jumpBoxName_var}ipconfig'
+var jumpBoxNicName_var = '${jumpBoxName_var}nic'
 var storageAccountType = 'Standard_LRS'
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${namingInfix}vnet'
+var virtualNetworkName_var = '${namingInfix}vnet'
 var subnetName = '${namingInfix}subnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIPAddressName = '${namingInfix}pip'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var publicIPAddressName_var = '${namingInfix}pip'
 var nicName = '${namingInfix}nic'
 var ipConfigName = '${namingInfix}ipconfig'
 var osType = {
@@ -115,8 +115,8 @@ var extensionVersion = '2.1'
 var encryptionOperation = 'EnableEncryption'
 var keyVaultResourceId = resourceId(keyVaultResourceGroup, 'Microsoft.KeyVault/vaults', keyVaultName)
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -135,16 +135,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-
   }
 }
 
-resource jumpBoxSAName_resource 'Microsoft.Storage/storageAccounts@2017-06-01' = {
-  name: jumpBoxSAName
+resource jumpBoxSAName 'Microsoft.Storage/storageAccounts@2017-06-01' = {
+  name: jumpBoxSAName_var
   location: resourceGroup().location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -154,8 +154,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01' = {
-  name: jumpBoxNicName
+resource jumpBoxNicName 'Microsoft.Network/networkInterfaces@2017-09-01' = {
+  name: jumpBoxNicName_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -164,7 +164,7 @@ resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -173,21 +173,17 @@ resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource jumpBoxName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: jumpBoxName
+resource jumpBoxName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: jumpBoxName_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: vmSku
     }
     osProfile: {
-      computerName: jumpBoxName
+      computerName: jumpBoxName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -202,23 +198,20 @@ resource jumpBoxName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: jumpBoxNicName_resource.id
+          id: jumpBoxNicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: reference(jumpBoxSAName).primaryEndpoints.blob
+        storageUri: reference(jumpBoxSAName_var).primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    jumpBoxNicName_resource
-  ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmssName
   location: resourceGroup().location
   sku: {
@@ -288,7 +281,4 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
       }
     }
   }
-  dependsOn: [
-    virtualNetworkName_resource
-  ]
 }

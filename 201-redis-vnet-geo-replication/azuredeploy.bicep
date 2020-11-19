@@ -53,7 +53,7 @@ param newSecondaryCacheName string {
 var primarySubnetId = resourceId(existingPrimaryVirtualNetworkResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', existingPrimaryVirtualNetworkName, existingPrimaryCacheSubnetName)
 var secondarySubnetId = resourceId(existingSecondaryVirtualNetworkResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', existingSecondaryVirtualNetworkName, existingSecondaryCacheSubnetName)
 
-resource newPrimaryCacheName_resource 'Microsoft.Cache/Redis@2018-03-01' = {
+resource newPrimaryCacheName_res 'Microsoft.Cache/Redis@2018-03-01' = {
   name: newPrimaryCacheName
   location: location
   properties: {
@@ -66,7 +66,7 @@ resource newPrimaryCacheName_resource 'Microsoft.Cache/Redis@2018-03-01' = {
   }
 }
 
-resource newSecondaryCacheName_resource 'Microsoft.Cache/Redis@2018-03-01' = {
+resource newSecondaryCacheName_res 'Microsoft.Cache/Redis@2018-03-01' = {
   name: newSecondaryCacheName
   location: secondaryLocation
   properties: {
@@ -82,19 +82,15 @@ resource newSecondaryCacheName_resource 'Microsoft.Cache/Redis@2018-03-01' = {
 resource newPrimaryCacheName_newSecondaryCacheName 'Microsoft.Cache/Redis/linkedServers@2018-03-01' = {
   name: '${newPrimaryCacheName}/${newSecondaryCacheName}'
   properties: {
-    linkedRedisCacheId: newSecondaryCacheName_resource.id
+    linkedRedisCacheId: newSecondaryCacheName_res.id
     linkedRedisCacheLocation: secondaryLocation
     serverRole: 'Secondary'
   }
-  dependsOn: [
-    newPrimaryCacheName_resource
-    newSecondaryCacheName_resource
-  ]
 }
 
 output primaryLocation string = location
 output existingPrimaryCacheSubnetId string = primarySubnetId
-output newPrimaryCacheId string = newPrimaryCacheName_resource.id
-output secondaryLocation_output string = secondaryLocation
+output newPrimaryCacheId string = newPrimaryCacheName_res.id
+output secondaryLocation_out string = secondaryLocation
 output existingSecondaryCacheSubnetId string = secondarySubnetId
-output newSecondaryCacheId string = newSecondaryCacheName_resource.id
+output newSecondaryCacheId string = newSecondaryCacheName_res.id

@@ -97,14 +97,14 @@ var clusterNode2 = {
     type: 'Standard_LRS'
   }
 }
-var vNet1_variable = {
+var vNet1_var = {
   name: '${clusterNamePrefix}-vnet1'
   addressSpacePrefix: '10.1.0.0/16'
   subnetName: 'subnet1'
   subnetPrefix: '10.1.0.0/24'
   peeringName: '${clusterNamePrefix}-vnet1/PeeringToVNet2'
 }
-var vNet2_variable = {
+var vNet2_var = {
   name: '${clusterNamePrefix}-vnet2'
   addressSpacePrefix: '10.2.0.0/16'
   subnetName: 'subnet1'
@@ -113,19 +113,19 @@ var vNet2_variable = {
 }
 
 resource vNet1_name 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: vNet1_variable.name
+  name: vNet1_var.name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vNet1_variable.addressSpacePrefix
+        vNet1_var.addressSpacePrefix
       ]
     }
     subnets: [
       {
-        name: vNet1_variable.subnetName
+        name: vNet1_var.subnetName
         properties: {
-          addressPrefix: vNet1_variable.subnetPrefix
+          addressPrefix: vNet1_var.subnetPrefix
         }
       }
     ]
@@ -133,19 +133,19 @@ resource vNet1_name 'Microsoft.Network/virtualNetworks@2019-06-01' = {
 }
 
 resource vNet2_name 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: vNet2_variable.name
+  name: vNet2_var.name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vNet2_variable.addressSpacePrefix
+        vNet2_var.addressSpacePrefix
       ]
     }
     subnets: [
       {
-        name: vNet2_variable.subnetName
+        name: vNet2_var.subnetName
         properties: {
-          addressPrefix: vNet2_variable.subnetPrefix
+          addressPrefix: vNet2_var.subnetPrefix
         }
       }
     ]
@@ -153,7 +153,7 @@ resource vNet2_name 'Microsoft.Network/virtualNetworks@2019-06-01' = {
 }
 
 resource vNet1_peeringName 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2019-06-01' = {
-  name: vNet1_variable.peeringName
+  name: vNet1_var.peeringName
   location: location
   properties: {
     allowVirtualNetworkAccess: true
@@ -164,14 +164,10 @@ resource vNet1_peeringName 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
       id: vNet2_name.id
     }
   }
-  dependsOn: [
-    vNet1_name
-    vNet2_name
-  ]
 }
 
 resource vNet2_peeringName 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2019-06-01' = {
-  name: vNet2_variable.peeringName
+  name: vNet2_var.peeringName
   location: location
   properties: {
     allowVirtualNetworkAccess: true
@@ -182,10 +178,6 @@ resource vNet2_peeringName 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
       id: vNet1_name.id
     }
   }
-  dependsOn: [
-    vNet1_name
-    vNet2_name
-  ]
 }
 
 resource clusterNode1_defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -241,7 +233,7 @@ resource clusterNode1_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet1_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_variable.name, vNet1_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_var.name, vNet1_var.subnetName)
           }
         }
         {
@@ -258,7 +250,7 @@ resource clusterNode1_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet1_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_variable.name, vNet1_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_var.name, vNet1_var.subnetName)
           }
         }
         {
@@ -275,16 +267,12 @@ resource clusterNode1_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet1_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_variable.name, vNet1_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet1_var.name, vNet1_var.subnetName)
           }
         }
       ]
     }
   }
-  dependsOn: [
-    clusterNode1_defaultStorageAccount_name
-    vNet1_name
-  ]
 }
 
 resource clusterNode2_defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -340,7 +328,7 @@ resource clusterNode2_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet2_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_variable.name, vNet2_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_var.name, vNet2_var.subnetName)
           }
         }
         {
@@ -357,7 +345,7 @@ resource clusterNode2_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet2_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_variable.name, vNet2_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_var.name, vNet2_var.subnetName)
           }
         }
         {
@@ -374,16 +362,12 @@ resource clusterNode2_name 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
           }
           virtualNetworkProfile: {
             id: vNet2_name.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_variable.name, vNet2_variable.subnetName)
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', vNet2_var.name, vNet2_var.subnetName)
           }
         }
       ]
     }
   }
-  dependsOn: [
-    clusterNode2_defaultStorageAccount_name
-    vNet2_name
-  ]
 }
 
 output vnet1 object = vNet1_name.properties

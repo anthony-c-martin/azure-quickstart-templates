@@ -138,8 +138,8 @@ var imageOffer = 'UbuntuServer'
 var imageSKU = vmImageSKU
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, 'GatewaySubnet')
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var nicName = '${vmName}-nic'
-var vmPublicIPName = '${vmName}-publicIP'
+var nicName_var = '${vmName}-nic'
+var vmPublicIPName_var = '${vmName}-publicIP'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -151,9 +151,9 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2018-07-01' = {
+resource localGatewayName_res 'Microsoft.Network/localNetworkGateways@2018-07-01' = {
   name: localGatewayName
   location: location
   properties: {
@@ -166,28 +166,24 @@ resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2018-
   }
 }
 
-resource connectionName_resource 'Microsoft.Network/connections@2018-07-01' = {
+resource connectionName_res 'Microsoft.Network/connections@2018-07-01' = {
   name: connectionName
   location: location
   properties: {
     virtualNetworkGateway1: {
-      id: gatewayName_resource.id
+      id: gatewayName_res.id
     }
     localNetworkGateway2: {
-      id: localGatewayName_resource.id
+      id: localGatewayName_res.id
     }
     connectionType: 'IPsec'
     routingWeight: 10
     sharedKey: sharedKey
   }
-  dependsOn: [
-    gatewayName_resource
-    localGatewayName_resource
-  ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -208,7 +204,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-07-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2018-07-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -223,7 +219,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-07-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
@@ -235,12 +231,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-07-
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
+resource gatewayPublicIPName_res 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
   name: gatewayPublicIPName
   location: location
   properties: {
@@ -248,15 +241,15 @@ resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource vmPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
-  name: vmPublicIPName
+resource vmPublicIPName 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
+  name: vmPublicIPName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2018-07-01' = {
+resource gatewayName_res 'Microsoft.Network/virtualNetworkGateways@2018-07-01' = {
   name: gatewayName
   location: location
   properties: {
@@ -268,7 +261,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2018-07-
             id: gatewaySubnetRef
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName_res.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -282,14 +275,10 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2018-07-
     vpnType: vpnType
     enableBgp: 'false'
   }
-  dependsOn: [
-    gatewayPublicIPName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-07-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-07-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -298,7 +287,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-07-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: vmPublicIPName_resource.id
+            id: vmPublicIPName.id
           }
           subnet: {
             id: subnetRef
@@ -307,14 +296,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-07-01' = {
       }
     ]
   }
-  dependsOn: [
-    vmPublicIPName_resource
-    virtualNetworkName_resource
-    gatewayName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: vmName
   location: location
   properties: {
@@ -342,12 +326,9 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }

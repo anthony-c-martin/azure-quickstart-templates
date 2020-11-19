@@ -44,13 +44,13 @@ param location string {
   default: resourceGroup().location
 }
 
-var hostingPlanName = 'hostingplan${uniqueString(resourceGroup().id)}'
-var webSiteName = 'webSite${uniqueString(resourceGroup().id)}'
-var sqlserverName = 'sqlserver${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = 'hostingplan${uniqueString(resourceGroup().id)}'
+var webSiteName_var = 'webSite${uniqueString(resourceGroup().id)}'
+var sqlserverName_var = 'sqlserver${uniqueString(resourceGroup().id)}'
 var databaseName = 'sampledb'
 
-resource sqlserverName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
-  name: sqlserverName
+resource sqlserverName 'Microsoft.Sql/servers@2020-02-02-preview' = {
+  name: sqlserverName_var
   location: location
   tags: {
     displayName: 'SqlServer'
@@ -63,7 +63,7 @@ resource sqlserverName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
 }
 
 resource sqlserverName_databaseName 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
-  name: '${sqlserverName}/${databaseName}'
+  name: '${sqlserverName_var}/${databaseName}'
   location: location
   tags: {
     displayName: 'Database'
@@ -74,25 +74,19 @@ resource sqlserverName_databaseName 'Microsoft.Sql/servers/databases@2020-02-02-
     maxSizeBytes: '1073741824'
     requestedServiceObjectiveName: 'Basic'
   }
-  dependsOn: [
-    sqlserverName_resource
-  ]
 }
 
 resource sqlserverName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrules@2020-02-02-preview' = {
   location: location
-  name: '${sqlserverName}/AllowAllWindowsAzureIps'
+  name: '${sqlserverName_var}/AllowAllWindowsAzureIps'
   properties: {
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
   }
-  dependsOn: [
-    sqlserverName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   tags: {
     displayName: 'HostingPlan'
@@ -102,51 +96,48 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
     capacity: skuCapacity
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webSiteName
+resource webSiteName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webSiteName_var
   location: location
   tags: {
-    'hidden-related:${hostingPlanName_resource.id}': 'empty'
+    'hidden-related:${hostingPlanName.id}': 'empty'
     displayName: 'Website'
   }
   properties: {
-    name: webSiteName
-    serverFarmId: hostingPlanName_resource.id
+    name: webSiteName_var
+    serverFarmId: hostingPlanName.id
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
 resource webSiteName_connectionstrings 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${webSiteName}/connectionstrings'
+  name: '${webSiteName_var}/connectionstrings'
   properties: {
     DefaultConnection: {
-      value: 'Data Source=tcp:${sqlserverName_resource.properties.fullyQualifiedDomainName},1433;Initial Catalog=${databaseName};User Id=${sqlAdministratorLogin}@${sqlserverName_resource.properties.fullyQualifiedDomainName};Password=${sqlAdministratorLoginPassword};'
+      value: 'Data Source=tcp:${sqlserverName.properties.fullyQualifiedDomainName},1433;Initial Catalog=${databaseName};User Id=${sqlAdministratorLogin}@${sqlserverName.properties.fullyQualifiedDomainName};Password=${sqlAdministratorLoginPassword};'
       type: 'SQLAzure'
     }
   }
   dependsOn: [
-    webSiteName
+    webSiteName_var
   ]
 }
 
 resource AppInsights_webSiteName 'Microsoft.Insights/components@2020-02-02-preview' = {
-  name: 'AppInsights${webSiteName}'
+  name: 'AppInsights${webSiteName_var}'
   location: location
   tags: {
-    'hidden-link:${webSiteName_resource.id}': 'Resource'
+    'hidden-link:${webSiteName.id}': 'Resource'
     displayName: 'AppInsightsComponent'
   }
   properties: {
-    ApplicationId: webSiteName
+    ApplicationId: webSiteName_var
     Application_Type: 'web'
   }
   dependsOn: [
-    webSiteName
+    webSiteName_var
   ]
 }

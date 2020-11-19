@@ -65,7 +65,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var blobContainerName_variable = toLower(blobContainerName)
+var blobContainerName_var = toLower(blobContainerName)
 var listAccountSasRequestContent = {
   signedServices: 'bfqt'
   signedPermission: 'rwdlacup'
@@ -74,7 +74,7 @@ var listAccountSasRequestContent = {
   signedResourceTypes: 'sco'
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-02-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2018-02-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -84,34 +84,27 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-02-
 }
 
 resource storageAccountName_default_blobContainerName 'Microsoft.Storage/storageAccounts/blobServices/containers@2018-02-01' = {
-  name: '${storageAccountName}/default/${blobContainerName_variable}'
+  name: '${storageAccountName}/default/${blobContainerName_var}'
   properties: {
     publicAccess: 'Blob'
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2018-02-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2018-02-01' = {
   name: appServicePlanName
   location: location
   sku: {
-    Name: appServicePlanSkuName
+    name: appServicePlanSkuName
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2018-02-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2018-02-01' = {
   name: webAppName
   location: location
   properties: {
     name: webAppName
     serverFarmId: '/subscriptions/${subscription().id}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
   }
-  dependsOn: [
-    appServicePlanName_resource
-    storageAccountName_resource
-  ]
 }
 
 resource webAppName_logs 'Microsoft.Web/sites/config@2018-02-01' = {
@@ -120,12 +113,9 @@ resource webAppName_logs 'Microsoft.Web/sites/config@2018-02-01' = {
     applicationLogs: {
       azureBlobStorage: {
         level: diagnosticsLogsLevel
-        sasUrl: '${reference('Microsoft.Storage/storageAccounts/${storageAccountName}').primaryEndpoints.blob}${blobContainerName_variable}?${listAccountSas(storageAccountName, '2018-02-01', listAccountSasRequestContent).accountSasToken}'
+        sasUrl: '${reference('Microsoft.Storage/storageAccounts/${storageAccountName}').primaryEndpoints.blob}${blobContainerName_var}?${listAccountSas(storageAccountName, '2018-02-01', listAccountSasRequestContent).accountSasToken}'
         retentionInDays: diagnosticsLogsRetentionInDays
       }
     }
   }
-  dependsOn: [
-    webAppName_resource
-  ]
 }

@@ -112,37 +112,37 @@ param location string {
 }
 
 var adminUsername = linuxAdminUsername
-var agentCount_variable = agentCount
+var agentCount_var = agentCount
 var agentsEndpointDNSNamePrefix = '${dnsNamePrefix}agents'
-var agentVMSize_variable = agentVMSize
-var masterCount_variable = masterCount
+var agentVMSize_var = agentVMSize
+var masterCount_var = masterCount
 var mastersEndpointDNSNamePrefix = '${dnsNamePrefix}mgmt'
-var orchestratorType_variable = orchestratorType
-var sshRSAPublicKey_variable = sshRSAPublicKey
-var enableDiagnostics_variable = enableDiagnostics
+var orchestratorType_var = orchestratorType
+var sshRSAPublicKey_var = sshRSAPublicKey
+var enableDiagnostics_var = enableDiagnostics
 
 resource containerservice_name 'Microsoft.ContainerService/containerServices@2016-09-30' = {
   location: location
   name: 'containerservice-${resourceGroup().name}'
   properties: {
     orchestratorProfile: {
-      orchestratorType: orchestratorType_variable
+      orchestratorType: orchestratorType_var
     }
     masterProfile: {
-      count: masterCount_variable
+      count: masterCount_var
       dnsPrefix: mastersEndpointDNSNamePrefix
     }
     agentPoolProfiles: [
       {
         name: 'agentpools'
-        count: agentCount_variable
-        vmSize: agentVMSize_variable
+        count: agentCount_var
+        vmSize: agentVMSize_var
         dnsPrefix: agentsEndpointDNSNamePrefix
       }
     ]
     diagnosticsProfile: {
       vmDiagnostics: {
-        enabled: enableDiagnostics_variable
+        enabled: enableDiagnostics_var
       }
     }
     linuxProfile: {
@@ -150,7 +150,7 @@ resource containerservice_name 'Microsoft.ContainerService/containerServices@201
       ssh: {
         publicKeys: [
           {
-            keyData: sshRSAPublicKey_variable
+            keyData: sshRSAPublicKey_var
           }
         ]
       }

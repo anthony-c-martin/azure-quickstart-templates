@@ -38,14 +38,14 @@ param runtime string {
   default: 'node'
 }
 
-var functionAppName = appName
-var hostingPlanName = appName
-var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var functionAppName_var = appName
+var hostingPlanName_var = appName
+var applicationInsightsName_var = appName
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -53,38 +53,38 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'Storage'
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: 'Y1'
     tier: 'Dynamic'
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     computeMode: 'Dynamic'
   }
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
-  name: functionAppName
+resource functionAppName 'Microsoft.Web/sites@2020-06-01' = {
+  name: functionAppName_var
   location: location
   kind: 'functionapp'
   properties: {
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     siteConfig: {
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
         }
         {
           name: 'WEBSITE_CONTENTSHARE'
-          value: toLower(functionAppName)
+          value: toLower(functionAppName_var)
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -96,7 +96,7 @@ resource functionAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: reference(applicationInsightsName_resource.id, '2020-02-02-preview').InstrumentationKey
+          value: reference(applicationInsightsName.id, '2020-02-02-preview').InstrumentationKey
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
@@ -105,20 +105,16 @@ resource functionAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-  ]
 }
 
-resource applicationInsightsName_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: applicationInsightsName
+resource applicationInsightsName 'microsoft.insights/components@2020-02-02-preview' = {
+  name: applicationInsightsName_var
   location: appInsightsLocation
   tags: {
-    'hidden-link:${resourceId('Microsoft.Web/sites', applicationInsightsName)}': 'Resource'
+    'hidden-link:${resourceId('Microsoft.Web/sites', applicationInsightsName_var)}': 'Resource'
   }
   properties: {
-    ApplicationId: applicationInsightsName
+    ApplicationId: applicationInsightsName_var
     Request_Source: 'IbizaWebAppExtensionCreate'
   }
 }

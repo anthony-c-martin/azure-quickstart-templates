@@ -105,16 +105,16 @@ param licenseType string {
   default: 'LicenseIncluded'
 }
 
-var networkSecurityGroupName = 'SQLMI-${managedInstanceName}-NSG'
-var routeTableName = 'SQLMI-${managedInstanceName}-Route-Table'
-var gatewayPublicIpAddressName = 'SQLMI-${managedInstanceName}-Gateway-IP'
-var gatewayName = 'SQLMI-${managedInstanceName}-Gateway'
+var networkSecurityGroupName_var = 'SQLMI-${managedInstanceName}-NSG'
+var routeTableName_var = 'SQLMI-${managedInstanceName}-Route-Table'
+var gatewayPublicIpAddressName_var = 'SQLMI-${managedInstanceName}-Gateway-IP'
+var gatewayName_var = 'SQLMI-${managedInstanceName}-Gateway'
 var gatewaySku = 'Basic'
 var gatewaySubnetName = 'GatewaySubnet'
 var clientRootCertName = 'RootCert'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -192,15 +192,15 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource routeTableName_resource 'Microsoft.Network/routeTables@2019-06-01' = {
-  name: routeTableName
+resource routeTableName 'Microsoft.Network/routeTables@2019-06-01' = {
+  name: routeTableName_var
   location: location
   properties: {
     disableBgpRoutePropagation: false
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-06-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -215,10 +215,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
         properties: {
           addressPrefix: subnetPrefix
           routeTable: {
-            id: routeTableName_resource.id
+            id: routeTableName.id
           }
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
           delegations: [
             {
@@ -238,13 +238,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
       }
     ]
   }
-  dependsOn: [
-    routeTableName_resource
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2019-06-01-preview' = {
+resource managedInstanceName_res 'Microsoft.Sql/managedInstances@2019-06-01-preview' = {
   identity: {
     type: 'SystemAssigned'
   }
@@ -261,21 +257,18 @@ resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2019-06-01
     vCores: vCores
     licenseType: licenseType
   }
-  dependsOn: [
-    virtualNetworkName_resource
-  ]
 }
 
-resource gatewayPublicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
-  name: gatewayPublicIpAddressName
+resource gatewayPublicIpAddressName 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
+  name: gatewayPublicIpAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2019-06-01' = {
-  name: gatewayName
+resource gatewayName 'Microsoft.Network/virtualNetworkGateways@2019-06-01' = {
+  name: gatewayName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -286,7 +279,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2019-06-
             id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, gatewaySubnetName)
           }
           publicIPAddress: {
-            id: gatewayPublicIpAddressName_resource.id
+            id: gatewayPublicIpAddressName.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -309,14 +302,10 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2019-06-
         {
           name: clientRootCertName
           properties: {
-            PublicCertData: publicRootCertData
+            publicCertData: publicRootCertData
           }
         }
       ]
     }
   }
-  dependsOn: [
-    gatewayPublicIpAddressName_resource
-    virtualNetworkName_resource
-  ]
 }

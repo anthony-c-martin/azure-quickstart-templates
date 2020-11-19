@@ -20,7 +20,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource eventGridTopicName_resource 'Microsoft.EventGrid/topics@2018-01-01' = {
+resource eventGridTopicName_res 'Microsoft.EventGrid/topics@2018-01-01' = {
   name: eventGridTopicName
   location: location
 }
@@ -41,7 +41,4 @@ resource eventGridTopicName_Microsoft_EventGrid_eventGridSubscriptionName 'Micro
       ]
     }
   }
-  dependsOn: [
-    eventGridTopicName_resource
-  ]
 }

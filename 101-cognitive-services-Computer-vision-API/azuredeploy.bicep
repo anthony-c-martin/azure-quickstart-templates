@@ -21,7 +21,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource accountName_resource 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
+resource accountName_res 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   name: accountName
   location: location
   kind: 'ComputerVision'

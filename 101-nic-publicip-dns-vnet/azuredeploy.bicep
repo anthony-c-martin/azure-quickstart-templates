@@ -32,14 +32,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var virtualNetworkName = 'virtualNetwork1'
-var publicIPAddressName = 'publicIp1'
+var virtualNetworkName_var = 'virtualNetwork1'
+var publicIPAddressName_var = 'publicIp1'
 var subnetName = 'subnet1'
-var nicName = 'networkInterface1'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var nicName_var = 'networkInterface1'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -49,8 +49,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -69,8 +69,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -78,7 +78,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         name: 'ipconfig1'
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
@@ -88,8 +88,4 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
-  ]
 }

@@ -43,13 +43,13 @@ param location string {
 var distinguishedName = 'CN=${rootHostname}'
 var wwwHostname = 'www.${rootHostname}'
 
-resource certificateOrderName_resource 'Microsoft.CertificateRegistration/certificateOrders@2015-08-01' = {
+resource certificateOrderName_res 'Microsoft.CertificateRegistration/certificateOrders@2015-08-01' = {
   name: certificateOrderName
   location: 'global'
   properties: {
-    DistinguishedName: distinguishedName
-    ValidityInYears: 1
-    ProductType: productType
+    distinguishedName: distinguishedName
+    validityInYears: 1
+    productType: productType
   }
 }
 
@@ -57,10 +57,10 @@ resource existingAppName_certificateOrderName 'Microsoft.Web/sites/domainOwnersh
   name: concat(existingAppName, '/${certificateOrderName}')
   location: existingAppLocation
   properties: {
-    id: certificateOrderName_resource.properties.DomainVerificationToken
+    id: certificateOrderName_res.properties.DomainVerificationToken
   }
   dependsOn: [
-    certificateOrderName_resource
+    certificateOrderName_res
   ]
 }
 
@@ -71,10 +71,6 @@ resource certificateOrderName_certificateOrderName 'Microsoft.CertificateRegistr
     keyVaultId: existingKeyVaultId
     keyVaultSecretName: certificateOrderName
   }
-  dependsOn: [
-    certificateOrderName_resource
-    resourceId('Microsoft.Web/sites/domainOwnershipIdentifiers', existingAppName, certificateOrderName)
-  ]
 }
 
 resource Microsoft_Web_certificates_certificateOrderName 'Microsoft.Web/certificates@2015-08-01' = {
@@ -84,12 +80,9 @@ resource Microsoft_Web_certificates_certificateOrderName 'Microsoft.Web/certific
     keyVaultId: existingKeyVaultId
     keyVaultSecretName: certificateOrderName
   }
-  dependsOn: [
-    resourceId('Microsoft.CertificateRegistration/certificateOrders/certificates', certificateOrderName, certificateOrderName)
-  ]
 }
 
-resource existingAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource existingAppName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: existingAppName
   location: existingAppLocation
   properties: {
@@ -98,18 +91,15 @@ resource existingAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
       {
         name: rootHostname
         sslState: 1
-        thumbprint: certificateOrderName_resource.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.SignedCertificate.Thumbprint
         toUpdate: true
       }
       {
         name: wwwHostname
         sslState: 1
-        thumbprint: certificateOrderName_resource.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.SignedCertificate.Thumbprint
         toUpdate: true
       }
     ]
   }
-  dependsOn: [
-    Microsoft_Web_certificates_certificateOrderName
-  ]
 }

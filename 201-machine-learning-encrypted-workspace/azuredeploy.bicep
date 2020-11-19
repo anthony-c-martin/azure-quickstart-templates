@@ -54,13 +54,13 @@ param resource_cmk_uri string {
   }
 }
 
-var storageAccountName = 'sa${uniqueString(resourceGroup().id)}'
+var storageAccountName_var = 'sa${uniqueString(resourceGroup().id)}'
 var storageAccountType = 'Standard_LRS'
-var applicationInsightsName = 'ai${uniqueString(resourceGroup().id)}'
-var containerRegistryName = 'cr${uniqueString(resourceGroup().id)}'
+var applicationInsightsName_var = 'ai${uniqueString(resourceGroup().id)}'
+var containerRegistryName_var = 'cr${uniqueString(resourceGroup().id)}'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -82,8 +82,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   }
 }
 
-resource applicationInsightsName_resource 'Microsoft.Insights/components@2020-02-02-preview' = {
-  name: applicationInsightsName
+resource applicationInsightsName 'Microsoft.Insights/components@2020-02-02-preview' = {
+  name: applicationInsightsName_var
   location: location
   kind: 'web'
   properties: {
@@ -91,8 +91,8 @@ resource applicationInsightsName_resource 'Microsoft.Insights/components@2020-02
   }
 }
 
-resource containerRegistryName_resource 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
-  name: containerRegistryName
+resource containerRegistryName 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
+  name: containerRegistryName_var
   location: location
   sku: {
     name: 'Standard'
@@ -102,7 +102,7 @@ resource containerRegistryName_resource 'Microsoft.ContainerRegistry/registries@
   }
 }
 
-resource workspaceName_resource 'Microsoft.MachineLearningServices/workspaces@2020-01-01' = {
+resource workspaceName_res 'Microsoft.MachineLearningServices/workspaces@2020-01-01' = {
   name: workspaceName
   location: location
   identity: {
@@ -115,9 +115,9 @@ resource workspaceName_resource 'Microsoft.MachineLearningServices/workspaces@20
   properties: {
     friendlyName: workspaceName
     keyVault: cmk_keyvault_id
-    applicationInsights: applicationInsightsName_resource.id
-    containerRegistry: containerRegistryName_resource.id
-    storageAccount: storageAccountName_resource.id
+    applicationInsights: applicationInsightsName.id
+    containerRegistry: containerRegistryName.id
+    storageAccount: storageAccountName.id
     encryption: {
       status: encryption_status
       keyVaultProperties: {
@@ -127,9 +127,4 @@ resource workspaceName_resource 'Microsoft.MachineLearningServices/workspaces@20
     }
     hbiWorkspace: confidential_data
   }
-  dependsOn: [
-    storageAccountName_resource
-    applicationInsightsName_resource
-    containerRegistryName_resource
-  ]
 }

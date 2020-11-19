@@ -29,7 +29,7 @@ param acrSku string {
   default: 'Basic'
 }
 
-resource acrName_resource 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
+resource acrName_res 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
   name: acrName
   location: location
   tags: {
@@ -45,4 +45,4 @@ resource acrName_resource 'Microsoft.ContainerRegistry/registries@2019-12-01-pre
   }
 }
 
-output acrLoginServer string = reference(acrName_resource.id, '2019-12-01-preview').loginServer
+output acrLoginServer string = reference(acrName_res.id, '2019-12-01-preview').loginServer

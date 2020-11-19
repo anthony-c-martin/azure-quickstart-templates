@@ -82,7 +82,7 @@ param clusterWorkerNodeCount int {
 
 var defaultApiVersion = '2015-06-15'
 
-resource adlStoreName_resource 'Microsoft.DataLakeStore/accounts@2015-10-01-preview' = {
+resource adlStoreName_res 'Microsoft.DataLakeStore/accounts@2015-10-01-preview' = {
   name: adlStoreName
   location: 'East US 2'
   tags: {}
@@ -92,7 +92,7 @@ resource adlStoreName_resource 'Microsoft.DataLakeStore/accounts@2015-10-01-prev
   dependsOn: []
 }
 
-resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource clusterStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: clusterStorageAccountName
   location: 'East US 2'
   tags: {}
@@ -102,7 +102,7 @@ resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2
   dependsOn: []
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
   name: clusterName
   location: 'East US 2'
   tags: {}
@@ -132,7 +132,7 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' 
           name: '${clusterStorageAccountName}.blob.core.windows.net'
           isDefault: true
           container: clusterName
-          key: listKeys(clusterStorageAccountName_resource.id, defaultApiVersion).key1
+          key: listKeys(clusterStorageAccountName_res.id, defaultApiVersion).key1
         }
       ]
     }
@@ -167,12 +167,8 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    adlStoreName_resource
-    clusterStorageAccountName_resource
-  ]
 }
 
-output adlStoreAccount object = adlStoreName_resource.properties
-output storageAccount object = clusterStorageAccountName_resource.properties
-output cluster object = clusterName_resource.properties
+output adlStoreAccount object = adlStoreName_res.properties
+output storageAccount object = clusterStorageAccountName_res.properties
+output cluster object = clusterName_res.properties

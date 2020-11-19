@@ -36,7 +36,7 @@ param repoUrl string {
   default: ''
 }
 
-var appServicePlanPortalName = 'AppServicePlan-${webAppName}'
+var appServicePlanPortalName_var = 'AppServicePlan-${webAppName}'
 var gitRepoReference = {
   '.net': 'https://github.com/Azure-Samples/app-service-web-dotnet-get-started'
   node: 'https://github.com/Azure-Samples/nodejs-docs-hello-world'
@@ -64,24 +64,21 @@ var configReference = {
   }
 }
 
-resource appServicePlanPortalName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: appServicePlanPortalName
+resource appServicePlanPortalName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: appServicePlanPortalName_var
   location: location
   sku: {
     name: sku
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: webAppName
   location: location
   properties: {
     siteConfig: configReference[language]
-    serverFarmId: appServicePlanPortalName_resource.id
+    serverFarmId: appServicePlanPortalName.id
   }
-  dependsOn: [
-    appServicePlanPortalName_resource
-  ]
 }
 
 resource webAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
@@ -92,7 +89,4 @@ resource webAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
     branch: 'master'
     isManualIntegration: true
   }
-  dependsOn: [
-    webAppName_resource
-  ]
 }

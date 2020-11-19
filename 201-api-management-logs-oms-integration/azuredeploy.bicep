@@ -57,11 +57,11 @@ param location string {
   default: resourceGroup().location
 }
 
-var apiManagementServiceName = 'apiservice${uniqueString(resourceGroup().id)}'
-var omsWorkspaceName = 'omsworkspace${uniqueString(resourceGroup().id)}'
+var apiManagementServiceName_var = 'apiservice${uniqueString(resourceGroup().id)}'
+var omsWorkspaceName_var = 'omsworkspace${uniqueString(resourceGroup().id)}'
 
-resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2017-03-01' = {
-  name: apiManagementServiceName
+resource apiManagementServiceName 'Microsoft.ApiManagement/service@2017-03-01' = {
+  name: apiManagementServiceName_var
   location: location
   tags: {}
   sku: {
@@ -74,8 +74,8 @@ resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2017
   }
 }
 
-resource omsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
-  name: omsWorkspaceName
+resource omsWorkspaceName 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
+  name: omsWorkspaceName_var
   location: workspaceRegion
   properties: {
     sku: {
@@ -85,9 +85,9 @@ resource omsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@201
 }
 
 resource apiManagementServiceName_Microsoft_Insights_service 'Microsoft.ApiManagement/service/providers/diagnosticSettings@2015-07-01' = {
-  name: '${apiManagementServiceName}/Microsoft.Insights/service'
+  name: '${apiManagementServiceName_var}/Microsoft.Insights/service'
   properties: {
-    workspaceId: omsWorkspaceName_resource.id
+    workspaceId: omsWorkspaceName.id
     logs: [
       {
         category: 'GatewayLogs'
@@ -95,8 +95,4 @@ resource apiManagementServiceName_Microsoft_Insights_service 'Microsoft.ApiManag
       }
     ]
   }
-  dependsOn: [
-    apiManagementServiceName_resource
-    omsWorkspaceName_resource
-  ]
 }

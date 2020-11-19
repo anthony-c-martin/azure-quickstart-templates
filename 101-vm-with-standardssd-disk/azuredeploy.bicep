@@ -53,7 +53,7 @@ param location string {
 
 var dataDiskSize = 1024
 var dataDisksCount = 5
-var virtualNetworkName = '${toLower(virtualMachineName)}-vnet'
+var virtualNetworkName_var = '${toLower(virtualMachineName)}-vnet'
 var subnetName = '${toLower(virtualMachineName)}-subnet'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
@@ -61,17 +61,17 @@ var OSDiskName = '${toLower(virtualMachineName)}OSDisk'
 var addressPrefix = '10.2.3.0/24'
 var subnetPrefix = '10.2.3.0/24'
 var publicIPAddressType = 'Dynamic'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var networkInterfaceName = toLower(virtualMachineName)
-var publicIpAddressName = '${toLower(virtualMachineName)}-ip'
-var networkSecurityGroupName = '${subnetName}-nsg'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var networkInterfaceName_var = toLower(virtualMachineName)
+var publicIpAddressName_var = '${toLower(virtualMachineName)}-ip'
+var networkSecurityGroupName_var = '${subnetName}-nsg'
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource publicIpAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   sku: {
     name: 'Basic'
     tier: 'Regional'
   }
-  name: publicIpAddressName
+  name: publicIpAddressName_var
   location: location
   properties: {
     publicIPAddressVersion: 'IPv4'
@@ -79,8 +79,8 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -101,8 +101,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -116,19 +116,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -137,7 +134,7 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIpAddressName_resource.id
+            id: publicIpAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -146,13 +143,9 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
       }
     ]
   }
-  dependsOn: [
-    publicIpAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -160,7 +153,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
       vmSize: virtualMachineSize
     }
     osProfile: {
-      computername: virtualMachineName
+      computerName: virtualMachineName
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -200,12 +193,9 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }

@@ -75,7 +75,7 @@ var nsAuthorizationRuleId = namespaceName_namespaceAuthorizationRuleName.id
 var ehAuthorizationRuleId1 = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', namespaceName, eventHubName, eventhubAuthorizationRuleName)
 var ehAuthorizationRuleId2 = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', namespaceName, eventHubName, eventhubAuthorizationRuleName1)
 
-resource namespaceName_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: namespaceName
   location: location
   sku: {
@@ -93,9 +93,6 @@ resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@201
     messageRetentionInDays: 4
     partitionCount: 4
   }
-  dependsOn: [
-    namespaceName_resource
-  ]
 }
 
 resource namespaceName_eventHubName_consumerGroupName 'Microsoft.EventHub/namespaces/eventhubs/consumergroups@2017-04-01' = {
@@ -103,9 +100,6 @@ resource namespaceName_eventHubName_consumerGroupName 'Microsoft.EventHub/namesp
   properties: {
     userMetadata: 'User Metadata'
   }
-  dependsOn: [
-    namespaceName_eventHubName
-  ]
 }
 
 resource namespaceName_eventHubName_eventhubAuthorizationRuleName 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2017-04-01' = {
@@ -117,9 +111,6 @@ resource namespaceName_eventHubName_eventhubAuthorizationRuleName 'Microsoft.Eve
       'Manage'
     ]
   }
-  dependsOn: [
-    namespaceName_eventHubName
-  ]
 }
 
 resource namespaceName_eventHubName_eventhubAuthorizationRuleName1 'Microsoft.EventHub/namespaces/eventhubs/authorizationRules@2017-04-01' = {
@@ -129,9 +120,6 @@ resource namespaceName_eventHubName_eventhubAuthorizationRuleName1 'Microsoft.Ev
       'Send'
     ]
   }
-  dependsOn: [
-    namespaceName_eventHubName
-  ]
 }
 
 resource namespaceName_namespaceAuthorizationRuleName 'Microsoft.EventHub/namespaces/AuthorizationRules@2017-04-01' = {
@@ -143,9 +131,6 @@ resource namespaceName_namespaceAuthorizationRuleName 'Microsoft.EventHub/namesp
       'Manage'
     ]
   }
-  dependsOn: [
-    namespaceName_resource
-  ]
 }
 
 output defaultNamespaceConnectionString string = listkeys(authRuleResourceId, '2017-04-01').primaryConnectionString

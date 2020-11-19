@@ -18,13 +18,13 @@ param location string {
 }
 param appName string = uniqueString(resourceGroup().id)
 
-var appServicePlanName = toLower('asp-${appName}')
-var webSiteName = toLower('wapp-${appName}')
-var appInsightName = toLower('appi-${appName}')
-var logAnalyticsName = toLower('la-${appName}')
+var appServicePlanName_var = toLower('asp-${appName}')
+var webSiteName_var = toLower('wapp-${appName}')
+var appInsightName_var = toLower('appi-${appName}')
+var logAnalyticsName_var = toLower('la-${appName}')
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: appServicePlanName
+resource appServicePlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: appServicePlanName_var
   location: location
   sku: {
     name: skuName
@@ -35,12 +35,12 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
     ProjectName: appName
   }
   properties: {
-    name: appServicePlanName
+    name: appServicePlanName_var
   }
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webSiteName
+resource webSiteName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webSiteName_var
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -50,40 +50,30 @@ resource webSiteName_resource 'Microsoft.Web/sites@2019-08-01' = {
     ProjectName: appName
   }
   properties: {
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName.id
     httpsOnly: true
     siteConfig: {
       minTlsVersion: '1.2'
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-    logAnalyticsName_resource
-  ]
 }
 
 resource webSiteName_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${webSiteName}/appsettings'
+  name: '${webSiteName_var}/appsettings'
   properties: {
-    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightName_resource.properties.InstrumentationKey
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightName.properties.InstrumentationKey
   }
   dependsOn: [
-    webSiteName_resource
-    webSiteName_Microsoft_ApplicationInsights_AzureWebSites
-    appInsightName_resource
+    appInsightName
   ]
 }
 
 resource webSiteName_Microsoft_ApplicationInsights_AzureWebSites 'Microsoft.Web/sites/siteextensions@2019-08-01' = {
-  name: '${webSiteName}/Microsoft.ApplicationInsights.AzureWebSites'
-  dependsOn: [
-    webSiteName_resource
-    appInsightName_resource
-  ]
+  name: '${webSiteName_var}/Microsoft.ApplicationInsights.AzureWebSites'
 }
 
 resource webSiteName_logs 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${webSiteName}/logs'
+  name: '${webSiteName_var}/logs'
   properties: {
     applicationLogs: {
       fileSystem: {
@@ -103,13 +93,10 @@ resource webSiteName_logs 'Microsoft.Web/sites/config@2019-08-01' = {
       enabled: true
     }
   }
-  dependsOn: [
-    webSiteName_resource
-  ]
 }
 
-resource appInsightName_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: appInsightName
+resource appInsightName 'microsoft.insights/components@2020-02-02-preview' = {
+  name: appInsightName_var
   location: location
   kind: 'string'
   tags: {
@@ -118,17 +105,13 @@ resource appInsightName_resource 'microsoft.insights/components@2020-02-02-previ
   }
   properties: {
     Application_Type: 'web'
-    applicationId: appInsightName
-    WorkspaceResourceId: logAnalyticsName_resource.id
+    ApplicationId: appInsightName_var
+    WorkspaceResourceId: logAnalyticsName.id
   }
-  dependsOn: [
-    webSiteName_resource
-    logAnalyticsName_resource
-  ]
 }
 
-resource logAnalyticsName_resource 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
-  name: logAnalyticsName
+resource logAnalyticsName 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
+  name: logAnalyticsName_var
   location: location
   tags: {
     displayName: 'Log Analytics'

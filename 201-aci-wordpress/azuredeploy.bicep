@@ -36,42 +36,36 @@ param location string {
 
 var cpuCores = '0.5'
 var memoryInGb = '0.7'
-var wordpressContainerGroupName = 'wordpress-containerinstance'
+var wordpressContainerGroupName_var = 'wordpress-containerinstance'
 var wordpressShareName = 'wordpress-share'
 var mysqlShareName = 'mysql-share'
 var scriptName = 'createFileShare'
-var identityName = 'scratch'
+var identityName_var = 'scratch'
 var roleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-var roleDefinitionName = guid(identityName, roleDefinitionId, resourceGroup().id)
+var roleDefinitionName_var = guid(identityName_var, roleDefinitionId, resourceGroup().id)
 
-resource identityName_resource 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: identityName
+resource identityName 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+  name: identityName_var
   location: location
 }
 
-resource roleDefinitionName_resource 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: roleDefinitionName
+resource roleDefinitionName 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: roleDefinitionName_var
   properties: {
     roleDefinitionId: roleDefinitionId
-    principalId: reference(identityName).principalId
+    principalId: reference(identityName_var).principalId
     scope: resourceGroup().id
     principalType: 'ServicePrincipal'
   }
-  dependsOn: [
-    identityName_resource
-  ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
     name: storageAccountType
   }
   kind: 'StorageV2'
-  dependsOn: [
-    roleDefinitionName_resource
-  ]
 }
 
 resource scriptName_wordpressShareName 'Microsoft.Resources/deploymentScripts@2019-10-01-preview' = {
@@ -79,9 +73,9 @@ resource scriptName_wordpressShareName 'Microsoft.Resources/deploymentScripts@20
   location: location
   kind: 'AzurePowerShell'
   identity: {
-    type: 'userAssigned'
+    type: 'UserAssigned'
     userAssignedIdentities: {
-      '${identityName_resource.id}': {}
+      '${identityName.id}': {}
     }
   }
   properties: {
@@ -93,9 +87,6 @@ resource scriptName_wordpressShareName 'Microsoft.Resources/deploymentScripts@20
     cleanupPreference: 'OnSuccess'
     retentionInterval: 'P1D'
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
 resource scriptName_mysqlShareName 'Microsoft.Resources/deploymentScripts@2019-10-01-preview' = {
@@ -103,9 +94,9 @@ resource scriptName_mysqlShareName 'Microsoft.Resources/deploymentScripts@2019-1
   location: location
   kind: 'AzurePowerShell'
   identity: {
-    type: 'userAssigned'
+    type: 'UserAssigned'
     userAssignedIdentities: {
-      '${identityName_resource.id}': {}
+      '${identityName.id}': {}
     }
   }
   properties: {
@@ -117,13 +108,10 @@ resource scriptName_mysqlShareName 'Microsoft.Resources/deploymentScripts@2019-1
     cleanupPreference: 'OnSuccess'
     retentionInterval: 'P1D'
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
-resource wordpresscontainerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
-  name: wordpressContainerGroupName
+resource wordpresscontainerGroupName 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+  name: wordpressContainerGroupName_var
   location: location
   properties: {
     containers: [
@@ -156,7 +144,7 @@ resource wordpresscontainerGroupName_resource 'Microsoft.ContainerInstance/conta
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
         }
@@ -186,7 +174,7 @@ resource wordpresscontainerGroupName_resource 'Microsoft.ContainerInstance/conta
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
         }
@@ -222,10 +210,6 @@ resource wordpresscontainerGroupName_resource 'Microsoft.ContainerInstance/conta
     }
     osType: 'Linux'
   }
-  dependsOn: [
-    scriptName_wordpressShareName
-    scriptName_mysqlShareName
-  ]
 }
 
-output siteFQDN string = wordpresscontainerGroupName_resource.properties.ipAddress.fqdn
+output siteFQDN string = wordpresscontainerGroupName.properties.ipAddress.fqdn

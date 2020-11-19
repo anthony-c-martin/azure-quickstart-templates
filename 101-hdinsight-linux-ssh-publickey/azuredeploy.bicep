@@ -80,10 +80,10 @@ param WorkerNodeVirtualMachineSize string {
   default: 'Standard_D3_v2'
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}storage'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -92,7 +92,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -111,10 +111,10 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
     storageProfile: {
       storageaccounts: [
         {
-          name: replace(replace(concat(reference(storageAccountName_resource.id, '2019-06-01').primaryEndpoints.blob), 'https:', ''), '/', '')
+          name: replace(replace(concat(reference(storageAccountName.id, '2019-06-01').primaryEndpoints.blob), 'https:', ''), '/', '')
           isDefault: true
           container: clusterName
-          key: listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value
+          key: listKeys(storageAccountName.id, '2019-06-01').keys[0].value
         }
       ]
     }
@@ -161,9 +161,6 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties

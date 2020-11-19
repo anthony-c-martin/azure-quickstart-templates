@@ -109,9 +109,9 @@ var template = {
   protectWithLocks: 'nestedtemplates/protectwithlocks${protectWithLocks}.json'
 }
 var uniqueString = uniqueString(subscription().id, resourceGroup().id)
-var diagnosticStorageAccountName = toLower(substring(replace(concat(keyVaultName, uniqueString, uniqueString), '-', ''), 0, 23))
+var diagnosticStorageAccountName_var = toLower(substring(replace(concat(keyVaultName, uniqueString, uniqueString), '-', ''), 0, 23))
 
-resource keyVaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource keyVaultName_res 'Microsoft.KeyVault/vaults@2019-09-01' = {
   name: keyVaultName
   location: location
   tags: {
@@ -143,7 +143,7 @@ resource keyVaultName_Microsoft_Insights_service 'Microsoft.KeyVault/vaults/prov
   name: '${keyVaultName}/Microsoft.Insights/service'
   location: location
   properties: {
-    storageAccountId: diagnosticStorageAccountName_resource.id
+    storageAccountId: diagnosticStorageAccountName.id
     logs: [
       {
         category: 'AuditEvent'
@@ -155,14 +155,10 @@ resource keyVaultName_Microsoft_Insights_service 'Microsoft.KeyVault/vaults/prov
       }
     ]
   }
-  dependsOn: [
-    keyVaultName_resource
-    diagnosticStorageAccountName_resource
-  ]
 }
 
-resource diagnosticStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: diagnosticStorageAccountName
+resource diagnosticStorageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: diagnosticStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -173,14 +169,14 @@ resource diagnosticStorageAccountName_resource 'Microsoft.Storage/storageAccount
   }
 }
 
-module protectWithLocks_resource '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(variables(\'template\').protectWithLocks, parameters(\'_artifactsLocationSasToken\')))]>' = {
+module protectWithLocks_res '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat(variables('template').protectWithLocks, parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'protectWithLocks'
   params: {
     keyVaultName: keyVaultName
-    diagnosticStorageAccountName: diagnosticStorageAccountName
+    diagnosticStorageAccountName: diagnosticStorageAccountName_var
   }
   dependsOn: [
-    keyVaultName_resource
-    diagnosticStorageAccountName_resource
+    keyVaultName_res
+    diagnosticStorageAccountName
   ]
 }

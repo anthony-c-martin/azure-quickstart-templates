@@ -46,11 +46,11 @@ param vmSize string {
   default: 'Standard_A1_v2'
 }
 
-var vmName = 'myVM'
-var nicName = '${vmName}-nic'
-var virtualNetworkName = 'vnet-myVnet'
+var vmName_var = 'myVM'
+var nicName_var = '${vmName_var}-nic'
+var virtualNetworkName_var = 'vnet-myVnet'
 var subnetName = 'default'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var updateip_templateUri = uri(artifactsLocation, 'nested/update-nic.json${artifactsLocationSasToken}')
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -63,10 +63,10 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -87,8 +87,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -102,19 +102,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: '10.0.0.0/24'
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -129,20 +126,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -158,27 +152,24 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    updateIp
-  ]
 }
 
-module updateIp '<failed to parse [variables(\'updateip_templateUri\')]>' = {
+module updateIp '?' /*TODO: replace with correct path to [variables('updateip_templateUri')]*/ = {
   name: 'updateIp'
   params: {
-    nicName: nicName
+    nicName: nicName_var
     SubnetRef: subnetRef
-    privateIp: reference(nicName).ipConfigurations[0].properties.privateIPAddress
+    privateIp: reference(nicName_var).ipConfigurations[0].properties.privateIPAddress
     location: location
   }
   dependsOn: [
-    nicName_resource
+    nicName
   ]
 }
 
-output privateIp string = reference(nicName).ipConfigurations[0].properties.privateIPAddress
+output privateIp string = reference(nicName_var).ipConfigurations[0].properties.privateIPAddress

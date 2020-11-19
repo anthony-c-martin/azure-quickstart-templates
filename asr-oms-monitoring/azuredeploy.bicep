@@ -110,7 +110,7 @@ var azureSubscriptionId = 'AzureSubscriptionId'
 var omsWorkspaceId = 'OMSWorkspaceId'
 var omsWorkspaceKey = 'OMSWorkspacekey'
 
-resource omslogAnalyticsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
+resource omslogAnalyticsWorkspaceName_res 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
   name: omsLogAnalyticsWorkspaceName
   location: omsLogAnalyticsRegion
 }
@@ -132,9 +132,6 @@ resource omslogAnalyticsWorkspaceName_Microsoft_Windows_Hyper_V_VMMS_Admin 'Micr
       }
     ]
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent1 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -146,9 +143,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent1 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Average Replication Size'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent2 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -160,9 +154,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent2 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Replication Throughput'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent3 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -174,9 +165,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent3 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Network Send Throughput'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent4 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -188,9 +176,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent4 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Replication Count'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent5 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -202,9 +187,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent5 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Network Bytes Sent'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent6 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -216,9 +198,6 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent6 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Last Replication Size'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
 resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent7 'Microsoft.OperationalInsights/workspaces/datasources@2015-11-01-preview' = {
@@ -230,12 +209,9 @@ resource omslogAnalyticsWorkspaceName_Hyper_VAzureReplicationAgent7 'Microsoft.O
     intervalSeconds: 10
     counterName: 'Resynchronized Bytes'
   }
-  dependsOn: [
-    omslogAnalyticsWorkspaceName_resource
-  ]
 }
 
-resource omsAutomationAccountName_resource 'Microsoft.Automation/automationAccounts@2015-10-31' = {
+resource omsAutomationAccountName_res 'Microsoft.Automation/automationAccounts@2015-10-31' = {
   location: omsAutomationRegion
   name: omsAutomationAccountName
   properties: {
@@ -251,11 +227,8 @@ resource omsAutomationAccountName_omsWorkspaceId 'Microsoft.Automation/automatio
   tags: {}
   properties: {
     description: 'OMS Workspace Id'
-    value: '"${reference(omslogAnalyticsWorkspaceName_resource.id, '2015-11-01-preview').customerId}"'
+    value: '"${reference(omslogAnalyticsWorkspaceName_res.id, '2015-11-01-preview').customerId}"'
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-  ]
 }
 
 resource omsAutomationAccountName_omsWorkspaceKey 'Microsoft.Automation/automationAccounts/variables@2015-10-31' = {
@@ -264,11 +237,8 @@ resource omsAutomationAccountName_omsWorkspaceKey 'Microsoft.Automation/automati
   tags: {}
   properties: {
     description: 'OMS Workspace key'
-    value: '"${listKeys(omslogAnalyticsWorkspaceName_resource.id, '2015-11-01-preview').primarySharedKey}"'
+    value: '"${listKeys(omslogAnalyticsWorkspaceName_res.id, '2015-11-01-preview').primarySharedKey}"'
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-  ]
 }
 
 resource omsAutomationAccountName_azureSubscriptionId 'Microsoft.Automation/automationAccounts/variables@2015-10-31' = {
@@ -281,9 +251,6 @@ resource omsAutomationAccountName_azureSubscriptionId 'Microsoft.Automation/auto
     type: 'string'
     value: '"${subscription().subscriptionId}"'
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmOperationalInsights_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -294,10 +261,6 @@ resource omsAutomationAccountName_psModules_azureRmOperationalInsights_name 'Mic
       uri: psModules.azureRMOperationalInsights.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmResources_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -308,10 +271,6 @@ resource omsAutomationAccountName_psModules_azureRmResources_name 'Microsoft.Aut
       uri: psModules.AzureRMResources.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmAutomation_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -322,11 +281,6 @@ resource omsAutomationAccountName_psModules_azureRmAutomation_name 'Microsoft.Au
       uri: psModules.azureRMAutomation.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureRmResources_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmStorage_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -337,11 +291,6 @@ resource omsAutomationAccountName_psModules_azureRmStorage_name 'Microsoft.Autom
       uri: psModules.azureRmStorage.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureStorage_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureStorage_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -352,10 +301,6 @@ resource omsAutomationAccountName_psModules_azureStorage_name 'Microsoft.Automat
       uri: psModules.azureStorage.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmCompute_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -366,10 +311,6 @@ resource omsAutomationAccountName_psModules_azureRmCompute_name 'Microsoft.Autom
       uri: psModules.azureRmCompute.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmSiteRecovery_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -380,11 +321,6 @@ resource omsAutomationAccountName_psModules_azureRmSiteRecovery_name 'Microsoft.
       uri: psModules.AzureRmSiteRecovery.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureStorage_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmbackup_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -395,11 +331,6 @@ resource omsAutomationAccountName_psModules_azureRmbackup_name 'Microsoft.Automa
       uri: psModules.azureRmBackup.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureStorage_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmRecoveryServices_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -410,11 +341,6 @@ resource omsAutomationAccountName_psModules_azureRmRecoveryServices_name 'Micros
       uri: psModules.azureRmRecoveryServices.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureStorage_name
-  ]
 }
 
 resource omsAutomationAccountName_psModules_azureRmProfile_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -425,9 +351,6 @@ resource omsAutomationAccountName_psModules_azureRmProfile_name 'Microsoft.Autom
       uri: psModules.azureRmProfile.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-  ]
 }
 
 resource omsAutomationAccountName_psModules_omsASRMonitoring_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
@@ -438,10 +361,6 @@ resource omsAutomationAccountName_psModules_omsASRMonitoring_name 'Microsoft.Aut
       uri: psModules.omsASRMonitoring.url
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_psModules_azureStorage_name
-  ]
 }
 
 resource omsAutomationAccountName_runbooks_omsASRMonitoring_name 'Microsoft.Automation/automationAccounts/runbooks@2015-10-31' = {
@@ -458,23 +377,6 @@ resource omsAutomationAccountName_runbooks_omsASRMonitoring_name 'Microsoft.Auto
       version: runbooks.omsASRMonitoring.version
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_azureSubscriptionId
-    omsAutomationAccountName_omsWorkspaceId
-    omsAutomationAccountName_omsWorkspaceKey
-    omsAutomationAccountName_psModules_azureRmProfile_name
-    omsAutomationAccountName_psModules_azureRmResources_name
-    omsAutomationAccountName_psModules_azureRmCompute_name
-    omsAutomationAccountName_psModules_azureStorage_name
-    omsAutomationAccountName_psModules_azureRmStorage_name
-    omsAutomationAccountName_psModules_azureRmRecoveryServices_name
-    omsAutomationAccountName_psModules_azureRmSiteRecovery_name
-    omsAutomationAccountName_psModules_azureRmbackup_name
-    omsAutomationAccountName_psModules_azureRmOperationalInsights_name
-    omsAutomationAccountName_psModules_azureRmAutomation_name
-    omsAutomationAccountName_psModules_omsASRMonitoring_name
-  ]
 }
 
 resource omsAutomationAccountName_ingestscheduleName 'microsoft.automation/automationAccounts/schedules@2015-10-31' = {
@@ -488,10 +390,6 @@ resource omsAutomationAccountName_ingestscheduleName 'microsoft.automation/autom
     interval: ingestInterval
     frequency: ingestFrequency
   }
-  dependsOn: [
-    omsAutomationAccountName_resource
-    omsAutomationAccountName_runbooks_omsASRMonitoring_name
-  ]
 }
 
 resource omsAutomationAccountName_IngestScheduleGuid 'microsoft.automation/automationAccounts/jobSchedules@2015-10-31' = {
@@ -506,11 +404,6 @@ resource omsAutomationAccountName_IngestScheduleGuid 'microsoft.automation/autom
       name: runbooks.omsASRMonitoring.name
     }
   }
-  dependsOn: [
-    omsAutomationAccountName_ingestscheduleName
-    omsAutomationAccountName_runbooks_omsASRMonitoring_name
-    omsAutomationAccountName_resource
-  ]
 }
 
 output AutomationAccontName string = 'Microsoft.Automation/automationAccounts/${omsAutomationAccountName}'

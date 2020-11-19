@@ -41,7 +41,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: vnetName
   location: location
   properties: {
@@ -59,9 +59,6 @@ resource vnetName_subnet1Name 'Microsoft.Network/virtualNetworks/subnets@2020-05
   properties: {
     addressPrefix: subnet1Prefix
   }
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
 resource vnetName_subnet2Name 'Microsoft.Network/virtualNetworks/subnets@2020-05-01' = {
@@ -70,8 +67,4 @@ resource vnetName_subnet2Name 'Microsoft.Network/virtualNetworks/subnets@2020-05
   properties: {
     addressPrefix: subnet2Prefix
   }
-  dependsOn: [
-    vnetName_resource
-    vnetName_subnet1Name
-  ]
 }

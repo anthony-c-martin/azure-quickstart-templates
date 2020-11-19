@@ -10,7 +10,7 @@ param endpoint string {
   }
 }
 
-resource eventSubName_resource 'Microsoft.EventGrid/eventSubscriptions@2020-06-01' = {
+resource eventSubName_res 'Microsoft.EventGrid/eventSubscriptions@2020-06-01' = {
   name: eventSubName
   properties: {
     destination: {

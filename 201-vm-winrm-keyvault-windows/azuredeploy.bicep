@@ -58,15 +58,15 @@ param certificateUrl string {
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
-var virtualNetworkName = 'myVNET'
-var nicName = 'myNIC'
-var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnet1Name)
-var networkSecurityGroupName = '${subnet1Name}-nsg'
+var virtualNetworkName_var = 'myVNET'
+var nicName_var = 'myNIC'
+var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnet1Name)
+var networkSecurityGroupName_var = '${subnet1Name}-nsg'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -76,8 +76,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: resourceGroup().location
   properties: {
     securityRules: [
@@ -98,8 +98,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -113,19 +113,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-09-01' = {
+  name: nicName_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -134,7 +131,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -143,13 +140,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-09-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   name: vmName
   location: resourceGroup().location
   properties: {
@@ -204,12 +197,9 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }

@@ -40,40 +40,40 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}samultinic'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}samultinic'
 var storageAccountType = 'Standard_LRS'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
-var nic1Name = 'nic1'
-var nic2Name = 'nic2'
-var vnetName = 'vnet'
-var vnetId = vnetName_resource.id
+var nic1Name_var = 'nic1'
+var nic2Name_var = 'nic2'
+var vnetName_var = 'vnet'
+var vnetId = vnetName.id
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Frontend'
-var subnet1Id = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnet1Name)
+var subnet1Id = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnet1Name)
 var subnet1Prefix = '10.0.1.0/24'
 var subnet1PrivateAddress = '10.0.1.5'
 var subnet2Name = 'Web'
-var subnet2Id = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnet2Name)
+var subnet2Id = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnet2Name)
 var subnet2Prefix = '10.0.2.0/24'
 var subnet2PrivateAddress = '10.0.2.5'
-var publicIPAddressName = '${uniqueString(resourceGroup().id)}PublicIp'
+var publicIPAddressName_var = '${uniqueString(resourceGroup().id)}PublicIp'
 var publicIPAddressType = 'Dynamic'
-var publicIPAddressId = publicIPAddressName_resource.id
-var networkSecurityGroupName = 'default-NSG'
+var publicIPAddressId = publicIPAddressName.id
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   location: location
-  name: storageAccountName
+  name: storageAccountName_var
   sku: {
     name: storageAccountType
   }
   kind: 'StorageV2'
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -94,9 +94,9 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   location: location
-  name: vnetName
+  name: vnetName_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -109,7 +109,7 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
@@ -118,20 +118,17 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: subnet2Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   location: location
-  name: publicIPAddressName
+  name: publicIPAddressName_var
   properties: {
     dnsSettings: {
       domainNameLabel: vmName
@@ -141,9 +138,9 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource nic1Name_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+resource nic1Name 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   location: location
-  name: nic1Name
+  name: nic1Name_var
   properties: {
     ipConfigurations: [
       {
@@ -151,8 +148,8 @@ resource nic1Name_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAddress: subnet1PrivateAddress
           privateIPAllocationMethod: 'Static'
-          PublicIpAddress: {
-            Id: publicIPAddressId
+          publicIPAddress: {
+            id: publicIPAddressId
           }
           subnet: {
             id: subnet1Id
@@ -167,9 +164,9 @@ resource nic1Name_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   ]
 }
 
-resource nic2Name_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+resource nic2Name 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   location: location
-  name: nic2Name
+  name: nic2Name_var
   properties: {
     ipConfigurations: [
       {
@@ -189,14 +186,14 @@ resource nic2Name_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   location: location
   name: vmName
   properties: {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: reference(storageAccountName_resource.id, '2019-06-01').primaryEndpoints.blob
+        storageUri: reference(storageAccountName.id, '2019-06-01').primaryEndpoints.blob
       }
     }
     hardwareProfile: {
@@ -205,13 +202,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nic1Name_resource.id
+          id: nic1Name.id
           properties: {
             primary: true
           }
         }
         {
-          id: nic2Name_resource.id
+          id: nic2Name.id
           properties: {
             primary: false
           }
@@ -245,11 +242,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nic1Name_resource
-    nic2Name_resource
-  ]
 }
 
 output sshCommand string = 'ssh ${adminUsername}@${vmName}.${location}.cloudapp.azure.com'

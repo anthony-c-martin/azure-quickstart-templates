@@ -105,10 +105,6 @@ resource eventGridTopic_name_Microsoft_EventGrid_eventGridSubscription_name 'Mic
       isSubjectCaseSensitive: false
     }
   }
-  dependsOn: [
-    logicApp_name
-    eventGridTopic_name
-  ]
 }
 
 output eventGridTopicEndpointUrl string = reference(eventGridTopic.name).endpoint

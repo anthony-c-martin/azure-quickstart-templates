@@ -12,7 +12,7 @@ param location string {
 
 var hubName = 'MyHub'
 
-resource namespaceName_resource 'Microsoft.NotificationHubs/namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.NotificationHubs/namespaces@2017-04-01' = {
   name: namespaceName
   location: location
   sku: {
@@ -24,7 +24,4 @@ resource namespaceName_resource 'Microsoft.NotificationHubs/namespaces@2017-04-0
 resource namespaceName_hubName 'Microsoft.NotificationHubs/namespaces/notificationHubs@2017-04-01' = {
   name: '${namespaceName}/${hubName}'
   location: location
-  dependsOn: [
-    namespaceName_resource
-  ]
 }

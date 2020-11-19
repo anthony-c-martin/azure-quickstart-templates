@@ -30,7 +30,7 @@ param share_name string {
   default: 'share'
 }
 
-resource account_name_resource 'Microsoft.DataShare/accounts@2019-11-01' = {
+resource account_name_res 'Microsoft.DataShare/accounts@2019-11-01' = {
   name: account_name
   location: location
   identity: {
@@ -44,7 +44,4 @@ resource account_name_share_name 'Microsoft.DataShare/accounts/shares@2019-11-01
   properties: {
     shareKind: 'CopyBased'
   }
-  dependsOn: [
-    account_name_resource
-  ]
 }

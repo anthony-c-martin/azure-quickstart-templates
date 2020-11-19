@@ -46,7 +46,7 @@ param restartPolicy string {
   default: 'always'
 }
 
-resource name_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+resource name_res 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
   name: name
   location: location
   properties: {
@@ -63,7 +63,7 @@ resource name_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' 
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
         }
@@ -83,4 +83,4 @@ resource name_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' 
   }
 }
 
-output containerIPv4Address string = name_resource.properties.ipAddress.ip
+output containerIPv4Address string = name_res.properties.ipAddress.ip

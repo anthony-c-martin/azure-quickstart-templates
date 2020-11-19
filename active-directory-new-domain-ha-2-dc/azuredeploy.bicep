@@ -58,13 +58,13 @@ param adVMSize string {
 }
 
 var storageAccountType = 'Premium_LRS'
-var adPDCVMName = 'adPDC'
-var adBDCVMName = 'adBDC'
+var adPDCVMName_var = 'adPDC'
+var adBDCVMName_var = 'adBDC'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
 var imageSKU = '2016-Datacenter'
-var adAvailabilitySetName = 'adAvailabiltySet'
-var publicIPAddressName = 'ad-lb-pip'
+var adAvailabilitySetName_var = 'adAvailabiltySet'
+var publicIPAddressName_var = 'ad-lb-pip'
 var adLBFE = 'LBFE'
 var adLBBE = 'LBBE'
 var adPDCRDPNAT = 'adPDCRDP'
@@ -73,16 +73,16 @@ var virtualNetworkName = 'adVNET'
 var virtualNetworkAddressRange = '10.0.0.0/16'
 var adSubnetName = 'adSubnet'
 var adSubnet = '10.0.0.0/24'
-var adPDCNicName = 'adPDCNic'
+var adPDCNicName_var = 'adPDCNic'
 var adPDCNicIPAddress = '10.0.0.4'
-var adBDCNicName = 'adBDCNic'
+var adBDCNicName_var = 'adBDCNic'
 var adBDCNicIPAddress = '10.0.0.5'
 var adSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, adSubnetName)
-var adLBName = 'adLoadBalancer'
-var adlbFEConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', adLBName, adLBFE)
-var adPDCRDPNATRuleID = resourceId('Microsoft.Network/loadBalancers/inboundNatRules', adLBName, adPDCRDPNAT)
-var adBDCRDPNATRuleID = resourceId('Microsoft.Network/loadBalancers/inboundNatRules', adLBName, adBDCRDPNAT)
-var adBEAddressPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', adLBName, adLBBE)
+var adLBName_var = 'adLoadBalancer'
+var adlbFEConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', adLBName_var, adLBFE)
+var adPDCRDPNATRuleID = resourceId('Microsoft.Network/loadBalancers/inboundNatRules', adLBName_var, adPDCRDPNAT)
+var adBDCRDPNATRuleID = resourceId('Microsoft.Network/loadBalancers/inboundNatRules', adLBName_var, adBDCRDPNAT)
+var adBEAddressPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', adLBName_var, adLBBE)
 var adDataDiskSize = 1000
 var vnetTemplateUri = uri(artifactsLocation, 'nestedtemplates/vnet.json${artifactsLocationSasToken}')
 var nicTemplateUri = uri(artifactsLocation, 'nestedtemplates/nic.json${artifactsLocationSasToken}')
@@ -95,8 +95,8 @@ var adBDCPreparationFunction = 'PrepareADBDC.ps1\\PrepareADBDC'
 var adBDCConfigurationModulesURL = uri(artifactsLocation, 'DSC/ConfigureADBDC.zip${artifactsLocationSasToken}')
 var adBDCConfigurationFunction = 'ConfigureADBDC.ps1\\ConfigureADBDC'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-03-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-03-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -106,19 +106,19 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource adAvailabilitySetName_resource 'Microsoft.Compute/availabilitySets@2019-12-01' = {
+resource adAvailabilitySetName 'Microsoft.Compute/availabilitySets@2019-12-01' = {
   location: location
-  name: adAvailabilitySetName
+  name: adAvailabilitySetName_var
   properties: {
-    PlatformUpdateDomainCount: 20
-    PlatformFaultDomainCount: 2
+    platformUpdateDomainCount: 20
+    platformFaultDomainCount: 2
   }
   sku: {
     name: 'Aligned'
   }
 }
 
-module VNet '<failed to parse [variables(\'vnetTemplateUri\')]>' = {
+module VNet '?' /*TODO: replace with correct path to [variables('vnetTemplateUri')]*/ = {
   name: 'VNet'
   params: {
     location: location
@@ -129,8 +129,8 @@ module VNet '<failed to parse [variables(\'vnetTemplateUri\')]>' = {
   }
 }
 
-resource adLBName_resource 'Microsoft.Network/loadBalancers@2020-03-01' = {
-  name: adLBName
+resource adLBName 'Microsoft.Network/loadBalancers@2020-03-01' = {
+  name: adLBName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -138,7 +138,7 @@ resource adLBName_resource 'Microsoft.Network/loadBalancers@2020-03-01' = {
         name: adLBFE
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -175,13 +175,10 @@ resource adLBName_resource 'Microsoft.Network/loadBalancers@2020-03-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource adPDCNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' = {
-  name: adPDCNicName
+resource adPDCNicName 'Microsoft.Network/networkInterfaces@2020-03-01' = {
+  name: adPDCNicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -207,14 +204,10 @@ resource adPDCNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' 
       }
     ]
   }
-  dependsOn: [
-    VNet
-    adLBName_resource
-  ]
 }
 
-resource adBDCNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' = {
-  name: adBDCNicName
+resource adBDCNicName 'Microsoft.Network/networkInterfaces@2020-03-01' = {
+  name: adBDCNicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -240,24 +233,20 @@ resource adBDCNicName_resource 'Microsoft.Network/networkInterfaces@2020-03-01' 
       }
     ]
   }
-  dependsOn: [
-    VNet
-    adLBName_resource
-  ]
 }
 
-resource adPDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: adPDCVMName
+resource adPDCVMName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: adPDCVMName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: adVMSize
     }
     availabilitySet: {
-      id: adAvailabilitySetName_resource.id
+      id: adAvailabilitySetName.id
     }
     osProfile: {
-      computerName: adPDCVMName
+      computerName: adPDCVMName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -269,7 +258,7 @@ resource adPDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${adPDCVMName}_OSDisk'
+        name: '${adPDCVMName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -278,7 +267,7 @@ resource adPDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       }
       dataDisks: [
         {
-          name: '${adPDCVMName}_data-disk1'
+          name: '${adPDCVMName_var}_data-disk1'
           caching: 'None'
           diskSizeGB: adDataDiskSize
           lun: 0
@@ -292,20 +281,15 @@ resource adPDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: adPDCNicName_resource.id
+          id: adPDCNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    adPDCNicName_resource
-    adAvailabilitySetName_resource
-    adLBName_resource
-  ]
 }
 
 resource adPDCVMName_CreateADForest 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${adPDCVMName}/CreateADForest'
+  name: '${adPDCVMName_var}/CreateADForest'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -329,12 +313,9 @@ resource adPDCVMName_CreateADForest 'Microsoft.Compute/virtualMachines/extension
       }
     }
   }
-  dependsOn: [
-    adPDCVMName_resource
-  ]
 }
 
-module UpdateVNetDNS1 '<failed to parse [variables(\'vnetwithDNSTemplateUri\')]>' = {
+module UpdateVNetDNS1 '?' /*TODO: replace with correct path to [variables('vnetwithDNSTemplateUri')]*/ = {
   name: 'UpdateVNetDNS1'
   params: {
     location: location
@@ -351,11 +332,11 @@ module UpdateVNetDNS1 '<failed to parse [variables(\'vnetwithDNSTemplateUri\')]>
   ]
 }
 
-module UpdateBDCNIC '<failed to parse [variables(\'nicTemplateUri\')]>' = {
+module UpdateBDCNIC '?' /*TODO: replace with correct path to [variables('nicTemplateUri')]*/ = {
   name: 'UpdateBDCNIC'
   params: {
     location: location
-    nicName: adBDCNicName
+    nicName: adBDCNicName_var
     ipConfigurations: [
       {
         name: 'ipconfig1'
@@ -383,23 +364,23 @@ module UpdateBDCNIC '<failed to parse [variables(\'nicTemplateUri\')]>' = {
     ]
   }
   dependsOn: [
-    adBDCNicName_resource
+    adBDCNicName
     UpdateVNetDNS1
   ]
 }
 
-resource adBDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: adBDCVMName
+resource adBDCVMName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: adBDCVMName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: adVMSize
     }
     availabilitySet: {
-      id: adAvailabilitySetName_resource.id
+      id: adAvailabilitySetName.id
     }
     osProfile: {
-      computerName: adBDCVMName
+      computerName: adBDCVMName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -411,7 +392,7 @@ resource adBDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${adBDCVMName}_osdisk'
+        name: '${adBDCVMName_var}_osdisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -420,7 +401,7 @@ resource adBDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
       }
       dataDisks: [
         {
-          name: '${adBDCVMName}_data-disk1'
+          name: '${adBDCVMName_var}_data-disk1'
           caching: 'None'
           diskSizeGB: adDataDiskSize
           lun: 0
@@ -434,20 +415,15 @@ resource adBDCVMName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: adBDCNicName_resource.id
+          id: adBDCNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    adBDCNicName_resource
-    adAvailabilitySetName_resource
-    adLBName_resource
-  ]
 }
 
 resource adBDCVMName_PrepareBDC 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${adBDCVMName}/PrepareBDC'
+  name: '${adBDCVMName_var}/PrepareBDC'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -462,15 +438,12 @@ resource adBDCVMName_PrepareBDC 'Microsoft.Compute/virtualMachines/extensions@20
       }
     }
   }
-  dependsOn: [
-    adBDCVMName_resource
-  ]
 }
 
-module ConfiguringBackupADDomainController '<failed to parse [variables(\'configureADBDCTemplateUri\')]>' = {
+module ConfiguringBackupADDomainController '?' /*TODO: replace with correct path to [variables('configureADBDCTemplateUri')]*/ = {
   name: 'ConfiguringBackupADDomainController'
   params: {
-    adBDCVMName: adBDCVMName
+    adBDCVMName: adBDCVMName_var
     location: location
     adminUsername: adminUsername
     adminPassword: adminPassword
@@ -484,7 +457,7 @@ module ConfiguringBackupADDomainController '<failed to parse [variables(\'config
   ]
 }
 
-module UpdateVNetDNS2 '<failed to parse [variables(\'vnetwithDNSTemplateUri\')]>' = {
+module UpdateVNetDNS2 '?' /*TODO: replace with correct path to [variables('vnetwithDNSTemplateUri')]*/ = {
   name: 'UpdateVNetDNS2'
   params: {
     location: location

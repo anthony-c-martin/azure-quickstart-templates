@@ -96,7 +96,7 @@ param targetSQLTable string {
   }
 }
 
-var dataFactoryName = 'HiveTransformDF${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'HiveTransformDF${uniqueString(resourceGroup().id)}'
 var azureStorageLinkedServiceName = 'AzureStorageLinkedService'
 var ftpLinkedServiceName = 'FTPLinkedService'
 var hdInsightOnDemandLinkedServiceName = 'HDInsightOnDemandLinkedService'
@@ -107,13 +107,13 @@ var blobOutputDatasetName = 'AzureBlobOutputDataset'
 var sqlDatasetName = 'AzureSQLDataset'
 var pipelineName = 'Pipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: 'West US'
 }
 
 resource dataFactoryName_ftpLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${ftpLinkedServiceName}'
+  name: '${dataFactoryName_var}/${ftpLinkedServiceName}'
   properties: {
     type: 'FtpServer'
     typeProperties: {
@@ -126,13 +126,10 @@ resource dataFactoryName_ftpLinkedServiceName 'Microsoft.DataFactory/datafactori
       enableServerCertificateValidation: false
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureStorageLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureStorageLinkedServiceName}'
   properties: {
     type: 'AzureStorage'
     description: 'Azure Storage linked service'
@@ -140,13 +137,10 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/da
       connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${storageAccountKey}'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${hdInsightOnDemandLinkedServiceName}'
+  name: '${dataFactoryName_var}/${hdInsightOnDemandLinkedServiceName}'
   properties: {
     type: 'HDInsightOnDemand'
     typeProperties: {
@@ -157,14 +151,10 @@ resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFacto
       linkedServiceName: azureStorageLinkedServiceName
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_azureSqlLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureSqlLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureSqlLinkedServiceName}'
   properties: {
     type: 'AzureSqlDatabase'
     description: 'Azure SQL linked service'
@@ -172,13 +162,10 @@ resource dataFactoryName_azureSqlLinkedServiceName 'Microsoft.DataFactory/datafa
       connectionString: 'Server=tcp:${sqlServerName}.database.windows.net,1433;Database=${sqlDatabaseName};User ID=${sqlServerUserName};Password=${sqlServerPassword};Trusted_Connection=False;Encrypt=True;Connection Timeout=30'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_ftpDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${ftpDatasetName}'
+  name: '${dataFactoryName_var}/${ftpDatasetName}'
   properties: {
     type: 'FileShare'
     linkedServiceName: ftpLinkedServiceName
@@ -192,14 +179,10 @@ resource dataFactoryName_ftpDatasetName 'Microsoft.DataFactory/datafactories/dat
     }
     external: true
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_ftpLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${blobInputDatasetName}'
+  name: '${dataFactoryName_var}/${blobInputDatasetName}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: azureStorageLinkedServiceName
@@ -212,14 +195,10 @@ resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactori
       interval: 1
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_blobOutputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${blobOutputDatasetName}'
+  name: '${dataFactoryName_var}/${blobOutputDatasetName}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: azureStorageLinkedServiceName
@@ -235,14 +214,10 @@ resource dataFactoryName_blobOutputDatasetName 'Microsoft.DataFactory/datafactor
       interval: 1
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_sqlDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlDatasetName}'
+  name: '${dataFactoryName_var}/${sqlDatasetName}'
   properties: {
     type: 'AzureSqlTable'
     linkedServiceName: azureSqlLinkedServiceName
@@ -255,14 +230,10 @@ resource dataFactoryName_sqlDatasetName 'Microsoft.DataFactory/datafactories/dat
     }
     policy: {}
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureSqlLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datapipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${pipelineName}'
+  name: '${dataFactoryName_var}/${pipelineName}'
   properties: {
     description: 'Pipeline that copies data from an FTP server to Azure Blobs, invokes a hive script on an on-demand HDInsightcluster to transform the data'
     activities: [
@@ -363,15 +334,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datap
     end: '10/2/2015 12:00:00 AM'
     isPaused: false
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-    dataFactoryName_hdInsightOnDemandLinkedServiceName
-    dataFactoryName_ftpLinkedServiceName
-    dataFactoryName_azureSqlLinkedServiceName
-    dataFactoryName_ftpDatasetName
-    dataFactoryName_blobInputDatasetName
-    dataFactoryName_blobOutputDatasetName
-    dataFactoryName_sqlDatasetName
-  ]
 }

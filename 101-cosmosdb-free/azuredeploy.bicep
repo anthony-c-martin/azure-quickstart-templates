@@ -16,9 +16,9 @@ param databaseName string {
   }
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
   name: accountName
   location: location
   properties: {
@@ -31,7 +31,7 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01'
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
@@ -40,7 +40,4 @@ resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/sqlData
       throughput: 400
     }
   }
-  dependsOn: [
-    resourceId('Microsoft.DocumentDB/databaseAccounts', accountName_variable)
-  ]
 }

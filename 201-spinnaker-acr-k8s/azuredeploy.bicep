@@ -58,27 +58,27 @@ param location string {
 }
 
 var resourcePrefix = 'spinnaker'
-var kubernetesName = 'containerservice-${resourceGroup().name}'
-var storageAccountName = concat(resourcePrefix, uniqueString(resourceGroup().id))
+var kubernetesName_var = 'containerservice-${resourceGroup().name}'
+var storageAccountName_var = concat(resourcePrefix, uniqueString(resourceGroup().id))
 var OSDiskName = '${resourcePrefix}OSDisk'
-var nicName = '${resourcePrefix}VMNic'
+var nicName_var = '${resourcePrefix}VMNic'
 var subnetName = '${resourcePrefix}Subnet'
-var publicIPAddressName = '${resourcePrefix}PublicIP'
+var publicIPAddressName_var = '${resourcePrefix}PublicIP'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = '${resourcePrefix}VM'
-var virtualNetworkName = '${resourcePrefix}VNET'
+var vmName_var = '${resourcePrefix}VM'
+var virtualNetworkName_var = '${resourcePrefix}VNET'
 var vmExtensionName = '${resourcePrefix}Init'
-var acrPrefix = uniqueString(resourceGroup().id)
-var acrStorageAccountName = 'registry${uniqueString(resourceGroup().id)}'
+var acrPrefix_var = uniqueString(resourceGroup().id)
+var acrStorageAccountName_var = 'registry${uniqueString(resourceGroup().id)}'
 var kubernetesDnsPrefix = 'k8s${uniqueString(resourceGroup().id)}'
 var pipelinePort = '8000'
 var artifactsLocation = 'https://raw.githubusercontent.com/Azure/azure-devops-utils/v0.12.0/'
 var extensionScript = '201-spinnaker-acr-k8s.sh'
 var artifactsLocationSasToken = ''
 
-resource kubernetesName_resource 'Microsoft.ContainerService/containerServices@2016-09-30' = {
+resource kubernetesName 'Microsoft.ContainerService/containerServices@2016-09-30' = {
   location: location
-  name: kubernetesName
+  name: kubernetesName_var
   properties: {
     orchestratorProfile: {
       orchestratorType: 'Kubernetes'
@@ -106,14 +106,14 @@ resource kubernetesName_resource 'Microsoft.ContainerService/containerServices@2
       }
     }
     servicePrincipalProfile: {
-      ClientId: servicePrincipalAppId
-      Secret: servicePrincipalAppKey
+      clientId: servicePrincipalAppId
+      secret: servicePrincipalAppKey
     }
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -122,8 +122,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-09-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-09-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -133,8 +133,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-09-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -153,8 +153,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-09-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-09-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -163,30 +163,26 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: '${virtualNetworkName_resource.id}/subnets/${subnetName}'
+            id: '${virtualNetworkName.id}/subnets/${subnetName}'
           }
         }
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_D3_v2'
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -208,7 +204,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -216,25 +212,21 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: concat(reference(storageAccountName_resource.id, '2016-01-01').primaryEndpoints.blob)
+        storageUri: concat(reference(storageAccountName.id, '2016-01-01').primaryEndpoints.blob)
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -247,18 +239,17 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} -ai "${servicePrincipalAppId}" -ak "${servicePrincipalAppKey}" -si "${subscription().subscriptionId}" -ti "${subscription().tenantId}" -un "${adminUsername}" -rg "${resourceGroup().name}" -mf "${kubernetesName_resource.properties.masterProfile.fqdn}" -san "${storageAccountName}" -sak "${listKeys(storageAccountName_resource.id, '2016-01-01').keys[0].value}" -acr "${acrPrefix_resource.properties.loginServer}" -ikp $(expr "${kubernetesPipeline}" == "Include") -prg "${pipelineRegistry}" -prp "${pipelineRepository}" -pp "${pipelinePort}" -al "${artifactsLocation}" -st "${artifactsLocationSasToken}"'
+      commandToExecute: './${extensionScript} -ai "${servicePrincipalAppId}" -ak "${servicePrincipalAppKey}" -si "${subscription().subscriptionId}" -ti "${subscription().tenantId}" -un "${adminUsername}" -rg "${resourceGroup().name}" -mf "${kubernetesName.properties.masterProfile.fqdn}" -san "${storageAccountName_var}" -sak "${listKeys(storageAccountName.id, '2016-01-01').keys[0].value}" -acr "${acrPrefix.properties.loginServer}" -ikp $(expr "${kubernetesPipeline}" == "Include") -prg "${pipelineRegistry}" -prp "${pipelineRepository}" -pp "${pipelinePort}" -al "${artifactsLocation}" -st "${artifactsLocationSasToken}"'
     }
   }
   dependsOn: [
-    vmName_resource
-    kubernetesName_resource
-    acrPrefix_resource
+    kubernetesName
+    acrPrefix
   ]
 }
 
-resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: acrStorageAccountName
+resource acrStorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: acrStorageAccountName_var
   location: location
   kind: 'Storage'
   sku: {
@@ -276,8 +267,8 @@ resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-
   }
 }
 
-resource acrPrefix_resource 'Microsoft.ContainerRegistry/registries@2017-03-01' = {
-  name: acrPrefix
+resource acrPrefix 'Microsoft.ContainerRegistry/registries@2017-03-01' = {
+  name: acrPrefix_var
   location: location
   sku: {
     name: 'Basic'
@@ -285,17 +276,14 @@ resource acrPrefix_resource 'Microsoft.ContainerRegistry/registries@2017-03-01' 
   properties: {
     adminUserEnabled: false
     storageAccount: {
-      name: acrStorageAccountName
-      accessKey: listKeys(acrStorageAccountName_resource.id, '2016-01-01').keys[0].value
+      name: acrStorageAccountName_var
+      accessKey: listKeys(acrStorageAccountName.id, '2016-01-01').keys[0].value
     }
   }
-  dependsOn: [
-    acrStorageAccountName_resource
-  ]
 }
 
-output spinnakerVmFQDN string = reference(publicIPAddressName).dnsSettings.fqdn
-output SSH string = 'ssh -L 9000:localhost:9000 -L 8084:localhost:8084 -L 8001:localhost:8001 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
-output kubernetesMasterFQDN string = kubernetesName_resource.properties.masterProfile.fqdn
-output kubernetesMasterSsh string = 'ssh ${adminUsername}@${kubernetesName_resource.properties.masterProfile.fqdn}'
-output azureContainerRegistryName string = acrPrefix_resource.properties.loginServer
+output spinnakerVmFQDN string = reference(publicIPAddressName_var).dnsSettings.fqdn
+output SSH string = 'ssh -L 9000:localhost:9000 -L 8084:localhost:8084 -L 8001:localhost:8001 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output kubernetesMasterFQDN string = kubernetesName.properties.masterProfile.fqdn
+output kubernetesMasterSsh string = 'ssh ${adminUsername}@${kubernetesName.properties.masterProfile.fqdn}'
+output azureContainerRegistryName string = acrPrefix.properties.loginServer

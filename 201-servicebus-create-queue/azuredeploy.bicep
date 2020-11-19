@@ -15,7 +15,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -39,7 +39,4 @@ resource serviceBusNamespaceName_serviceBusQueueName 'Microsoft.ServiceBus/names
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }

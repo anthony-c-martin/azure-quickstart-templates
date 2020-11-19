@@ -25,9 +25,9 @@ param location string {
   default: resourceGroup().location
 }
 
-var responseAlertName = 'ResponseTime-${toLower(applicationInsightsName)}'
+var responseAlertName_var = 'ResponseTime-${toLower(applicationInsightsName)}'
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: workspaceName
   location: location
   properties: {
@@ -37,28 +37,25 @@ resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-0
   }
 }
 
-resource applicationInsightsName_resource 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource applicationInsightsName_res 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
-    WorkspaceResourceId: workspaceName_resource.id
+    WorkspaceResourceId: workspaceName_res.id
   }
-  dependsOn: [
-    workspaceName_resource
-  ]
 }
 
-resource responseAlertName_resource 'Microsoft.Insights/metricAlerts@2018-03-01' = {
-  name: responseAlertName
+resource responseAlertName 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: responseAlertName_var
   location: 'global'
   properties: {
     description: 'response time alert'
     severity: 0
     enabled: true
     scopes: [
-      applicationInsightsName_resource.id
+      applicationInsightsName_res.id
     ]
     evaluationFrequency: 'PT1M'
     windowSize: 'PT5M'
@@ -81,10 +78,6 @@ resource responseAlertName_resource 'Microsoft.Insights/metricAlerts@2018-03-01'
       }
     ]
   }
-  dependsOn: [
-    applicationInsightsName_resource
-    emailActionGroup
-  ]
 }
 
 resource emailActionGroup 'microsoft.insights/actionGroups@2019-06-01' = {

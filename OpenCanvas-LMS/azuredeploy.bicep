@@ -106,15 +106,15 @@ param adminPasswordOrKey string {
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'canvasVMNic'
+var nicName_var = 'canvasVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var publicIPAddressType = 'Dynamic'
 var vmSize = 'Standard_D2_v2'
-var vmName = 'opencanvas'
-var virtualNetworkName = 'canvasLMSVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = 'opencanvas'
+var virtualNetworkName_var = 'canvasLMSVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var installScriptName = 'opencanvas.sh'
 var ubuntuOSVersion = '16.04-LTS'
 var installScriptUrl = uri(artifactsLocation, concat(installScriptName, artifactsLocationSasToken))
@@ -129,9 +129,9 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource dnsNameForPublicIP_resource 'Microsoft.Network/publicIPAddresses@2018-02-01' = {
+resource dnsNameForPublicIP_res 'Microsoft.Network/publicIPAddresses@2018-02-01' = {
   name: dnsNameForPublicIP
   location: location
   tags: {
@@ -145,8 +145,8 @@ resource dnsNameForPublicIP_resource 'Microsoft.Network/publicIPAddresses@2018-0
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -193,8 +193,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-02-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-02-01' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     displayName: 'VirtualNetwork'
@@ -211,19 +211,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-02-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-02-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-02-01' = {
+  name: nicName_var
   location: location
   tags: {
     displayName: 'NetworkInterface'
@@ -235,7 +232,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-02-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: dnsNameForPublicIP_resource.id
+            id: dnsNameForPublicIP_res.id
           }
           subnet: {
             id: subnetRef
@@ -244,14 +241,10 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-02-01' = {
       }
     ]
   }
-  dependsOn: [
-    dnsNameForPublicIP_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   tags: {
     displayName: 'VirtualMachine'
@@ -261,7 +254,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminVMUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -282,18 +275,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_installopencavas 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
-  name: '${vmName}/installopencavas'
+  name: '${vmName_var}/installopencavas'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -306,10 +296,7 @@ resource vmName_installopencavas 'Microsoft.Compute/virtualMachines/extensions@2
       ]
     }
     protectedSettings: {
-      commandToExecute: 'mv *.sh /home/${adminVMUsername} && cd /home/${adminVMUsername} && sudo chmod 777 *.sh && sudo -u ${adminVMUsername} /bin/bash ${installScriptName} ${reference(dnsNameForPublicIP_resource.id, '2016-03-30').dnsSettings.fqdn} ${smtpEmail} ${postgresPassword} ${adminLoginEmail} ${adminLoginPassword} ${adminAccountName} ${lms_stat_coll} ${smtp_type} ${smtp_port} ${smtp_pass}'
+      commandToExecute: 'mv *.sh /home/${adminVMUsername} && cd /home/${adminVMUsername} && sudo chmod 777 *.sh && sudo -u ${adminVMUsername} /bin/bash ${installScriptName} ${reference(dnsNameForPublicIP_res.id, '2016-03-30').dnsSettings.fqdn} ${smtpEmail} ${postgresPassword} ${adminLoginEmail} ${adminLoginPassword} ${adminAccountName} ${lms_stat_coll} ${smtp_type} ${smtp_port} ${smtp_pass}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

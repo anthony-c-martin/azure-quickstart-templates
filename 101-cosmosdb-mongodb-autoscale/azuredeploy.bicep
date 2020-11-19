@@ -83,7 +83,7 @@ param autoscaleMaxThroughput int {
   default: 4000
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -116,8 +116,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: accountName_var
   location: location
   kind: 'MongoDB'
   properties: {
@@ -131,7 +131,7 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01'
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/mongodbDatabases@2020-04-01' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
@@ -142,13 +142,10 @@ resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/mongodb
       }
     }
   }
-  dependsOn: [
-    accountName_resource
-  ]
 }
 
 resource accountName_databaseName_collection1Name 'Microsoft.DocumentDb/databaseAccounts/mongodbDatabases/collections@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${collection1Name}'
+  name: '${accountName_var}/${databaseName}/${collection1Name}'
   properties: {
     resource: {
       id: collection1Name
@@ -183,13 +180,10 @@ resource accountName_databaseName_collection1Name 'Microsoft.DocumentDb/database
       }
     }
   }
-  dependsOn: [
-    accountName_databaseName
-  ]
 }
 
 resource accountName_databaseName_collection2Name 'Microsoft.DocumentDb/databaseAccounts/mongodbDatabases/collections@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${collection2Name}'
+  name: '${accountName_var}/${databaseName}/${collection2Name}'
   properties: {
     resource: {
       id: collection2Name
@@ -224,7 +218,4 @@ resource accountName_databaseName_collection2Name 'Microsoft.DocumentDb/database
       }
     }
   }
-  dependsOn: [
-    accountName_databaseName
-  ]
 }

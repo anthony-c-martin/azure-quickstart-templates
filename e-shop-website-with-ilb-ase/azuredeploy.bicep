@@ -50,31 +50,31 @@ var vnetName = '${existingASEName}-vnet'
 var aseSubnetName = '${existingASEName}-subnet'
 var aseSubnetAddressPrefix = '192.168.251.64/26'
 var agSubnetName = 'app-gateway-subnet'
-var aspName = '${existingASEName}-asp'
-var webAppName = '${existingASEName}-web'
-var contentAppName = '${existingASEName}-content'
-var apiAppName = '${existingASEName}-api'
-var adminAppName = '${existingASEName}-admin'
-var appInsightsName = '${existingASEName}-app-insights'
-var sqlServerName = '${existingASEName}-sql-server'
-var storageAccountName = '${existingASEName}-${''}'
-var redisCacheName = '${existingASEName}-cache'
+var aspName_var = '${existingASEName}-asp'
+var webAppName_var = '${existingASEName}-web'
+var contentAppName_var = '${existingASEName}-content'
+var apiAppName_var = '${existingASEName}-api'
+var adminAppName_var = '${existingASEName}-admin'
+var appInsightsName_var = '${existingASEName}-app-insights'
+var sqlServerName_var = '${existingASEName}-sql-server'
+var storageAccountName_var = '${existingASEName}-${''}'
+var redisCacheName_var = '${existingASEName}-cache'
 var redisCacheSubnetName = 'redis-cache-subnet'
 var redisCacheSubnetAddressPrefix = '192.168.251.0/26'
 var redisCacheStaticIP = '192.168.251.62'
-var appGatewayName = '${existingASEName}-waf'
-var appGatewayPublicIPName = '${existingASEName}-waf-ip'
+var appGatewayName_var = '${existingASEName}-waf'
+var appGatewayPublicIPName_var = '${existingASEName}-waf-ip'
 var appGatewayPublicIPDnsPrefix = '${existingASEName}-waf'
-var cdnName = '${existingASEName}-cdn'
+var cdnName_var = '${existingASEName}-cdn'
 var cdnWebAppEndpointName = '${existingASEName}-cdn-web'
 var cdnStorageEndpointName = '${existingASEName}-cdn-storage'
-var webAppExternalHostName = '${webAppName}.${dnsSuffix}'
-var webAppInternalHostName = '${webAppName}.${existingASEDNSSuffix}'
-var apiAppInternalHostName = '${apiAppName}.${existingASEDNSSuffix}'
-var contentAppExternalHostName = '${contentAppName}.${dnsSuffix}'
-var contentAppInternalHostName = '${contentAppName}.${existingASEDNSSuffix}'
-var adminAppExternalHostName = '${adminAppName}.${dnsSuffix}'
-var adminAppInternalHostName = '${adminAppName}.${existingASEDNSSuffix}'
+var webAppExternalHostName = '${webAppName_var}.${dnsSuffix}'
+var webAppInternalHostName = '${webAppName_var}.${existingASEDNSSuffix}'
+var apiAppInternalHostName = '${apiAppName_var}.${existingASEDNSSuffix}'
+var contentAppExternalHostName = '${contentAppName_var}.${dnsSuffix}'
+var contentAppInternalHostName = '${contentAppName_var}.${existingASEDNSSuffix}'
+var adminAppExternalHostName = '${adminAppName_var}.${dnsSuffix}'
+var adminAppInternalHostName = '${adminAppName_var}.${existingASEDNSSuffix}'
 var sourceCodeRepositoryURL = 'https://github.com/OGCanviz/e-shop-website-with-ilb-ase'
 
 resource vnetName_redisCacheSubnetName 'Microsoft.Network/virtualNetworks/subnets@2020-05-01' = {
@@ -89,22 +89,19 @@ resource vnetName_agSubnetName 'Microsoft.Network/virtualNetworks/subnets@2020-0
   properties: {
     addressPrefix: aseSubnetAddressPrefix
   }
-  dependsOn: [
-    vnetName_redisCacheSubnetName
-  ]
 }
 
-resource appInsightsName_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: appInsightsName
+resource appInsightsName 'microsoft.insights/components@2020-02-02-preview' = {
+  name: appInsightsName_var
   location: appInsightsLocation
   properties: {
-    ApplicationId: appInsightsName
+    ApplicationId: appInsightsName_var
     Request_Source: 'IbizaWebAppExtensionCreate'
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_RAGRS'
@@ -127,8 +124,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   }
 }
 
-resource redisCacheName_resource 'Microsoft.Cache/Redis@2019-07-01' = {
-  name: redisCacheName
+resource redisCacheName 'Microsoft.Cache/Redis@2019-07-01' = {
+  name: redisCacheName_var
   location: location
   properties: {
     sku: {
@@ -140,17 +137,14 @@ resource redisCacheName_resource 'Microsoft.Cache/Redis@2019-07-01' = {
     staticIP: redisCacheStaticIP
     enableNonSslPort: true
   }
-  dependsOn: [
-    vnetName_redisCacheSubnetName
-  ]
 }
 
-resource aspName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: aspName
+resource aspName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: aspName_var
   location: location
   kind: 'app'
   properties: {
-    name: aspName
+    name: aspName_var
     workerSize: '0'
     workerSizeId: '0'
     numberOfWorkers: '1'
@@ -163,12 +157,12 @@ resource aspName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource contentAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: contentAppName
+resource contentAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: contentAppName_var
   location: location
   properties: {
-    name: contentAppName
-    serverFarmId: aspName_resource.id
+    name: contentAppName_var
+    serverFarmId: aspName.id
     hostingEnvironment: existingASEName
     siteConfig: {
       alwaysOn: true
@@ -180,75 +174,62 @@ resource contentAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
       ]
     }
   }
-  dependsOn: [
-    aspName_resource
-  ]
 }
 
 resource contentAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
-  name: '${contentAppName}/web'
+  name: '${contentAppName_var}/web'
   properties: {
-    RepoUrl: sourceCodeRepositoryURL
+    repoUrl: sourceCodeRepositoryURL
     branch: 'master'
-    IsManualIntegration: true
+    isManualIntegration: true
   }
-  dependsOn: [
-    contentAppName_resource
-  ]
 }
 
-resource apiAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: apiAppName
+resource apiAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: apiAppName_var
   location: location
   properties: {
-    name: apiAppName
-    serverFarmId: aspName_resource.id
+    name: apiAppName_var
+    serverFarmId: aspName.id
     hostingEnvironment: existingASEName
     siteConfig: {
       alwaysOn: true
       appSettings: [
         {
           name: 'ApplicationInsights:InstrumentationKey'
-          value: reference(appInsightsName_resource.id, '2020-02-02-preview').InstrumentationKey
+          value: reference(appInsightsName.id, '2020-02-02-preview').InstrumentationKey
         }
         {
           name: 'project'
           value: 'src/API/API.csproj'
         }
       ]
-      connectionstrings: [
+      connectionStrings: [
         {
           name: 'SalesConnection'
           type: 'SQLAzure'
-          connectionString: 'Server=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=Sales;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          connectionString: 'Server=tcp:${sqlServerName_var}.database.windows.net,1433;Initial Catalog=Sales;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
     }
   }
-  dependsOn: [
-    aspName_resource
-    appInsightsName_resource
-  ]
 }
 
 resource apiAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
-  name: '${apiAppName}/web'
+  name: '${apiAppName_var}/web'
   properties: {
-    RepoUrl: sourceCodeRepositoryURL
+    repoUrl: sourceCodeRepositoryURL
     branch: 'master'
-    IsManualIntegration: true
+    isManualIntegration: true
   }
-  dependsOn: [
-    apiAppName_resource
-  ]
 }
 
-resource adminAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: adminAppName
+resource adminAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: adminAppName_var
   location: location
   properties: {
-    name: adminAppName
-    serverFarmId: aspName_resource.id
+    name: adminAppName_var
+    serverFarmId: aspName.id
     hostingEnvironment: existingASEName
     siteConfig: {
       alwaysOn: true
@@ -271,7 +252,7 @@ resource adminAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
         {
           name: 'ApplicationInsights:InstrumentationKey'
-          value: reference(appInsightsName_resource.id, '2020-02-02-preview').InstrumentationKey
+          value: reference(appInsightsName.id, '2020-02-02-preview').InstrumentationKey
         }
         {
           name: 'project'
@@ -280,31 +261,23 @@ resource adminAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
       ]
     }
   }
-  dependsOn: [
-    aspName_resource
-    appInsightsName_resource
-  ]
 }
 
 resource adminAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
-  name: '${adminAppName}/web'
+  name: '${adminAppName_var}/web'
   properties: {
-    RepoUrl: sourceCodeRepositoryURL
+    repoUrl: sourceCodeRepositoryURL
     branch: 'master'
-    IsManualIntegration: true
+    isManualIntegration: true
   }
-  dependsOn: [
-    adminAppName_resource
-    apiAppName_web
-  ]
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webAppName
+resource webAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webAppName_var
   location: location
   properties: {
-    name: webAppName
-    serverFarmId: aspName_resource.id
+    name: webAppName_var
+    serverFarmId: aspName.id
     hostingEnvironment: existingASEName
     siteConfig: {
       alwaysOn: true
@@ -323,66 +296,56 @@ resource webAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
         {
           name: 'ApplicationInsights:InstrumentationKey'
-          value: reference(appInsightsName_resource.id, '2020-02-02-preview').InstrumentationKey
+          value: reference(appInsightsName.id, '2020-02-02-preview').InstrumentationKey
         }
         {
           name: 'project'
           value: 'src/Web/Web.csproj'
         }
       ]
-      connectionstrings: [
+      connectionStrings: [
         {
           name: 'CatalogConnection'
           type: 'SQLAzure'
-          connectionString: 'Server=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=Catalog;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          connectionString: 'Server=tcp:${sqlServerName_var}.database.windows.net,1433;Initial Catalog=Catalog;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
         {
           name: 'SalesConnection'
           type: 'SQLAzure'
-          connectionString: 'Server=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=Sales;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          connectionString: 'Server=tcp:${sqlServerName_var}.database.windows.net,1433;Initial Catalog=Sales;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
         {
           name: 'IdentityConnection'
           type: 'SQLAzure'
-          connectionString: 'Server=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=Identity;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          connectionString: 'Server=tcp:${sqlServerName_var}.database.windows.net,1433;Initial Catalog=Identity;Persist Security Info=False;User ID=${sqlServerAdministratorLogin};Password=${sqlServerAdministratorLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
         {
           name: 'StorageConnection'
           type: 'Custom'
-          connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listkeys(storageAccountName_resource.id, '2019-06-01').keys[0].value};'
+          connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};AccountKey=${listkeys(storageAccountName.id, '2019-06-01').keys[0].value};'
         }
         {
           name: 'RedisConnection'
           type: 'Custom'
-          connectionString: '${redisCacheName}.redis.cache.windows.net:6380,password=${listKeys(redisCacheName_resource.id, '2016-04-01').primaryKey},ssl=True,abortConnect=False'
+          connectionString: '${redisCacheName_var}.redis.cache.windows.net:6380,password=${listKeys(redisCacheName.id, '2016-04-01').primaryKey},ssl=True,abortConnect=False'
         }
       ]
     }
   }
-  dependsOn: [
-    aspName_resource
-    appInsightsName_resource
-    storageAccountName_resource
-    redisCacheName_resource
-  ]
 }
 
 resource webAppName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
-  name: '${webAppName}/web'
+  name: '${webAppName_var}/web'
   properties: {
-    RepoUrl: sourceCodeRepositoryURL
+    repoUrl: sourceCodeRepositoryURL
     branch: 'master'
-    IsManualIntegration: true
+    isManualIntegration: true
   }
-  dependsOn: [
-    webAppName_resource
-    adminAppName_web
-  ]
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource sqlServerName 'Microsoft.Sql/servers@2020-02-02-preview' = {
   location: location
-  name: sqlServerName
+  name: sqlServerName_var
   properties: {
     administratorLogin: sqlServerAdministratorLogin
     administratorLoginPassword: sqlServerAdministratorLoginPassword
@@ -392,55 +355,43 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
 
 resource sqlServerName_Catalog 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
   location: location
-  name: '${sqlServerName}/Catalog'
+  name: '${sqlServerName_var}/Catalog'
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     edition: 'Basic'
     zoneRedundant: false
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_Sales 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
   location: location
-  name: '${sqlServerName}/Sales'
+  name: '${sqlServerName_var}/Sales'
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     edition: 'Basic'
     zoneRedundant: false
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_Identity 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
   location: location
-  name: '${sqlServerName}/Identity'
+  name: '${sqlServerName_var}/Identity'
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     edition: 'Basic'
     zoneRedundant: false
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_allow_access_from_aseSubnetName 'Microsoft.Sql/servers/virtualNetworkRules@2020-02-02-preview' = {
-  name: '${sqlServerName}/allow-access-from-${aseSubnetName}'
+  name: '${sqlServerName_var}/allow-access-from-${aseSubnetName}'
   properties: {
     virtualNetworkSubnetId: resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName, aseSubnetName)
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
-resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-01' = {
-  name: appGatewayName
+resource appGatewayName 'Microsoft.Network/applicationGateways@2020-05-01' = {
+  name: appGatewayName_var
   location: location
   properties: {
     sku: {
@@ -462,8 +413,8 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
-            id: appGatewayPublicIPName_resource.id
+          publicIPAddress: {
+            id: appGatewayPublicIPName.id
           }
         }
       }
@@ -472,7 +423,7 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'appGatewayFrontendPort'
         properties: {
-          Port: 80
+          port: 80
         }
       }
     ]
@@ -480,7 +431,7 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'webAppBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
               fqdn: webAppInternalHostName
             }
@@ -490,7 +441,7 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'contentAppBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
               fqdn: contentAppInternalHostName
             }
@@ -500,7 +451,7 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'adminAppBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
               fqdn: adminAppInternalHostName
             }
@@ -512,36 +463,36 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'webAppBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
-          PickHostNameFromBackendAddress: false
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          pickHostNameFromBackendAddress: false
           probe: {
-            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName, 'webAppProbe')
+            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName_var, 'webAppProbe')
           }
         }
       }
       {
         name: 'contentAppBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
-          PickHostNameFromBackendAddress: false
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          pickHostNameFromBackendAddress: false
           probe: {
-            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName, 'contentAppProbe')
+            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName_var, 'contentAppProbe')
           }
         }
       }
       {
         name: 'adminAppBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
-          PickHostNameFromBackendAddress: false
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          pickHostNameFromBackendAddress: false
           probe: {
-            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName, 'adminAppProbe')
+            id: resourceId('Microsoft.Network/applicationGateways/probes', appGatewayName_var, 'adminAppProbe')
           }
         }
       }
@@ -550,86 +501,86 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       {
         name: 'webAppHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName, 'appGatewayFrontendIP')
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName_var, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName, 'appGatewayFrontendPort')
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName_var, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
-          HostName: webAppExternalHostName
+          protocol: 'Http'
+          hostName: webAppExternalHostName
         }
       }
       {
         name: 'contentAppHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName, 'appGatewayFrontendIP')
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName_var, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName, 'appGatewayFrontendPort')
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName_var, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
-          HostName: contentAppExternalHostName
+          protocol: 'Http'
+          hostName: contentAppExternalHostName
         }
       }
       {
         name: 'adminAppHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName, 'appGatewayFrontendIP')
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName_var, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName, 'appGatewayFrontendPort')
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName_var, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
-          HostName: adminAppExternalHostName
+          protocol: 'Http'
+          hostName: adminAppExternalHostName
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'webAppRule'
+        name: 'webAppRule'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName, 'webAppHttpListener')
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName_var, 'webAppHttpListener')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName, 'webAppBackendPool')
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName_var, 'webAppBackendPool')
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName, 'webAppBackendHttpSettings')
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName_var, 'webAppBackendHttpSettings')
           }
         }
       }
       {
-        Name: 'contentAppRule'
+        name: 'contentAppRule'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName, 'contentAppHttpListener')
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName_var, 'contentAppHttpListener')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName, 'contentAppBackendPool')
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName_var, 'contentAppBackendPool')
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName, 'contentAppBackendHttpSettings')
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName_var, 'contentAppBackendHttpSettings')
           }
         }
       }
       {
-        Name: 'adminAppRule'
+        name: 'adminAppRule'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName, 'adminAppHttpListener')
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName_var, 'adminAppHttpListener')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName, 'adminAppBackendPool')
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName_var, 'adminAppBackendPool')
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName, 'adminAppBackendHttpSettings')
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName_var, 'adminAppBackendHttpSettings')
           }
         }
       }
@@ -700,14 +651,10 @@ resource appGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-
       ]
     }
   }
-  dependsOn: [
-    vnetName_agSubnetName
-    appGatewayPublicIPName_resource
-  ]
 }
 
-resource appGatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: appGatewayPublicIPName
+resource appGatewayPublicIPName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: appGatewayPublicIPName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -717,8 +664,8 @@ resource appGatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@20
   }
 }
 
-resource cdnName_resource 'microsoft.cdn/profiles@2020-04-15' = {
-  name: cdnName
+resource cdnName 'microsoft.cdn/profiles@2020-04-15' = {
+  name: cdnName_var
   location: location
   sku: {
     name: 'standard_verizon'
@@ -726,7 +673,7 @@ resource cdnName_resource 'microsoft.cdn/profiles@2020-04-15' = {
 }
 
 resource cdnName_cdnWebAppEndpointName 'microsoft.cdn/profiles/endpoints@2020-04-15' = {
-  name: '${cdnName}/${cdnWebAppEndpointName}'
+  name: '${cdnName_var}/${cdnWebAppEndpointName}'
   location: location
   properties: {
     isHttpAllowed: true
@@ -753,13 +700,10 @@ resource cdnName_cdnWebAppEndpointName 'microsoft.cdn/profiles/endpoints@2020-04
     optimizationType: 'GeneralWebDelivery'
     originHostHeader: contentAppExternalHostName
   }
-  dependsOn: [
-    cdnName_resource
-  ]
 }
 
 resource cdnName_cdnStorageEndpointName 'microsoft.cdn/profiles/endpoints@2020-04-15' = {
-  name: '${cdnName}/${cdnStorageEndpointName}'
+  name: '${cdnName_var}/${cdnStorageEndpointName}'
   location: location
   properties: {
     isHttpAllowed: true
@@ -768,7 +712,7 @@ resource cdnName_cdnStorageEndpointName 'microsoft.cdn/profiles/endpoints@2020-0
       {
         name: 'Storage'
         properties: {
-          hostName: replace(replace(reference(storageAccountName_resource.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
+          hostName: replace(replace(reference(storageAccountName.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
         }
       }
     ]
@@ -784,15 +728,11 @@ resource cdnName_cdnStorageEndpointName 'microsoft.cdn/profiles/endpoints@2020-0
       'application/xml'
     ]
     optimizationType: 'GeneralWebDelivery'
-    originHostHeader: replace(replace(reference(storageAccountName_resource.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
+    originHostHeader: replace(replace(reference(storageAccountName.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
   }
-  dependsOn: [
-    cdnName_resource
-    storageAccountName_resource
-  ]
 }
 
 output webAppURL string = 'http://${webAppExternalHostName}'
 output adminAppURL string = 'http://${adminAppExternalHostName}'
 output adminAppRedirectURL string = 'http://${adminAppExternalHostName}/signin-oidc'
-output appGatewayPublicIPFqdn string = reference(appGatewayPublicIPName_resource.id, '2018-04-01').dnsSettings.fqdn
+output appGatewayPublicIPFqdn string = reference(appGatewayPublicIPName.id, '2018-04-01').dnsSettings.fqdn

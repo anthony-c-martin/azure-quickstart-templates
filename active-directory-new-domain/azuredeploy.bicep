@@ -123,7 +123,7 @@ param loadBalancerName string {
   default: 'adLoadBalancer'
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-02-01' = {
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2019-02-01' = {
   name: publicIPAddressName
   location: location
   properties: {
@@ -134,19 +134,19 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource availabilitySetName_resource 'Microsoft.Compute/availabilitySets@2019-03-01' = {
+resource availabilitySetName_res 'Microsoft.Compute/availabilitySets@2019-03-01' = {
   location: location
   name: availabilitySetName
   properties: {
-    PlatformUpdateDomainCount: 20
-    PlatformFaultDomainCount: 2
+    platformUpdateDomainCount: 20
+    platformFaultDomainCount: 2
   }
   sku: {
     name: 'Aligned'
   }
 }
 
-module VNet '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nestedtemplates/vnet.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module VNet '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'VNet'
   params: {
     virtualNetworkName: virtualNetworkName
@@ -157,7 +157,7 @@ module VNet '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2019-02-01' = {
+resource loadBalancerName_res 'Microsoft.Network/loadBalancers@2019-02-01' = {
   name: loadBalancerName
   location: location
   properties: {
@@ -166,7 +166,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2019-02-01' 
         name: loadBalancerFrontEndIPName
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName_res.id
           }
         }
       }
@@ -191,12 +191,9 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2019-02-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-02-01' = {
+resource networkInterfaceName_res 'Microsoft.Network/networkInterfaces@2019-02-01' = {
   name: networkInterfaceName
   location: location
   properties: {
@@ -223,13 +220,9 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
       }
     ]
   }
-  dependsOn: [
-    VNet
-    loadBalancerName_resource
-  ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -237,7 +230,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-
       vmSize: vmSize
     }
     availabilitySet: {
-      id: availabilitySetName_resource.id
+      id: availabilitySetName_res.id
     }
     osProfile: {
       computerName: virtualMachineName
@@ -275,16 +268,11 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-    availabilitySetName_resource
-    loadBalancerName_resource
-  ]
 }
 
 resource virtualMachineName_CreateADForest 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
@@ -312,12 +300,9 @@ resource virtualMachineName_CreateADForest 'Microsoft.Compute/virtualMachines/ex
       }
     }
   }
-  dependsOn: [
-    virtualMachineName_resource
-  ]
 }
 
-module UpdateVNetDNS '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nestedtemplates/vnet-with-dns-server.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module UpdateVNetDNS '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet-with-dns-server.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'UpdateVNetDNS'
   params: {
     virtualNetworkName: virtualNetworkName

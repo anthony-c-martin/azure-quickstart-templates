@@ -115,12 +115,12 @@ param databaseSkuFamily string {
 }
 
 var databaseName = '${siteName}database'
-var serverName = '${siteName}mysqlserver'
-var jdbcSonarUserName = '${administratorLogin}@${serverName}'
-var hostingPlanName = '${siteName}serviceplan'
-var firewallrule = '${serverName}firewall'
+var serverName_var = '${siteName}mysqlserver'
+var jdbcSonarUserName = '${administratorLogin}@${serverName_var}'
+var hostingPlanName_var = '${siteName}serviceplan'
+var firewallrule = '${serverName_var}firewall'
 
-resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: siteName
   location: location
   properties: {
@@ -128,12 +128,8 @@ resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
       linuxFxVersion: 'DOCKER|SONARQUBE'
     }
     name: siteName
-    serverFarmId: hostingPlanName
+    serverFarmId: hostingPlanName_var
   }
-  dependsOn: [
-    hostingPlanName_resource
-    serverName_databaseName
-  ]
 }
 
 resource siteName_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
@@ -142,33 +138,30 @@ resource siteName_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
     displayName: 'SonarappSettings'
   }
   properties: {
-    SONARQUBE_JDBC_URL: 'jdbc:mysql://${serverName_resource.properties.fullyQualifiedDomainName}:3306/${databaseName}?verifyServerCertificate=true&useSSL=true&requireSSL=false&useUnicode=true&characterEncoding=utf8'
+    SONARQUBE_JDBC_URL: 'jdbc:mysql://${serverName.properties.fullyQualifiedDomainName}:3306/${databaseName}?verifyServerCertificate=true&useSSL=true&requireSSL=false&useUnicode=true&characterEncoding=utf8'
     SONARQUBE_JDBC_USERNAME: jdbcSonarUserName
     SONARQUBE_JDBC_PASSWORD: administratorLoginPassword
   }
-  dependsOn: [
-    siteName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSizeId: '1'
     reserved: true
     numberOfWorkers: '1'
   }
   sku: {
-    Tier: servicePlanTier
-    Name: servicePlanSku
+    tier: servicePlanTier
+    name: servicePlanSku
   }
   kind: 'linux'
 }
 
-resource serverName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
-  name: serverName
+resource serverName 'Microsoft.DBforMySQL/servers@2017-12-01' = {
+  name: serverName_var
   location: location
   sku: {
     name: databaseSkuName
@@ -187,24 +180,17 @@ resource serverName_resource 'Microsoft.DBforMySQL/servers@2017-12-01' = {
 
 resource serverName_firewallrule 'Microsoft.DBforMySQL/servers/firewallrules@2017-12-01' = {
   location: location
-  name: '${serverName}/${firewallrule}'
+  name: '${serverName_var}/${firewallrule}'
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '255.255.255.255'
   }
-  dependsOn: [
-    serverName_resource
-  ]
 }
 
 resource serverName_databaseName 'Microsoft.DBforMySQL/servers/databases@2017-12-01' = {
-  name: '${serverName}/${databaseName}'
+  name: '${serverName_var}/${databaseName}'
   properties: {
     charset: 'utf8'
     collation: 'utf8_general_ci'
   }
-  dependsOn: [
-    serverName_resource
-    serverName_firewallrule
-  ]
 }

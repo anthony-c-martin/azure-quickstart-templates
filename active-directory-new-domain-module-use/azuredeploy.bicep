@@ -26,7 +26,7 @@ param location string {
   default: resourceGroup().location
 }
 
-module createADController '<failed to parse https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/modules/active-directory-new-domain/0.9/azuredeploy.json>' = {
+module createADController '?' /*TODO: replace with correct path to https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/modules/active-directory-new-domain/0.9/azuredeploy.json*/ = {
   name: 'createADController'
   params: {
     adminUsername: adminUsername

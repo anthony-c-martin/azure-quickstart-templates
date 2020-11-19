@@ -71,7 +71,7 @@ resource workspaceName_datastoreName 'Microsoft.MachineLearningServices/workspac
   name: '${workspaceName}/${datastoreName}'
   location: location
   properties: {
-    DataStoreType: 'adls'
+    dataStoreType: 'adls'
     SkipValidation: skipValidation
     ClientId: clientId
     ClientSecret: clientSecret

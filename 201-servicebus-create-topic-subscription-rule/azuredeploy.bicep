@@ -25,12 +25,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var location_variable = location
+var location_var = location
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var authRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceName, defaultSASKeyName)
 var sbVersion = '2017-04-01'
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -52,9 +52,6 @@ resource serviceBusNamespaceName_serviceBusTopicName 'Microsoft.ServiceBus/names
     enablePartitioning: 'false'
     enableExpress: 'false'
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }
 
 resource serviceBusNamespaceName_serviceBusTopicName_serviceBusSubscriptionName 'Microsoft.ServiceBus/namespaces/topics/Subscriptions@2017-04-01' = {
@@ -68,9 +65,6 @@ resource serviceBusNamespaceName_serviceBusTopicName_serviceBusSubscriptionName 
     enableBatchedOperations: 'false'
     autoDeleteOnIdle: 'P10675199DT2H48M5.4775807S'
   }
-  dependsOn: [
-    serviceBusNamespaceName_serviceBusTopicName
-  ]
 }
 
 resource serviceBusNamespaceName_serviceBusTopicName_serviceBusSubscriptionName_serviceBusRuleName 'Microsoft.ServiceBus/namespaces/topics/Subscriptions/Rules@2017-04-01' = {
@@ -82,9 +76,6 @@ resource serviceBusNamespaceName_serviceBusTopicName_serviceBusSubscriptionName_
       requiresPreprocessing: 'false'
     }
   }
-  dependsOn: [
-    serviceBusNamespaceName_serviceBusTopicName_serviceBusSubscriptionName
-  ]
 }
 
 output NamespaceConnectionString string = listkeys(authRuleResourceId, sbVersion).primaryConnectionString

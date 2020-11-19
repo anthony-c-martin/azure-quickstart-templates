@@ -32,22 +32,22 @@ param location string {
   default: resourceGroup().location
 }
 
-var virtualNetworkName = 'virtualNetwork1'
-var publicIPAddressName1 = 'publicIp1'
-var publicIPAddressName2 = 'publicIp2'
+var virtualNetworkName_var = 'virtualNetwork1'
+var publicIPAddressName1_var = 'publicIp1'
+var publicIPAddressName2_var = 'publicIp2'
 var subnetName = 'subnet1'
-var loadBalancerName = 'loadBalancer1'
-var nicName = 'networkInterface1'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIPAddressID1 = publicIPAddressName1_resource.id
-var publicIPAddressID2 = publicIPAddressName2_resource.id
-var lbBackendPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, 'loadBalancerBackend')
-var lbProbeID = resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName, 'tcpProbe')
-var frontEndIPConfigID1 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'loadBalancerFrontEnd1')
-var frontEndIPConfigID2 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'loadBalancerFrontEnd2')
+var loadBalancerName_var = 'loadBalancer1'
+var nicName_var = 'networkInterface1'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var publicIPAddressID1 = publicIPAddressName1.id
+var publicIPAddressID2 = publicIPAddressName2.id
+var lbBackendPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, 'loadBalancerBackend')
+var lbProbeID = resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName_var, 'tcpProbe')
+var frontEndIPConfigID1 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd1')
+var frontEndIPConfigID2 = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd2')
 
-resource publicIPAddressName1_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName1
+resource publicIPAddressName1 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName1_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -57,16 +57,16 @@ resource publicIPAddressName1_resource 'Microsoft.Network/publicIPAddresses@2020
   }
 }
 
-resource publicIPAddressName2_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName2
+resource publicIPAddressName2 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName2_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -85,8 +85,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -99,21 +99,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools/', loadBalancerName, 'loadBalancerBackEnd')
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools/', loadBalancerName_var, 'loadBalancerBackEnd')
             }
           ]
         }
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    loadBalancerName_resource
-  ]
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -187,8 +183,4 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName1_resource
-    publicIPAddressName2_resource
-  ]
 }

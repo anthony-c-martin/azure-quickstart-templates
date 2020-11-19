@@ -92,16 +92,16 @@ param location string {
   default: resourceGroup().location
 }
 
-var imageName = 'myCustomImage'
-var publicIPAddressName = '${customVmName}IP'
-var vmName = customVmName
-var nicName = '${customVmName}Nic'
+var imageName_var = 'myCustomImage'
+var publicIPAddressName_var = '${customVmName}IP'
+var vmName_var = customVmName
+var nicName_var = '${customVmName}Nic'
 var publicIPAddressType = 'Dynamic'
 var apiVersion = '2015-06-15'
 var templatelink = 'https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/101-vm-user-image-data-disks/${newOrExistingVnet}vnet.json'
 
-resource imageName_resource 'Microsoft.Compute/images@2017-03-30' = {
-  name: imageName
+resource imageName 'Microsoft.Compute/images@2017-03-30' = {
+  name: imageName_var
   location: location
   properties: {
     storageProfile: {
@@ -122,7 +122,7 @@ resource imageName_resource 'Microsoft.Compute/images@2017-03-30' = {
   }
 }
 
-module vnet_template '<failed to parse [variables(\'templatelink\')]>' = {
+module vnet_template '?' /*TODO: replace with correct path to [variables('templatelink')]*/ = {
   name: 'vnet-template'
   params: {
     virtualNetworkName: newOrExistingVnetName
@@ -131,8 +131,8 @@ module vnet_template '<failed to parse [variables(\'templatelink\')]>' = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -142,8 +142,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -152,7 +152,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: reference('vnet-template').outputs.subnet1Ref.value
@@ -161,27 +161,23 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    vnet_template
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
     storageProfile: {
       imageReference: {
-        id: imageName_resource.id
+        id: imageName.id
       }
       osDisk: {
         name: '${customVmName}_OSDisk'
@@ -204,7 +200,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
@@ -215,8 +211,4 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       }
     }
   }
-  dependsOn: [
-    nicName_resource
-    imageName_resource
-  ]
 }

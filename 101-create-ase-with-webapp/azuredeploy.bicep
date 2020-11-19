@@ -108,13 +108,13 @@ var ASE_VNETSubnet1Name = 'Subnet-1'
 var ASE_VNETSubnet1Prefix = '10.0.0.0/24'
 var ASE_VNETSubnet2Name = 'Subnet-2'
 var ASE_VNETSubnet2Prefix = '10.0.1.0/24'
-var ASE_WEB_APP_Name = 'ASE-WEB-APP${uniqueString(resourceGroup().id)}'
-var ASE_Name = 'ASE${uniqueString(resourceGroup().id)}'
-var ASE_VNET_Name = 'ASE-VNET${uniqueString(resourceGroup().id)}'
-var ASE_SERVICE_Name = 'ASE-SERVICE${uniqueString(resourceGroup().id)}'
+var ASE_WEB_APP_Name_var = 'ASE-WEB-APP${uniqueString(resourceGroup().id)}'
+var ASE_Name_var = 'ASE${uniqueString(resourceGroup().id)}'
+var ASE_VNET_Name_var = 'ASE-VNET${uniqueString(resourceGroup().id)}'
+var ASE_SERVICE_Name_var = 'ASE-SERVICE${uniqueString(resourceGroup().id)}'
 
-resource ASE_VNET_Name_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: ASE_VNET_Name
+resource ASE_VNET_Name 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: ASE_VNET_Name_var
   location: location
   tags: {
     displayName: 'ASE-VNET'
@@ -142,20 +142,20 @@ resource ASE_VNET_Name_resource 'Microsoft.Network/virtualNetworks@2020-05-01' =
   }
 }
 
-resource ASE_Name_resource 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
-  name: ASE_Name
+resource ASE_Name 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
+  name: ASE_Name_var
   location: location
   tags: {
-    'hidden-related:${ASE_SERVICE_Name_resource.id}': 'Resource'
-    'hidden-related:${ASE_WEB_APP_Name_resource.id}': 'Resource'
+    'hidden-related:${ASE_SERVICE_Name.id}': 'Resource'
+    'hidden-related:${ASE_WEB_APP_Name.id}': 'Resource'
     displayName: 'ASE'
   }
   properties: {
-    name: ASE_Name
+    name: ASE_Name_var
     location: location
-    ipSslAddressCount: ASE_ipSslAddressCount
+    ipsslAddressCount: ASE_ipSslAddressCount
     virtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', ASE_VNET_Name, ASE_VNETSubnet1Name)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', ASE_VNET_Name_var, ASE_VNETSubnet1Name)
     }
     multiSize: ASE_frontEndSize
     multiRoleCount: ASE_frontEndCount
@@ -177,21 +177,18 @@ resource ASE_Name_resource 'Microsoft.Web/hostingEnvironments@2019-08-01' = {
       }
     ]
   }
-  dependsOn: [
-    ASE_VNET_Name_resource
-  ]
 }
 
-resource ASE_SERVICE_Name_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: ASE_SERVICE_Name
+resource ASE_SERVICE_Name 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: ASE_SERVICE_Name_var
   location: location
   tags: {
     displayName: 'ASE-APP-SERVICE-APP'
   }
   properties: {
-    name: ASE_SERVICE_Name
-    hostingEnvironment: ASE_Name
-    hostingEnvironmentId: ASE_Name_resource.id
+    name: ASE_SERVICE_Name_var
+    hostingEnvironment: ASE_Name_var
+    hostingEnvironmentId: ASE_Name.id
   }
   sku: {
     name: 'P${ASE_APP_SERVICE_workerPool}'
@@ -200,25 +197,19 @@ resource ASE_SERVICE_Name_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
     family: 'P'
     capacity: ASE_APP_SERVICE_numberOfWorkersFromWorkerPool
   }
-  dependsOn: [
-    ASE_Name_resource
-  ]
 }
 
-resource ASE_WEB_APP_Name_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: ASE_WEB_APP_Name
+resource ASE_WEB_APP_Name 'Microsoft.Web/sites@2019-08-01' = {
+  name: ASE_WEB_APP_Name_var
   location: location
   tags: {
-    'hidden-related:${ASE_SERVICE_Name_resource.id}': 'Resource'
+    'hidden-related:${ASE_SERVICE_Name.id}': 'Resource'
     displayName: 'ASE-WEB-APP'
   }
   properties: {
-    name: ASE_WEB_APP_Name
-    serverFarmId: ASE_SERVICE_Name_resource.id
-    hostingEnvironment: ASE_Name
-    hostingEnvironmentId: ASE_Name_resource.id
+    name: ASE_WEB_APP_Name_var
+    serverFarmId: ASE_SERVICE_Name.id
+    hostingEnvironment: ASE_Name_var
+    hostingEnvironmentId: ASE_Name.id
   }
-  dependsOn: [
-    ASE_SERVICE_Name_resource
-  ]
 }

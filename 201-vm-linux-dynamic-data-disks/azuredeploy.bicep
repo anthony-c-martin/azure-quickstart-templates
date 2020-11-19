@@ -202,7 +202,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var avSetName = 'avSet'
+var avSetName_var = 'avSet'
 var diskCaching = 'ReadWrite'
 var networkSettings = {
   virtualNetworkName: 'virtualnetwork'
@@ -218,28 +218,28 @@ var networkSettings = {
     master: '10.0.0.254'
   }
 }
-var newStorageAccountName = '${uniqueString(resourceGroup().id)}dynamicdisk'
-var nicName = 'nic'
+var newStorageAccountName_var = '${uniqueString(resourceGroup().id)}dynamicdisk'
+var nicName_var = 'nic'
 var OSDiskName = 'osdisk'
-var publicIPAddressName = 'publicips'
+var publicIPAddressName_var = 'publicips'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhd'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', networkSettings.virtualNetworkName, networkSettings.subnet.dse.name)
 var installationCLI = 'bash azuredeploy.sh ${masterVMName} ${mountFolder} ${numDataDisks} ${dockerVer} ${dockerComposeVer} ${adminUsername} ${imageSku} ${dockerMachineVer}'
 var storageAccountType = storageType
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: newStorageAccountName
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: newStorageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource avSetName_resource 'Microsoft.Compute/availabilitySets@2017-12-01' = {
-  name: avSetName
+resource avSetName 'Microsoft.Compute/availabilitySets@2017-12-01' = {
+  name: avSetName_var
   location: location
   sku: {
     name: 'Aligned'
@@ -250,8 +250,8 @@ resource avSetName_resource 'Microsoft.Compute/availabilitySets@2017-12-01' = {
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -287,19 +287,16 @@ resource networkSettings_virtualNetworkName 'Microsoft.Network/virtualNetworks@2
         properties: {
           addressPrefix: networkSettings.subnet.dse.prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-03-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-03-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -309,8 +306,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-03-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-03-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -320,7 +317,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-03-01' = {
           privateIPAllocationMethod: 'Static'
           privateIPAddress: networkSettings.statics.master
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -329,18 +326,14 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-03-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    networkSettings_virtualNetworkName
-  ]
 }
 
-resource masterVMName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource masterVMName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: masterVMName
   location: location
   properties: {
     availabilitySet: {
-      id: avSetName_resource.id
+      id: avSetName.id
     }
     hardwareProfile: {
       vmSize: nodeSize
@@ -389,16 +382,11 @@ resource masterVMName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
-    avSetName_resource
-  ]
 }
 
 resource masterVMName_Installation 'Microsoft.Compute/virtualMachines/extensions@2016-03-30' = {
@@ -416,7 +404,4 @@ resource masterVMName_Installation 'Microsoft.Compute/virtualMachines/extensions
       commandToExecute: installationCLI
     }
   }
-  dependsOn: [
-    masterVMName_resource
-  ]
 }

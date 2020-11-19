@@ -85,13 +85,13 @@ param subnetRange string {
 var loadBalancerFrontEndIPName = 'ad-LBFE'
 var backendAddressPoolName = 'ad-LBBE'
 var inboundNatRulesName = 'ad-RDP'
-var networkInterfaceName = 'ad-nic'
-var publicIPAddressName = 'ad-ip'
-var availabilitySetName = 'ad-AvailabiltySet'
-var loadBalancerName = 'ad-LoadBalancer'
+var networkInterfaceName_var = 'ad-nic'
+var publicIPAddressName_var = 'ad-ip'
+var availabilitySetName_var = 'ad-AvailabiltySet'
+var loadBalancerName_var = 'ad-LoadBalancer'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -101,19 +101,19 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource availabilitySetName_resource 'Microsoft.Compute/availabilitySets@2020-06-01' = {
+resource availabilitySetName 'Microsoft.Compute/availabilitySets@2020-06-01' = {
   location: location
-  name: availabilitySetName
+  name: availabilitySetName_var
   properties: {
-    PlatformUpdateDomainCount: 20
-    PlatformFaultDomainCount: 2
+    platformUpdateDomainCount: 20
+    platformFaultDomainCount: 2
   }
   sku: {
     name: 'Aligned'
   }
 }
 
-module VNet '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nestedtemplates/vnet.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module VNet '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'VNet'
   params: {
     virtualNetworkName: virtualNetworkName
@@ -124,8 +124,8 @@ module VNet '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-06-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -133,7 +133,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
         name: loadBalancerFrontEndIPName
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -148,7 +148,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
         name: inboundNatRulesName
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, loadBalancerFrontEndIPName)
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, loadBalancerFrontEndIPName)
           }
           protocol: 'Tcp'
           frontendPort: 3389
@@ -158,13 +158,10 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -178,25 +175,21 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, backendAddressPoolName)
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, backendAddressPoolName)
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', loadBalancerName, inboundNatRulesName)
+              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules', loadBalancerName_var, inboundNatRulesName)
             }
           ]
         }
       }
     ]
   }
-  dependsOn: [
-    VNet
-    loadBalancerName_resource
-  ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -204,7 +197,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
       vmSize: vmSize
     }
     availabilitySet: {
-      id: availabilitySetName_resource.id
+      id: availabilitySetName.id
     }
     osProfile: {
       computerName: virtualMachineName
@@ -242,16 +235,11 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-    availabilitySetName_resource
-    loadBalancerName_resource
-  ]
 }
 
 resource virtualMachineName_CreateADForest 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
@@ -279,12 +267,9 @@ resource virtualMachineName_CreateADForest 'Microsoft.Compute/virtualMachines/ex
       }
     }
   }
-  dependsOn: [
-    virtualMachineName_resource
-  ]
 }
 
-module UpdateVNetDNS '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nestedtemplates/vnet.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module UpdateVNetDNS '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'UpdateVNetDNS'
   params: {
     virtualNetworkName: virtualNetworkName
@@ -302,9 +287,9 @@ module UpdateVNetDNS '<failed to parse [uri(parameters(\'_artifactsLocation\'), 
 }
 
 output dnsIpAddress string = privateIPAddress
-output domainName_output string = domainName
+output domainName_out string = domainName
 output virtualNetworkSubscriptionId string = subscription().subscriptionId
 output virtualNetworkResourceGroupName string = resourceGroup().name
-output virtualNetworkName_output string = virtualNetworkName
+output virtualNetworkName_out string = virtualNetworkName
 output virtualNetworkSubnetName string = subnetName
 output virtualNetworkAddressPrefixes string = virtualNetworkAddressRange

@@ -45,7 +45,7 @@ param storageAccountType string {
 param informaticaTags object
 param quickstartTags object
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: storageAccountName
   location: location
   tags: {
@@ -58,4 +58,4 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-
   }
 }
 
-output primaryKey string = listKeys(storageAccountName_resource.id, '2015-06-15').key1
+output primaryKey string = listKeys(storageAccountName_res.id, '2015-06-15').key1

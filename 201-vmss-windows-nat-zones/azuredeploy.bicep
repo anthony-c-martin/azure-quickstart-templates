@@ -48,13 +48,13 @@ param instanceCount int {
   default: 3
 }
 
-var networkSecurityGroupName = 'allowRemoting'
-var virtualNetworkName = '${vmssName}vnet'
-var publicIPAddressName = '${vmssName}pip'
+var networkSecurityGroupName_var = 'allowRemoting'
+var virtualNetworkName_var = '${vmssName}vnet'
+var publicIPAddressName_var = '${vmssName}pip'
 var subnetName = '${vmssName}subnet'
-var loadBalancerName = '${vmssName}lb'
-var publicIPAddressID = publicIPAddressName_resource.id
-var lbID = loadBalancerName_resource.id
+var loadBalancerName_var = '${vmssName}lb'
+var publicIPAddressID = publicIPAddressName.id
+var lbID = loadBalancerName.id
 var natPoolName = '${vmssName}natpool'
 var bePoolName = '${vmssName}bepool'
 var nicName = '${vmssName}nic'
@@ -67,8 +67,8 @@ var imageReference = {
   version: 'latest'
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-08-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-08-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -87,8 +87,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-08-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2017-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2017-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -124,8 +124,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-08-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-08-01' = {
+  name: publicIPAddressName_var
   location: location
   sku: {
     name: 'Standard'
@@ -138,8 +138,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2017-08-01' = {
+  name: loadBalancerName_var
   location: location
   sku: {
     name: 'Standard'
@@ -175,12 +175,9 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2017-08-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmssName
   location: location
   zones: [
@@ -215,7 +212,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
             name: nicName
             properties: {
               networkSecurityGroup: {
-                id: networkSecurityGroupName_resource.id
+                id: networkSecurityGroupName.id
               }
               primary: true
               ipConfigurations: [
@@ -223,16 +220,16 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, bePoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, bePoolName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, natPoolName)
                       }
                     ]
                   }
@@ -244,8 +241,4 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
       }
     }
   }
-  dependsOn: [
-    loadBalancerName_resource
-    virtualNetworkName_resource
-  ]
 }

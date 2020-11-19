@@ -65,16 +65,16 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = concat(uniqueString(resourceGroup().id, deployment().name))
+var storageAccountName_var = concat(uniqueString(resourceGroup().id, deployment().name))
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
 var windowsOSVersion = '2016-Datacenter'
-var nicName = '${dnsLabelPrefix}Nic'
-var publicIPName = '${dnsLabelPrefix}Pip'
+var nicName_var = '${dnsLabelPrefix}Nic'
+var publicIPName_var = '${dnsLabelPrefix}Pip'
 var subnetId = resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks/subnets', existingVNETName, existingSubnetName)
 
-resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPName
+resource publicIPName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -84,16 +84,16 @@ resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' 
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: 'Standard_LRS'
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -102,7 +102,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPName_resource.id
+            id: publicIPName.id
           }
           subnet: {
             id: subnetId
@@ -111,12 +111,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPName_resource
-  ]
 }
 
-resource dnsLabelPrefix_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource dnsLabelPrefix_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: dnsLabelPrefix
   location: location
   properties: {
@@ -153,21 +150,17 @@ resource dnsLabelPrefix_resource 'Microsoft.Compute/virtualMachines@2017-03-30' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: reference('Microsoft.Storage/storageAccounts/${storageAccountName}', '2015-06-15').primaryEndpoints.blob
+        storageUri: reference('Microsoft.Storage/storageAccounts/${storageAccountName_var}', '2015-06-15').primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource dnsLabelPrefix_joindomain 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -189,7 +182,4 @@ resource dnsLabelPrefix_joindomain 'Microsoft.Compute/virtualMachines/extensions
       Password: domainPassword
     }
   }
-  dependsOn: [
-    dnsLabelPrefix_resource
-  ]
 }

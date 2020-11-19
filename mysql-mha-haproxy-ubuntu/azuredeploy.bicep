@@ -140,14 +140,14 @@ var slaveOsSettings02 = {
   ]
 }
 
-module shared '<failed to parse [variables(\'sharedTemplateUrl\')]>' = {
+module shared '?' /*TODO: replace with correct path to [variables('sharedTemplateUrl')]*/ = {
   name: 'shared'
   params: {
     networkSettings: networkSettings
   }
 }
 
-module haproxyNode '<failed to parse [variables(\'haproxyTemplateUrl\')]>' = {
+module haproxyNode '?' /*TODO: replace with correct path to [variables('haproxyTemplateUrl')]*/ = {
   name: 'haproxyNode'
   params: {
     adminUsername: adminUsername
@@ -167,7 +167,7 @@ module haproxyNode '<failed to parse [variables(\'haproxyTemplateUrl\')]>' = {
   ]
 }
 
-module masterNode '<failed to parse [variables(\'masterTemplateUrl\')]>' = {
+module masterNode '?' /*TODO: replace with correct path to [variables('masterTemplateUrl')]*/ = {
   name: 'masterNode'
   params: {
     adminUsername: adminUsername
@@ -187,7 +187,7 @@ module masterNode '<failed to parse [variables(\'masterTemplateUrl\')]>' = {
   ]
 }
 
-module slaveNode01 '<failed to parse [variables(\'slaveTemplateUrl01\')]>' = {
+module slaveNode01 '?' /*TODO: replace with correct path to [variables('slaveTemplateUrl01')]*/ = {
   name: 'slaveNode01'
   params: {
     adminUsername: adminUsername
@@ -209,7 +209,7 @@ module slaveNode01 '<failed to parse [variables(\'slaveTemplateUrl01\')]>' = {
   ]
 }
 
-module slaveNode02 '<failed to parse [variables(\'slaveTemplateUrl02\')]>' = {
+module slaveNode02 '?' /*TODO: replace with correct path to [variables('slaveTemplateUrl02')]*/ = {
   name: 'slaveNode02'
   params: {
     adminUsername: adminUsername

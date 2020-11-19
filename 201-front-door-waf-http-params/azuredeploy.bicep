@@ -26,7 +26,7 @@ param httpRule2 object {
 
 var wafLocation = 'global'
 
-resource wafPolicyName_resource 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2019-03-01' = {
+resource wafPolicyName_res 'Microsoft.Network/FrontDoorWebApplicationFirewallPolicies@2019-03-01' = {
   name: wafPolicyName
   location: wafLocation
   properties: {

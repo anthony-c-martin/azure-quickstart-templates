@@ -58,7 +58,7 @@ resource workspaceName_datastoreName 'Microsoft.MachineLearningServices/workspac
   name: '${workspaceName}/${datastoreName}'
   location: location
   properties: {
-    DataStoreType: 'mysqldb'
+    dataStoreType: 'mysqldb'
     SkipValidation: skipValidation
     DatabaseName: databaseName
     Password: password

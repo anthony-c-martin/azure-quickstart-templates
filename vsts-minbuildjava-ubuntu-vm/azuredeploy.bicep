@@ -48,23 +48,23 @@ var imagePublisher = 'canonical'
 var imageOffer = 'ubuntuserver'
 var imageSKU = '16.04.0-LTS'
 var baseName = uniqueString(dnsLabelPrefix, resourceGroup().id, uniqueString(deployment().name))
-var nicName = 'myNic2${baseName}'
+var nicName_var = 'myNic2${baseName}'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
-var publicIPAddressName = 'myIP2${baseName}'
+var publicIPAddressName_var = 'myIP2${baseName}'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = dnsLabelPrefix
+var vmName_var = dnsLabelPrefix
 var vmSize = 'Standard_A0'
-var virtualNetworkName = 'MyVNET'
-var vnetID = virtualNetworkName_resource.id
+var virtualNetworkName_var = 'MyVNET'
+var vnetID = virtualNetworkName.id
 var storageAccountType = 'Standard_LRS'
-var storageAccountName = 'vsts2${baseName}'
+var storageAccountName_var = 'vsts2${baseName}'
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 
-resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource StorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -73,8 +73,8 @@ resource StorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -84,8 +84,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -104,8 +104,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -114,7 +114,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -123,21 +123,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -149,7 +145,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -157,19 +153,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    StorageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName}/newuserscript'
+  name: '${vmName_var}/newuserscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -183,7 +175,4 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2015
       commandToExecute: 'sh java-vstsbuild-install.sh ${vstsAccountURL} ${vstsPAT} ${vstsPoolName} ${vstsAgentName} ${adminUsername}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

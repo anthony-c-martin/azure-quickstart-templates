@@ -144,10 +144,6 @@ resource vNet1_gatewayName 'Microsoft.Network/virtualNetworkGateways@2020-05-01'
       asn: vNet1.asn
     }
   }
-  dependsOn: [
-    vNet1_gatewayPublicIPName
-    vNet1_name
-  ]
 }
 
 resource vNet2_gatewayName 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
@@ -179,10 +175,6 @@ resource vNet2_gatewayName 'Microsoft.Network/virtualNetworkGateways@2020-05-01'
       asn: vNet2.asn
     }
   }
-  dependsOn: [
-    vNet2_gatewayPublicIPName
-    vNet2_name
-  ]
 }
 
 resource vNet1_connectionName 'Microsoft.Network/connections@2020-05-01' = {
@@ -198,12 +190,8 @@ resource vNet1_connectionName 'Microsoft.Network/connections@2020-05-01' = {
     connectionType: 'Vnet2Vnet'
     routingWeight: 3
     sharedKey: sharedKey
-    enableBGP: true
+    enableBgp: true
   }
-  dependsOn: [
-    vNet1_gatewayName
-    vNet2_gatewayName
-  ]
 }
 
 resource vNet2_connectionName 'Microsoft.Network/connections@2020-05-01' = {
@@ -219,10 +207,6 @@ resource vNet2_connectionName 'Microsoft.Network/connections@2020-05-01' = {
     connectionType: 'Vnet2Vnet'
     routingWeight: 3
     sharedKey: sharedKey
-    enableBGP: true
+    enableBgp: true
   }
-  dependsOn: [
-    vNet1_gatewayName
-    vNet2_gatewayName
-  ]
 }

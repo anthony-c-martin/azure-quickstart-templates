@@ -59,9 +59,6 @@ resource Hub_01 'Microsoft.Network/virtualHubs@2020-04-01' = {
       id: AzfwTest.id
     }
   }
-  dependsOn: [
-    VWan_01
-  ]
 }
 
 resource Policy_01 'Microsoft.Network/firewallPolicies@2020-04-01' = {
@@ -110,9 +107,6 @@ resource Policy_01_DefaultApplicationRuleCollectionGroup 'Microsoft.Network/fire
       }
     ]
   }
-  dependsOn: [
-    Policy_01
-  ]
 }
 
 resource AzfwTest 'Microsoft.Network/azureFirewalls@2020-06-01' = {
@@ -135,10 +129,6 @@ resource AzfwTest 'Microsoft.Network/azureFirewalls@2020-06-01' = {
       id: Policy_01.id
     }
   }
-  dependsOn: [
-    Hub_01
-    Policy_01
-  ]
 }
 
 resource Spoke_01 'Microsoft.Network/virtualNetworks@2020-06-01' = {
@@ -162,9 +152,6 @@ resource Spoke_01_Workload_SN 'Microsoft.Network/virtualNetworks/subnets@2020-06
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
   }
-  dependsOn: [
-    Spoke_01
-  ]
 }
 
 resource Spoke_01_Jump_SN 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
@@ -177,10 +164,6 @@ resource Spoke_01_Jump_SN 'Microsoft.Network/virtualNetworks/subnets@2020-06-01'
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
   }
-  dependsOn: [
-    Spoke_01
-    RT_01
-  ]
 }
 
 resource Jump_Srv 'Microsoft.Compute/virtualMachines@2020-06-01' = {
@@ -225,9 +208,6 @@ resource Jump_Srv 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    netInterface_jump_srv
-  ]
 }
 
 resource Workload_Srv 'Microsoft.Compute/virtualMachines@2020-06-01' = {
@@ -272,9 +252,6 @@ resource Workload_Srv 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    netInterface_workload_srv
-  ]
 }
 
 resource netInterface_workload_srv 'Microsoft.Network/networkInterfaces@2020-06-01' = {
@@ -300,10 +277,6 @@ resource netInterface_workload_srv 'Microsoft.Network/networkInterfaces@2020-06-
       id: nsg_workload_srv.id
     }
   }
-  dependsOn: [
-    resourceId('Microsoft.Network/virtualNetworks/subnets', 'Spoke-01', 'Workload-SN')
-    nsg_workload_srv
-  ]
 }
 
 resource netInterface_jump_srv 'Microsoft.Network/networkInterfaces@2020-06-01' = {
@@ -332,11 +305,6 @@ resource netInterface_jump_srv 'Microsoft.Network/networkInterfaces@2020-06-01' 
       id: nsg_jump_srv.id
     }
   }
-  dependsOn: [
-    publicIP_jump_srv
-    resourceId('Microsoft.Network/virtualNetworks/subnets', 'Spoke-01', 'Jump-SN')
-    nsg_jump_srv
-  ]
 }
 
 resource nsg_jump_srv 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
@@ -418,10 +386,6 @@ resource Hub_01_VirtualNetworkRouteTable 'Microsoft.Network/virtualHubs/routeTab
       'All_Vnets'
     ]
   }
-  dependsOn: [
-    Hub_01
-    AzfwTest
-  ]
 }
 
 resource Hub_01_BranchRouteTable 'Microsoft.Network/virtualHubs/routeTables@2020-04-01' = {
@@ -444,9 +408,4 @@ resource Hub_01_BranchRouteTable 'Microsoft.Network/virtualHubs/routeTables@2020
       'All_Branches'
     ]
   }
-  dependsOn: [
-    Hub_01
-    AzfwTest
-    resourceId('Microsoft.Network/virtualHubs/routeTables', 'Hub-01', 'VirtualNetworkRouteTable')
-  ]
 }

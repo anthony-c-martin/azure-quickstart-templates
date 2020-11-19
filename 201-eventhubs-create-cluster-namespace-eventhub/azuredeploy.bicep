@@ -20,7 +20,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource clusterName_resource 'Microsoft.EventHub/clusters@2018-01-01-preview' = {
+resource clusterName_res 'Microsoft.EventHub/clusters@2018-01-01-preview' = {
   name: clusterName
   location: location
   sku: {
@@ -29,7 +29,7 @@ resource clusterName_resource 'Microsoft.EventHub/clusters@2018-01-01-preview' =
   }
 }
 
-resource namespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+resource namespaceName_res 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
   name: namespaceName
   location: location
   sku: {
@@ -40,11 +40,8 @@ resource namespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-previe
   properties: {
     isAutoInflateEnabled: false
     maximumThroughputUnits: 0
-    clusterArmId: clusterName_resource.id
+    clusterArmId: clusterName_res.id
   }
-  dependsOn: [
-    clusterName_resource
-  ]
 }
 
 resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
@@ -54,7 +51,4 @@ resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@201
     messageRetentionInDays: 7
     partitionCount: 1
   }
-  dependsOn: [
-    namespaceName_resource
-  ]
 }

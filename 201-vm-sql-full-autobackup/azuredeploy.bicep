@@ -182,7 +182,7 @@ param location string {
 
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -191,7 +191,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2016-04-
       adminUsername: adminUsername
       adminPassword: adminPassword
       windowsConfiguration: {
-        provisionVmAgent: 'true'
+        provisionVMAgent: 'true'
       }
     }
     hardwareProfile: {
@@ -234,14 +234,11 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2016-04-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -263,17 +260,14 @@ resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/
       }
     }
     protectedSettings: {
-      StorageUrl: reference(sqlAutobackupStorageAccountName_resource.id, '2015-06-15').primaryEndpoints.blob
-      StorageAccessKey: listKeys(sqlAutobackupStorageAccountName_resource.id, '2015-06-15').key1
+      StorageUrl: reference(sqlAutobackupStorageAccountName_res.id, '2015-06-15').primaryEndpoints.blob
+      StorageAccessKey: listKeys(sqlAutobackupStorageAccountName_res.id, '2015-06-15').key1
       Password: sqlAutobackupEncryptionPassword
     }
   }
-  dependsOn: [
-    virtualMachineName_resource
-  ]
 }
 
-module prepareSqlVmDeployment '<failed to parse https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-sql-full-autobackup/nested/preparingSqlServerSa.json>' = {
+module prepareSqlVmDeployment '?' /*TODO: replace with correct path to https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-sql-full-autobackup/nested/preparingSqlServerSa.json*/ = {
   name: 'prepareSqlVmDeployment'
   params: {
     sqlVMName: virtualMachineName
@@ -295,7 +289,7 @@ module prepareSqlVmDeployment '<failed to parse https://raw.githubusercontent.co
   ]
 }
 
-resource sqlAutobackupStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource sqlAutobackupStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: sqlAutobackupStorageAccountName
   location: location
   properties: {
@@ -303,7 +297,7 @@ resource sqlAutobackupStorageAccountName_resource 'Microsoft.Storage/storageAcco
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -323,7 +317,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+resource networkInterfaceName_res 'Microsoft.Network/networkInterfaces@2015-06-15' = {
   name: networkInterfaceName
   location: location
   properties: {
@@ -335,7 +329,7 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
+          publicIPAddress: {
             id: resourceId(resourceGroup().Name, 'Microsoft.Network/publicIpAddresses', publicIpAddressName)
           }
         }
@@ -345,14 +339,9 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015
       id: resourceId(resourceGroup().Name, 'Microsoft.Network/networkSecurityGroups', networkSecurityGroupName)
     }
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+resource publicIpAddressName_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: publicIpAddressName
   location: location
   properties: {
@@ -360,7 +349,7 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -395,4 +384,4 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

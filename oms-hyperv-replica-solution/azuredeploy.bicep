@@ -130,7 +130,7 @@ var solution = {
   Author: 'ben@bentaylor.work'
 }
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
   name: workspaceName
   location: workspaceRegion
 }
@@ -495,12 +495,9 @@ resource workspaceName_solution_Name 'Microsoft.OperationalInsights/workspaces/v
       }
     }
   }
-  dependsOn: [
-    workspaceName_resource
-  ]
 }
 
-resource automationAccountName_resource 'Microsoft.Automation/automationAccounts@2015-10-31' = {
+resource automationAccountName_res 'Microsoft.Automation/automationAccounts@2015-10-31' = {
   name: automationAccountName
   location: automationRegion
   tags: {}
@@ -526,9 +523,6 @@ resource automationAccountName_automation_runbook_publishOmsHyperVReplica_name '
       version: '1.0.0.0'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_automation_Asset_omsHypervReplicaRunNumber_name 'microsoft.automation/automationAccounts/variables@2015-10-31' = {
@@ -541,9 +535,6 @@ resource automationAccountName_automation_Asset_omsHypervReplicaRunNumber_name '
     type: automation.Asset.omsHypervReplicaRunNumber.type
     value: automation.Asset.omsHypervReplicaRunNumber.value
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_automation_Asset_omsHypervReplicaRunAsAccount_name 'microsoft.automation/automationAccounts/credentials@2015-10-31' = {
@@ -555,9 +546,6 @@ resource automationAccountName_automation_Asset_omsHypervReplicaRunAsAccount_nam
     password: onPremisesRunAsPassword
     description: automation.Asset.omsHypervReplicaRunAsAccount.description
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_automation_module_OMSDataInjection_name 'microsoft.automation/automationAccounts/modules@2015-10-31' = {
@@ -569,9 +557,6 @@ resource automationAccountName_automation_module_OMSDataInjection_name 'microsof
       uri: '${artifactsLocation}assets/${automation.module.OMSDataInjection.name}.zip${artifactsSasToken}'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_automation_connection_OMSDataInjection_name 'microsoft.automation/automationAccounts/connections@2015-10-31' = {
@@ -590,10 +575,6 @@ resource automationAccountName_automation_connection_OMSDataInjection_name 'micr
       PrimaryKey: workSpacePrimaryKey
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-    automationAccountName_automation_module_OMSDataInjection_name
-  ]
 }
 
 resource solution_Name 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
@@ -607,9 +588,9 @@ resource solution_Name 'Microsoft.OperationsManagement/solutions@2015-11-01-prev
     product: solution.Product
   }
   properties: {
-    workspaceResourceId: workspaceName_resource.id
+    workspaceResourceId: workspaceName_res.id
     referencedResources: [
-      automationAccountName_resource.id
+      automationAccountName_res.id
       automationAccountName_automation_module_OMSDataInjection_name.id
     ]
     containedResources: [
@@ -620,12 +601,4 @@ resource solution_Name 'Microsoft.OperationsManagement/solutions@2015-11-01-prev
       workspaceName_solution_Name.id
     ]
   }
-  dependsOn: [
-    automationAccountName_automation_runbook_publishOmsHyperVReplica_name
-    automationAccountName_automation_Asset_omsHypervReplicaRunAsAccount_name
-    automationAccountName_automation_Asset_omsHypervReplicaRunNumber_name
-    automationAccountName_automation_module_OMSDataInjection_name
-    automationAccountName_automation_connection_OMSDataInjection_name
-    workspaceName_solution_Name
-  ]
 }

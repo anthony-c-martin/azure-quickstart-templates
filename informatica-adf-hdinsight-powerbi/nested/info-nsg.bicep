@@ -43,7 +43,7 @@ param networkSecurityGroupsName string {
 param informaticaTags object
 param quickstartTags object
 
-resource networkSecurityGroupsName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+resource networkSecurityGroupsName_res 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
   name: networkSecurityGroupsName
   location: location
   tags: {

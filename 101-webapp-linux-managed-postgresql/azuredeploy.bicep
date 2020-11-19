@@ -88,10 +88,10 @@ param location string {
 }
 
 var databaseName = '${siteName}database'
-var serverName = '${siteName}pgserver'
-var hostingPlanName = '${siteName}serviceplan'
+var serverName_var = '${siteName}pgserver'
+var hostingPlanName_var = '${siteName}serviceplan'
 
-resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: siteName
   properties: {
     siteConfig: {
@@ -99,39 +99,36 @@ resource siteName_resource 'Microsoft.Web/sites@2019-08-01' = {
       connectionStrings: [
         {
           name: 'defaultConnection'
-          ConnectionString: 'Database=${databaseName};Server=${serverName_resource.properties.fullyQualifiedDomainName};User Id=${administratorLogin}@${serverName};Password=${administratorLoginPassword}'
+          connectionString: 'Database=${databaseName};Server=${serverName.properties.fullyQualifiedDomainName};User Id=${administratorLogin}@${serverName_var};Password=${administratorLoginPassword}'
           type: 'PostgreSQL'
         }
       ]
     }
     name: siteName
-    serverFarmId: hostingPlanName
+    serverFarmId: hostingPlanName_var
   }
   location: location
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSizeId: '1'
     reserved: true
     numberOfWorkers: '1'
   }
   sku: {
-    Tier: 'Standard'
-    Name: 'S1'
+    tier: 'Standard'
+    name: 'S1'
   }
   kind: 'linux'
 }
 
-resource serverName_resource 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
+resource serverName 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
   location: location
-  name: serverName
+  name: serverName_var
   properties: {
     createMode: 'Default'
     version: postgresqlVersion
@@ -150,23 +147,17 @@ resource serverName_resource 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
 
 resource serverName_serverName_firewall 'Microsoft.DBforPostgreSQL/servers/firewallrules@2017-12-01' = {
   location: location
-  name: '${serverName}/${serverName}firewall'
+  name: '${serverName_var}/${serverName_var}firewall'
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '255.255.255.255'
   }
-  dependsOn: [
-    serverName_resource
-  ]
 }
 
 resource serverName_databaseName 'Microsoft.DBforPostgreSQL/servers/databases@2017-12-01' = {
-  name: '${serverName}/${databaseName}'
+  name: '${serverName_var}/${databaseName}'
   properties: {
     charset: 'utf8'
     collation: 'English_United States.1252'
   }
-  dependsOn: [
-    serverName_resource
-  ]
 }

@@ -63,13 +63,13 @@ param appInsightsLocation string {
   }
 }
 
-var functionAppName = appName
-var hostingPlanName = appName
-var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}functions'
+var functionAppName_var = appName
+var hostingPlanName_var = appName
+var applicationInsightsName_var = appName
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}functions'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   kind: 'Storage'
   sku: {
@@ -77,58 +77,50 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   }
 }
 
-resource applicationInsightsName_resource 'microsoft.insights/components@2020-02-02-preview' = {
-  name: applicationInsightsName
+resource applicationInsightsName 'microsoft.insights/components@2020-02-02-preview' = {
+  name: applicationInsightsName_var
   location: appInsightsLocation
   tags: {
-    'hidden-link:${resourceId('Microsoft.Web/sites', applicationInsightsName)}': 'Resource'
+    'hidden-link:${resourceId('Microsoft.Web/sites', applicationInsightsName_var)}': 'Resource'
   }
   properties: {
-    ApplicationId: applicationInsightsName
+    ApplicationId: applicationInsightsName_var
     Request_Source: 'IbizaWebAppExtensionCreate'
   }
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
-    Name: sku
+    name: sku
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSize: workerSize
     numberOfWorkers: 1
   }
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
-  name: functionAppName
+resource functionAppName 'Microsoft.Web/sites@2020-06-01' = {
+  name: functionAppName_var
   location: location
   kind: 'functionapp'
   properties: {
-    name: functionAppName
-    serverFarmId: hostingPlanName_resource.id
+    name: functionAppName_var
+    serverFarmId: hostingPlanName.id
     clientAffinityEnabled: false
     siteConfig: {
       alwaysOn: true
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-  ]
 }
 
 resource functionAppName_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
-  name: '${functionAppName}/appsettings'
+  name: '${functionAppName_var}/appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName_resource.id, '2019-06-01').keys[0].value}'
-    APPINSIGHTS_INSTRUMENTATIONKEY: reference(applicationInsightsName_resource.id, '2020-02-02-preview').InstrumentationKey
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccountName.id, '2019-06-01').keys[0].value}'
+    APPINSIGHTS_INSTRUMENTATIONKEY: reference(applicationInsightsName.id, '2020-02-02-preview').InstrumentationKey
     FUNCTIONS_EXTENSION_VERSION: '~3'
   }
-  dependsOn: [
-    functionAppName_resource
-    storageAccountName_resource
-  ]
 }

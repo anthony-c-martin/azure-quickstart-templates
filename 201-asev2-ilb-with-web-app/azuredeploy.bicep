@@ -76,7 +76,7 @@ param numberOfWorkersFromWorkerPool int {
 
 var vnetID = resourceId(vnetResourceGroupName, 'Microsoft.Network/virtualNetworks', vnetResourceName)
 
-resource aseName_resource 'Microsoft.Web/hostingEnvironments@2016-09-01' = {
+resource aseName_res 'Microsoft.Web/hostingEnvironments@2016-09-01' = {
   name: aseName
   kind: 'ASEV2'
   location: aseLocation
@@ -89,17 +89,17 @@ resource aseName_resource 'Microsoft.Web/hostingEnvironments@2016-09-01' = {
   properties: {
     name: aseName
     location: aseLocation
-    ipSslAddressCount: 0
+    ipsslAddressCount: 0
     internalLoadBalancingMode: internalLoadBalancingMode
     dnsSuffix: dnsSuffix
     virtualNetwork: {
-      Id: vnetID
-      Subnet: subnetName
+      id: vnetID
+      subnet: subnetName
     }
   }
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2016-09-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2016-09-01' = {
   name: appServicePlanName
   location: aseLocation
   tags: {
@@ -111,7 +111,7 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2016-09-01' = {
   properties: {
     name: appServicePlanName
     hostingEnvironmentProfile: {
-      id: aseName_resource.id
+      id: aseName_res.id
     }
   }
   sku: {
@@ -121,12 +121,9 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2016-09-01' = {
     family: 'I'
     capacity: numberOfWorkersFromWorkerPool
   }
-  dependsOn: [
-    aseName_resource
-  ]
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2016-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2016-08-01' = {
   name: siteName
   location: resourceGroup().location
   tags: {
@@ -137,12 +134,9 @@ resource siteName_resource 'Microsoft.Web/sites@2016-08-01' = {
   }
   properties: {
     name: siteName
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName_res.id
     hostingEnvironmentProfile: {
-      id: aseName_resource.id
+      id: aseName_res.id
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }

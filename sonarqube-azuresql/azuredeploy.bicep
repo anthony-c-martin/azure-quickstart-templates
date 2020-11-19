@@ -149,14 +149,14 @@ var SQvmAppImagePublisher = 'MicrosoftWindowsServer'
 var SQvmAppImageOffer = 'WindowsServer'
 var SQvmAppWindowsOSVersion = '2019-Datacenter'
 var SQvmAppSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQvnet', SQvnetExternalSubnetName)
-var SQvmAppNicName = '${sqVM_AppName}NetworkInterface'
-var SQpublicIPName = 'SQpublicIP'
+var SQvmAppNicName_var = '${sqVM_AppName}NetworkInterface'
+var SQpublicIPName_var = 'SQpublicIP'
 var dscZipFile = 'DSC/SQdscAppConfiguration.ps1.zip'
 var SQdscAppConfigurationFunction = 'SQdscAppConfiguration.ps1\\Main'
 var AzureSqlServerName = concat(sqDB_ServerName, uniqueString(resourceGroup().id))
 var SQDBTemplateLocation = uri(artifactsLocation, 'nested/azureDBDeploy.json${artifactsLocationSasToken}')
 
-module deploySQLDB '<failed to parse [variables(\'SQDBTemplateLocation\')]>' = {
+module deploySQLDB '?' /*TODO: replace with correct path to [variables('SQDBTemplateLocation')]*/ = {
   name: 'deploySQLDB'
   params: {
     adminLogin: sqDB_Admin_UserName
@@ -192,13 +192,10 @@ resource SQvnet 'Microsoft.Network/virtualNetworks@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    SQnsgApp
-  ]
 }
 
-resource SQvmAppNicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: SQvmAppNicName
+resource SQvmAppNicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: SQvmAppNicName_var
   location: location
   tags: {
     displayName: 'SQvmAppNic'
@@ -213,19 +210,15 @@ resource SQvmAppNicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01
             id: SQvmAppSubnetRef
           }
           publicIPAddress: {
-            id: SQpublicIPName_resource.id
+            id: SQpublicIPName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    SQvnet
-    SQpublicIPName_resource
-  ]
 }
 
-resource sqVM_AppName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource sqVM_AppName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: sqVM_AppName
   location: location
   tags: {
@@ -259,14 +252,11 @@ resource sqVM_AppName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = 
     networkProfile: {
       networkInterfaces: [
         {
-          id: SQvmAppNicName_resource.id
+          id: SQvmAppNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    SQvmAppNicName_resource
-  ]
 }
 
 resource sqVM_AppName_configureAppVM_DSC 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
@@ -292,9 +282,6 @@ resource sqVM_AppName_configureAppVM_DSC 'Microsoft.Compute/virtualMachines/exte
       }
     }
   }
-  dependsOn: [
-    sqVM_AppName_resource
-  ]
 }
 
 resource sqVM_AppName_secureSonarQube 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
@@ -312,17 +299,13 @@ resource sqVM_AppName_secureSonarQube 'Microsoft.Compute/virtualMachines/extensi
       fileUris: [
         uri(artifactsLocation, 'secureSonarQube.ps1${artifactsLocationSasToken}')
       ]
-      commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File secureSonarQube.ps1 -serverName ${reference(SQpublicIPName).dnsSettings.fqdn} -websiteName SonarQubeProxy -installationType ${sqVM_Installation_Type} -reverseProxyType ${sqVM_ReverseProxy_Type}'
+      commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File secureSonarQube.ps1 -serverName ${reference(SQpublicIPName_var).dnsSettings.fqdn} -websiteName SonarQubeProxy -installationType ${sqVM_Installation_Type} -reverseProxyType ${sqVM_ReverseProxy_Type}'
     }
   }
-  dependsOn: [
-    sqVM_AppName_resource
-    sqVM_AppName_configureAppVM_DSC
-  ]
 }
 
-resource SQpublicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: SQpublicIPName
+resource SQpublicIPName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: SQpublicIPName_var
   location: location
   tags: {
     displayName: 'SQpublicIP'
@@ -417,5 +400,5 @@ resource SQnsgApp 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   }
 }
 
-output HTTP_Url string = '${reference(SQpublicIPName).dnsSettings.fqdn}:9000'
-output HTTPS_Url string = 'https://${reference(SQpublicIPName).dnsSettings.fqdn}'
+output HTTP_Url string = '${reference(SQpublicIPName_var).dnsSettings.fqdn}:9000'
+output HTTPS_Url string = 'https://${reference(SQpublicIPName_var).dnsSettings.fqdn}'

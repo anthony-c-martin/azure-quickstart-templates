@@ -10,7 +10,7 @@ param virtualMachineResourceGroup string {
 }
 param dashboardName string {
   metadata: {
-    Description: 'Resource name that Azure portal uses for the dashboard'
+    description: 'Resource name that Azure portal uses for the dashboard'
   }
   default: guid(virtualMachineName, virtualMachineResourceGroup)
 }
@@ -22,7 +22,7 @@ param dashboardDisplayName string {
 }
 param location string = resourceGroup().location
 
-resource dashboardName_resource 'Microsoft.Portal/dashboards@2019-01-01-preview' = {
+resource dashboardName_res 'Microsoft.Portal/dashboards@2019-01-01-preview' = {
   name: dashboardName
   location: location
   tags: {

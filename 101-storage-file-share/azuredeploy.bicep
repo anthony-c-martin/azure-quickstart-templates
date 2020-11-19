@@ -18,7 +18,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   kind: 'StorageV2'
@@ -33,7 +33,4 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
 
 resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
   name: '${storageAccountName}/default/${fileShareName}'
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }

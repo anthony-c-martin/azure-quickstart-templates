@@ -61,24 +61,24 @@ param location string {
   default: resourceGroup().location
 }
 
-var applicationGatewayName = 'applicationGateway1'
-var publicIPAddressName = 'publicIp1'
-var virtualNetworkName = 'virtualNetwork1'
+var applicationGatewayName_var = 'applicationGateway1'
+var publicIPAddressName_var = 'publicIp1'
+var virtualNetworkName_var = 'virtualNetwork1'
 var subnetName = 'appGatewaySubnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIPRef = publicIPAddressName_resource.id
-var applicationGatewayID = applicationGatewayName_resource.id
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var publicIPRef = publicIPAddressName.id
+var applicationGatewayID = applicationGatewayName.id
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -97,8 +97,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-
   }
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2017-06-01' = {
-  name: applicationGatewayName
+resource applicationGatewayName 'Microsoft.Network/applicationGateways@2017-06-01' = {
+  name: applicationGatewayName_var
   location: location
   properties: {
     sku: {
@@ -120,7 +120,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: publicIPRef
           }
         }
@@ -130,7 +130,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendPort'
         properties: {
-          Port: 80
+          port: 80
         }
       }
     ]
@@ -138,9 +138,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: backend1
+              ipAddress: backend1
             }
           ]
         }
@@ -150,10 +150,10 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
-          Path: backendPath
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          path: backendPath
         }
       }
     ]
@@ -161,14 +161,14 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            Id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
+          frontendIPConfiguration: {
+            id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
           }
-          FrontendPort: {
-            Id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort'
+          frontendPort: {
+            id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort'
           }
-          Protocol: 'Http'
-          SslCertificate: null
+          protocol: 'Http'
+          sslCertificate: null
         }
       }
     ]
@@ -203,9 +203,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'PathBasedRouting'
+          ruleType: 'PathBasedRouting'
           httpListener: {
             id: '${applicationGatewayID}/httpListeners/appGatewayHttpListener'
           }
@@ -216,8 +216,4 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
-  ]
 }

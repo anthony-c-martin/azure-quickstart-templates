@@ -60,11 +60,11 @@ param artifactsLocationSasToken string {
 
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${vmssName}vnet'
-var publicIPAddressName = '${vmssName}pip'
+var virtualNetworkName_var = '${vmssName}vnet'
+var publicIPAddressName_var = '${vmssName}pip'
 var subnetName = '${vmssName}subnet'
-var loadBalancerName = '${vmssName}lb'
-var publicIPAddressID = publicIPAddressName_resource.id
+var loadBalancerName_var = '${vmssName}lb'
+var publicIPAddressID = publicIPAddressName.id
 var natPoolName = '${vmssName}natpool'
 var natpool2Name = '${vmssName}natpool2'
 var bePoolName = '${vmssName}bepool'
@@ -73,7 +73,7 @@ var natEndPort = 50120
 var natBackendPort = 22
 var nicName = '${vmssName}nic'
 var ipConfigName = '${vmssName}ipconfig'
-var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'loadBalancerFrontEnd')
+var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd')
 var osType = {
   publisher: 'Canonical'
   offer: 'UbuntuServer'
@@ -93,8 +93,8 @@ var linuxConfiguration = {
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -113,8 +113,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -124,8 +124,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-06-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -170,12 +170,9 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
   name: vmssName
   location: location
   sku: {
@@ -213,19 +210,19 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, bePoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, bePoolName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, natPoolName)
                       }
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, natpool2Name)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, natpool2Name)
                       }
                     ]
                   }
@@ -257,10 +254,6 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01
       }
     }
   }
-  dependsOn: [
-    loadBalancerName_resource
-    virtualNetworkName_resource
-  ]
 }
 
 resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
@@ -268,7 +261,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
   location: location
   properties: {
     name: 'autoscalehost'
-    targetResourceUri: vmssName_resource.id
+    targetResourceUri: vmssName_res.id
     enabled: true
     profiles: [
       {
@@ -282,7 +275,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: vmssName_resource.id
+              metricResourceUri: vmssName_res.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -300,7 +293,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: vmssName_resource.id
+              metricResourceUri: vmssName_res.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -319,7 +312,4 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    vmssName_resource
-  ]
 }

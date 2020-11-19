@@ -46,7 +46,7 @@ var encryptionOperation = 'EnableEncryption'
 var keyVaultURL = 'https://${keyVaultName}.vault.azure.net/'
 var keyVaultResourceID = '${subscription().id}/resourceGroups/${keyVaultResourceGroup}/providers/Microsoft.KeyVault/vaults/${keyVaultName}'
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@[variables(\'computeApiVersion\')]' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@[variables(\'computeApiVersion\')]' = {
   name: vmssName
   location: resourceGroup().location
   sku: {

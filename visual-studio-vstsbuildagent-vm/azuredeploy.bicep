@@ -88,7 +88,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}storage'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
 var vnet01Prefix = '10.0.0.0/16'
 var vnet01Subnet1Name = 'Subnet-1'
 var vnet01Subnet1Prefix = '10.0.0.0/24'
@@ -97,11 +97,11 @@ var vmImageOffer = 'VisualStudio'
 var vmOSDiskName = 'VMOSDisk'
 var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', 'Vnet01', vnet01Subnet1Name)
 var vmStorageAccountContainerName = 'vhds'
-var vmNicName = '${vmName}NetworkInterface'
-var vmIP01Name = 'VMIP01'
+var vmNicName_var = '${vmName}NetworkInterface'
+var vmIP01Name_var = 'VMIP01'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+  name: storageAccountName_var
   location: location
   tags: {
     displayName: 'Storage01'
@@ -136,8 +136,8 @@ resource VNet01 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   dependsOn: []
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: vmNicName_var
   location: location
   tags: {
     displayName: 'VMNic01'
@@ -152,19 +152,15 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-prev
             id: vmSubnetRef
           }
           publicIPAddress: {
-            id: vmIP01Name_resource.id
+            id: vmIP01Name.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    VNet01
-    vmIP01Name_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   tags: {
@@ -195,15 +191,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    vmNicName_resource
-  ]
 }
 
 resource vmName_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
@@ -220,13 +212,10 @@ resource vmName_CustomScript 'Microsoft.Compute/virtualMachines/extensions@2015-
       commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -Command .\\InstallVSTSAgent.ps1 -vstsAccount ${vstsAccount} -personalAccessToken ${personalAccessToken} -AgentName ${vmName} -PoolName ${poolName} -runAsAutoLogon ${enableAutologon} -vmAdminUserName ${vmAdminUserName} -vmAdminPassword ${vmAdminPassword}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-resource vmIP01Name_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: vmIP01Name
+resource vmIP01Name 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: vmIP01Name_var
   location: location
   tags: {
     displayName: 'VMIP01'

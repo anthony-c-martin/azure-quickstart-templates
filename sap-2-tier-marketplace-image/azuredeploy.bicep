@@ -185,35 +185,35 @@ var countPublicIp = nicConfigurations[newOrExistingSubnet].countPublicIp
 var countNSG = nicConfigurations[newOrExistingSubnet].countNSG
 var sidlower = toLower(sapSystemId)
 var vmName = '${sidlower}-servercs'
-var storageAccountName = concat(sidlower, uniqueString(sidlower, resourceGroup().id))
+var storageAccountName_var = concat(sidlower, uniqueString(sidlower, resourceGroup().id))
 var vnetName = '${sidlower}-vnet'
 var publicIpName = '${sidlower}-pib'
-var nicName = '${sidlower}-nic'
+var nicName_var = '${sidlower}-nic'
 var nsgName = '${sidlower}-nsg-cs'
 var publicIPAddressType = 'Dynamic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var nestedDeploymentName = 'nestedTemplate'
-var nestedDeploymentNameProf = '${nestedDeploymentName}prof'
-var nestedDeploymentNameVnet = '${nestedDeploymentName}vnet'
-var nestedDeploymentNameNSG = '${nestedDeploymentName}nsg'
-var nestedDeploymentNameNIC = '${nestedDeploymentName}nic'
-var nestedDeploymentNamePIP = '${nestedDeploymentName}pip'
+var nestedDeploymentName_var = 'nestedTemplate'
+var nestedDeploymentNameProf_var = '${nestedDeploymentName_var}prof'
+var nestedDeploymentNameVnet_var = '${nestedDeploymentName_var}vnet'
+var nestedDeploymentNameNSG_var = '${nestedDeploymentName_var}nsg'
+var nestedDeploymentNameNIC_var = '${nestedDeploymentName_var}nic'
+var nestedDeploymentNamePIP_var = '${nestedDeploymentName_var}pip'
 var osDiskType = 'image'
 var apiVerion = '2015-06-15'
 var apiVerionRm = '2015-01-01'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: internalStorageType
   }
 }
 
-module nestedDeploymentNameVnet_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'vnet.json\')]>' = {
-  name: nestedDeploymentNameVnet
+module nestedDeploymentNameVnet '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'vnet.json')]*/ = {
+  name: nestedDeploymentNameVnet_var
   params: {
     vnetName: vnetName
     addressPrefix: addressPrefix
@@ -222,8 +222,8 @@ module nestedDeploymentNameVnet_resource '<failed to parse [concat(variables(\'g
   }
 }
 
-module nestedDeploymentNameNIC_resource '<failed to parse [concat(variables(\'github\'), \'nic-config.json\')]>' = {
-  name: nestedDeploymentNameNIC
+module nestedDeploymentNameNIC '?' /*TODO: replace with correct path to [concat(variables('github'), 'nic-config.json')]*/ = {
+  name: nestedDeploymentNameNIC_var
   params: {
     vnetName: vnetName
     subnetName: subnetName
@@ -234,8 +234,8 @@ module nestedDeploymentNameNIC_resource '<failed to parse [concat(variables(\'gi
   }
 }
 
-module nestedDeploymentNameProf_resource '<failed to parse [concat(variables(\'github\'), \'os-disk-parts.json\')]>' = {
-  name: nestedDeploymentNameProf
+module nestedDeploymentNameProf '?' /*TODO: replace with correct path to [concat(variables('github'), 'os-disk-parts.json')]*/ = {
+  name: nestedDeploymentNameProf_var
   params: {
     imageSku: imageSku
     imagePublisher: imagePublisher
@@ -247,68 +247,62 @@ module nestedDeploymentNameProf_resource '<failed to parse [concat(variables(\'g
     osType: internalOSType
     sidlower: sidlower
     vmName: vmName
-    storageAccountName: storageAccountName
+    storageAccountName: storageAccountName_var
   }
 }
 
-module nestedDeploymentNamePIP_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'pip.json\')]>' = {
-  name: nestedDeploymentNamePIP
+module nestedDeploymentNamePIP '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'pip.json')]*/ = {
+  name: nestedDeploymentNamePIP_var
   params: {
     publicIpName: publicIpName
     publicIPAddressType: publicIPAddressType
   }
 }
 
-module nestedDeploymentNameNSG_resource '<failed to parse [concat(variables(\'github\'), parameters(\'newOrExistingSubnet\'), \'nsg.json\')]>' = {
-  name: nestedDeploymentNameNSG
+module nestedDeploymentNameNSG '?' /*TODO: replace with correct path to [concat(variables('github'), parameters('newOrExistingSubnet'), 'nsg.json')]*/ = {
+  name: nestedDeploymentNameNSG_var
   params: {
     nsgName: nsgName
     osType: internalOSType
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
-    networkSecurityGroup: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.networkSecurityGroup
+    networkSecurityGroup: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.networkSecurityGroup
     ipConfigurations: [
       {
         name: 'ipconfig1'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.publicIPAddress
-          subnet: reference(nestedDeploymentNameNIC).outputs.selectedConfiguration.value.subnet
+          publicIPAddress: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.publicIPAddress
+          subnet: reference(nestedDeploymentNameNIC_var).outputs.selectedConfiguration.value.subnet
         }
       }
     ]
   }
-  dependsOn: [
-    nestedDeploymentNameVnet_resource
-    nestedDeploymentNameNIC_resource
-    nestedDeploymentNamePIP_resource
-    nestedDeploymentNameNSG_resource
-  ]
 }
 
-module nestedDeploymentName_resource '<failed to parse [concat(variables(\'github\'), \'cs-server-\', variables(\'vmSize\'), \'_multiNIC_No.json\')]>' = {
-  name: nestedDeploymentName
+module nestedDeploymentName '?' /*TODO: replace with correct path to [concat(variables('github'), 'cs-server-', variables('vmSize'), '_multiNIC_No.json')]*/ = {
+  name: nestedDeploymentName_var
   params: {
-    imageReference: reference(nestedDeploymentNameProf).outputs.imageReference.value
-    osDisk: reference(nestedDeploymentNameProf).outputs.osDisk.value
+    imageReference: reference(nestedDeploymentNameProf_var).outputs.imageReference.value
+    osDisk: reference(nestedDeploymentNameProf_var).outputs.osDisk.value
     osDiskType: osDiskType
     sidlower: sidlower
     vmName: vmName
     vmSize: vmSize
     adminUsername: adminUsername
     adminPassword: adminPassword
-    storageAccountName: storageAccountName
-    nicName: nicName
+    storageAccountName: storageAccountName_var
+    nicName: nicName_var
   }
   dependsOn: [
-    storageAccountName_resource
-    nestedDeploymentNameProf_resource
-    nicName_resource
+    storageAccountName
+    nestedDeploymentNameProf
+    nicName
   ]
 }
 
@@ -324,10 +318,7 @@ resource vmName_cseExtName 'Microsoft.Compute/virtualMachines/extensions@2015-06
       fileUris: [
         csExtension[internalOSType].script
       ]
-      commandToExecute: '${csExtension[internalOSType].scriptCall} -DBDataLUNS "${reference(nestedDeploymentName).outputs.dbDataLUNs.value}" -DBLogLUNS "${reference(nestedDeploymentName).outputs.dbLogLUNs.value}"'
+      commandToExecute: '${csExtension[internalOSType].scriptCall} -DBDataLUNS "${reference(nestedDeploymentName_var).outputs.dbDataLUNs.value}" -DBLogLUNS "${reference(nestedDeploymentName_var).outputs.dbLogLUNs.value}"'
     }
   }
-  dependsOn: [
-    nestedDeploymentName_resource
-  ]
 }

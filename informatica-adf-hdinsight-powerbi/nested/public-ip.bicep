@@ -34,7 +34,7 @@ param publicIPdnsPrefix string {
 param informaticaTags object
 param quickstartTags object
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: publicIPAddressName
   location: location
   tags: {

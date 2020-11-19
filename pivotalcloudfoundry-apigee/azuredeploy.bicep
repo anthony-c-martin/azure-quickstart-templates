@@ -143,14 +143,14 @@ var api_version = '2015-06-15'
 var extensionName = 'initdevbox'
 var newStorageAccountName = concat(storageAccountNamePrefixString, uniqueString(resourceGroup().id, deployment().name))
 var vmName = 'myjumpbox${uniqueString(resourceGroup().id, deployment().name)}'
-var location_variable = location
+var location_var = location
 var storageAccountType = 'Standard_GRS'
 var vmStorageAccountContainerName = 'vhds'
 var storageid = resourceId('Microsoft.Storage/storageAccounts', newStorageAccountName)
-var virtualNetworkName_variable = virtualNetworkName
+var virtualNetworkName_var = virtualNetworkName
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 var addressPrefix = '10.0.0.0/16'
-var vnetID = resourceId('Microsoft.Network/virtualNetworks', virtualNetworkName_variable)
+var vnetID = resourceId('Microsoft.Network/virtualNetworks', virtualNetworkName_var)
 var subnet1Name = subnetNameForBosh
 var subnet1Prefix = '10.0.0.0/24'
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
@@ -167,18 +167,18 @@ var ubuntuOSVersion = '14.04.5-LTS'
 var webSessionPassword = uniqueString(adminSSHKey)
 var installSize = 'Small'
 var vmSize = 'Standard_D2_v2'
-var baseUri_variable = baseUri
-var apigeeTemplateLink = '${baseUri_variable}Apigee/${apigeeEdge}.json'
-var pcfTemplateLink = '${baseUri_variable}pcf/pcfdeploy.json'
+var baseUri_var = baseUri
+var apigeeTemplateLink = '${baseUri_var}Apigee/${apigeeEdge}.json'
+var pcfTemplateLink = '${baseUri_var}pcf/pcfdeploy.json'
 var managementPublicIPDNSName = '${apigeeDeploymentName}${uniqueString(resourceGroup().id, deployment().name)}-management'
-var managementUI_variable = 'http://${managementPublicIPDNSName}.${toLower(replace(location_variable, ' ', ''))}.cloudapp.azure.com:9000'
-var managementDNSName = 'https://${managementPublicIPDNSName}.${toLower(replace(location_variable, ' ', ''))}.cloudapp.azure.com'
-var managementDNSAlias = '${managementPublicIPDNSName}.${toLower(replace(location_variable, ' ', ''))}.cloudapp.azure.com'
+var managementUI_var = 'http://${managementPublicIPDNSName}.${toLower(replace(location_var, ' ', ''))}.cloudapp.azure.com:9000'
+var managementDNSName = 'https://${managementPublicIPDNSName}.${toLower(replace(location_var, ' ', ''))}.cloudapp.azure.com'
+var managementDNSAlias = '${managementPublicIPDNSName}.${toLower(replace(location_var, ' ', ''))}.cloudapp.azure.com'
 var managementPublicIPAddressName = 'ApigeeManagementPublicIP-${apigeeDeploymentName}'
 var managementPublicIPResourceId = resourceId('Microsoft.Network/publicIPAddresses', managementPublicIPAddressName)
 var runtimePublicIPDNSName = '${apigeeDeploymentName}${uniqueString(resourceGroup().id, deployment().name)}-runtime'
-var runtimePublicDNSName_variable = 'https://${runtimePublicIPDNSName}.${toLower(replace(location_variable, ' ', ''))}.cloudapp.azure.com'
-var runtimePublicDNSAlias = '${runtimePublicIPDNSName}.${toLower(replace(location_variable, ' ', ''))}.cloudapp.azure.com'
+var runtimePublicDNSName_var = 'https://${runtimePublicIPDNSName}.${toLower(replace(location_var, ' ', ''))}.cloudapp.azure.com'
+var runtimePublicDNSAlias = '${runtimePublicIPDNSName}.${toLower(replace(location_var, ' ', ''))}.cloudapp.azure.com'
 var runtimePublicIPAddressName = 'ApigeeRuntimePublicIP-${apigeeDeploymentName}'
 var runtimePublicIPResourceId = resourceId('Microsoft.Network/publicIPAddresses', runtimePublicIPAddressName)
 var publicIPDNSName = '${apigeeDeploymentName}-management'
@@ -191,9 +191,9 @@ module pcf 'pcf/pcfdeploy.bicep' = {
   name: 'pcf'
   params: {
     apigeeEdge: apigeeEdge
-    managementUI: managementUI_variable
+    managementUI: managementUI_var
     managementDNSName: managementDNSName
-    runtimePublicDNSName: runtimePublicDNSName_variable
+    runtimePublicDNSName: runtimePublicDNSName_var
     storageAccountNamePrefixString: storageAccountNamePrefixString
     virtualNetworkName: virtualNetworkName
     subnetNameForBosh: subnetNameForBosh
@@ -209,17 +209,17 @@ module pcf 'pcf/pcfdeploy.bicep' = {
     clientSecret: clientSecret
     pivnetAPIToken: pivnetAPIToken
     installSize: installSize
-    location: location_variable
+    location: location_var
     apigeeAdminPassword: apigeeAdminPassword
     apigeeAdminEmail: apigeeAdminEmail
   }
 }
 
-module apigeeEdge_resource '<failed to parse [variables(\'apigeeTemplateLink\')]>' = {
+module apigeeEdge_res '?' /*TODO: replace with correct path to [variables('apigeeTemplateLink')]*/ = {
   name: 'apigeeEdge'
   params: {
     tshirtSize: tshirtSize
-    location: location_variable
+    location: location_var
     apigeeDeploymentName: apigeeDeploymentName
     adminUsername: adminUsername
     apigeeAdminEmail: apigeeAdminEmail
@@ -229,13 +229,13 @@ module apigeeEdge_resource '<failed to parse [variables(\'apigeeTemplateLink\')]
     sshPrivateKey: sshPrivateKey
     templateLocation: templateLocation
     managementPublicIPDNSName: managementPublicIPDNSName
-    managementUI: managementUI_variable
+    managementUI: managementUI_var
     managementDNSName: managementDNSName
     managementDNSAlias: managementDNSAlias
     managementPublicIPAddressName: managementPublicIPAddressName
     managementPublicIPResourceId: managementPublicIPResourceId
     runtimePublicIPDNSName: runtimePublicIPDNSName
-    runtimePublicDNSName: runtimePublicDNSName_variable
+    runtimePublicDNSName: runtimePublicDNSName_var
     runtimePublicDNSAlias: runtimePublicDNSAlias
     runtimePublicIPAddressName: runtimePublicIPAddressName
     runtimePublicIPResourceId: runtimePublicIPResourceId
@@ -244,8 +244,8 @@ module apigeeEdge_resource '<failed to parse [variables(\'apigeeTemplateLink\')]
 }
 
 output managementPublicDNSName string = managementDNSName
-output runtimePublicDNSName string = runtimePublicDNSName_variable
-output managementUI string = managementUI_variable
+output runtimePublicDNSName string = runtimePublicDNSName_var
+output managementUI string = managementUI_var
 output scriptoutput string = reference('pcf').outputs.scriptoutput.value
 output ProgressMonitorURL string = reference('pcf').outputs.ProgressMonitorURL.value
 output JumpboxFQDN string = reference('pcf').outputs.JumpboxFQDN.value

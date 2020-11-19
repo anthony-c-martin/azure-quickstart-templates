@@ -27,7 +27,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var dataFactoryName = 'CopyFromSQLToADFToAzureSQL${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'CopyFromSQLToADFToAzureSQL${uniqueString(resourceGroup().id)}'
 var gatewayName = 'Gateway${uniqueString(resourceGroup().id)}'
 var dataLakeLinkedServiceName = 'DataFactoryLinkedService'
 var sqlLinkedServiceName = 'SqlLinkedService'
@@ -37,23 +37,20 @@ var sqlDatasetName = 'SqlDataset'
 var azureSqlDatasetName = 'AzureSqlDataset'
 var pipelineName = 'CopyFromSQLToADFToAzureSQLPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: location
 }
 
 resource dataFactoryName_gatewayName 'Microsoft.DataFactory/datafactories/gateways@2015-10-01' = {
-  name: '${dataFactoryName}/${gatewayName}'
+  name: '${dataFactoryName_var}/${gatewayName}'
   properties: {
     description: 'ADF on-premises Data Management Gateway'
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_dataLakeLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${dataLakeLinkedServiceName}'
+  name: '${dataFactoryName_var}/${dataLakeLinkedServiceName}'
   properties: {
     type: 'AzureDataLakeStore'
     typeProperties: {
@@ -65,13 +62,10 @@ resource dataFactoryName_dataLakeLinkedServiceName 'Microsoft.DataFactory/datafa
       resourceGroupName: resourceGroup().name
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_sqlLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlLinkedServiceName}'
+  name: '${dataFactoryName_var}/${sqlLinkedServiceName}'
   properties: {
     type: 'OnPremisesSqlServer'
     typeProperties: {
@@ -81,27 +75,20 @@ resource dataFactoryName_sqlLinkedServiceName 'Microsoft.DataFactory/datafactori
       password: '**********'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_gatewayName
-  ]
 }
 
 resource dataFactoryName_azureSqlLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureSqlLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureSqlLinkedServiceName}'
   properties: {
     type: 'AzureSqlDatabase'
     typeProperties: {
       connectionString: azureSQLConnectionString
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_dataLakeDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${dataLakeDatasetName}'
+  name: '${dataFactoryName_var}/${dataLakeDatasetName}'
   properties: {
     structure: [
       {
@@ -122,7 +109,7 @@ resource dataFactoryName_dataLakeDatasetName 'Microsoft.DataFactory/datafactorie
     linkedServiceName: dataLakeLinkedServiceName
     typeProperties: {
       fileName: 'data.orc'
-      folderPath: '${dataFactoryName}/{year}/{month}/{day}/{hour}/{minute}/'
+      folderPath: '${dataFactoryName_var}/{year}/{month}/{day}/{hour}/{minute}/'
       format: {
         type: 'OrcFormat'
       }
@@ -176,14 +163,10 @@ resource dataFactoryName_dataLakeDatasetName 'Microsoft.DataFactory/datafactorie
     external: false
     policy: {}
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_dataLakeLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_sqlDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlDatasetName}'
+  name: '${dataFactoryName_var}/${sqlDatasetName}'
   properties: {
     structure: [
       {
@@ -212,14 +195,10 @@ resource dataFactoryName_sqlDatasetName 'Microsoft.DataFactory/datafactories/dat
     external: true
     policy: {}
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_sqlLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_azureSqlDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${azureSqlDatasetName}'
+  name: '${dataFactoryName_var}/${azureSqlDatasetName}'
   properties: {
     structure: [
       {
@@ -248,14 +227,10 @@ resource dataFactoryName_azureSqlDatasetName 'Microsoft.DataFactory/datafactorie
     external: false
     policy: {}
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureSqlLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/dataPipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${pipelineName}'
+  name: '${dataFactoryName_var}/${pipelineName}'
   properties: {
     activities: [
       {
@@ -345,11 +320,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/dataP
     isPaused: true
     pipelineMode: 'Scheduled'
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_dataLakeLinkedServiceName
-    dataFactoryName_sqlLinkedServiceName
-    dataFactoryName_azureSqlLinkedServiceName
-    dataFactoryName_dataLakeDatasetName
-  ]
 }

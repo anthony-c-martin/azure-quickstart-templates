@@ -97,14 +97,14 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var virtualNetworkName = 'vnet-vmaccess'
-var nicName = vmName
-var publicIPAddressName = vmName
+var virtualNetworkName_var = 'vnet-vmaccess'
+var nicName_var = vmName
+var publicIPAddressName_var = vmName
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnetName = 'VMAccess'
 var subnetPrefix = '10.0.0.0/24'
 var publicIPAddressType = 'Dynamic'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var storageAccountType = 'Standard_LRS'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
@@ -120,7 +120,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: newStorageAccountName
   location: location
   properties: {
@@ -128,8 +128,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -139,8 +139,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -159,8 +159,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -169,7 +169,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -178,13 +178,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
   name: vmName
   location: location
   properties: {
@@ -211,7 +207,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
@@ -222,10 +218,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
       }
     }
   }
-  dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_enablevmaccess 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -245,7 +237,4 @@ resource vmName_enablevmaccess 'Microsoft.Compute/virtualMachines/extensions@201
       remove_user: userNameToRemove
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

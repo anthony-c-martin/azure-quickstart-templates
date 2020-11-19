@@ -53,7 +53,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-04-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -74,10 +74,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-
         properties: {
           addressPrefix: managedInstanceSubnetPrefix
           networkSecurityGroup: {
-            id: nsgForManagedInstanceSubnet_resource.id
+            id: nsgForManagedInstanceSubnet_res.id
           }
           routeTable: {
-            id: routeTableForManagedInstanceSubnet_resource.id
+            id: routeTableForManagedInstanceSubnet_res.id
           }
           delegations: [
             {
@@ -91,13 +91,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-
       }
     ]
   }
-  dependsOn: [
-    nsgForManagedInstanceSubnet_resource
-    routeTableForManagedInstanceSubnet_resource
-  ]
 }
 
-resource nsgForManagedInstanceSubnet_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+resource nsgForManagedInstanceSubnet_res 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
   name: nsgForManagedInstanceSubnet
   location: location
   properties: {
@@ -218,7 +214,7 @@ resource nsgForManagedInstanceSubnet_resource 'Microsoft.Network/networkSecurity
   }
 }
 
-resource routeTableForManagedInstanceSubnet_resource 'Microsoft.Network/routeTables@2019-04-01' = {
+resource routeTableForManagedInstanceSubnet_res 'Microsoft.Network/routeTables@2019-04-01' = {
   name: routeTableForManagedInstanceSubnet
   location: location
   properties: {

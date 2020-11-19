@@ -30,7 +30,7 @@ param privateEndpointName string {
   }
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var locations = [
   {
     locationName: location
@@ -39,7 +39,7 @@ var locations = [
   }
 ]
 
-resource virtualNetworkName_resource 'Microsoft.Network/VirtualNetworks@2019-09-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/VirtualNetworks@2019-09-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -60,8 +60,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/VirtualNetworks@2019-09-
   }
 }
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
+  name: accountName_var
   kind: 'GlobalDocumentDB'
   location: location
   properties: {
@@ -78,7 +78,7 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01'
   }
 }
 
-resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-04-01' = {
+resource privateEndpointName_res 'Microsoft.Network/privateEndpoints@2019-04-01' = {
   name: privateEndpointName
   location: location
   properties: {
@@ -89,7 +89,7 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-0
       {
         name: 'MyConnection'
         properties: {
-          privateLinkServiceId: accountName_resource.id
+          privateLinkServiceId: accountName_res.id
           groupIds: [
             'Sql'
           ]
@@ -97,8 +97,4 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-0
       }
     ]
   }
-  dependsOn: [
-    accountName_resource
-    virtualNetworkName_resource
-  ]
 }

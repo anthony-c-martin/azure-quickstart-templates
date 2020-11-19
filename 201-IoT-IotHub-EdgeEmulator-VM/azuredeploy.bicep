@@ -87,14 +87,14 @@ param IoTfeatures string {
   default: 'None'
 }
 
-var networkInterfaceName = '${vmName}NetInt'
+var networkInterfaceName_var = '${vmName}NetInt'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIpAddressName = '${vmName}PublicIP'
+var publicIpAddressName_var = '${vmName}PublicIP'
 var osDiskType = 'Standard_LRS'
 var subnetAddressPrefix = '10.1.0.0/24'
 var addressPrefix = '10.1.0.0/16'
 
-resource IoTHubname_resource 'Microsoft.Devices/IotHubs@2019-03-22' = {
+resource IoTHubname_res 'Microsoft.Devices/IotHubs@2019-03-22' = {
   name: IoTHubname
   location: location
   properties: {
@@ -112,8 +112,8 @@ resource IoTHubname_resource 'Microsoft.Devices/IotHubs@2019-03-22' = {
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-07-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2019-07-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -124,24 +124,19 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: networkSecurityGroupName_resource.id
+      id: networkSecurityGroupName_res.id
     }
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-  ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -163,7 +158,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-04-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -183,18 +178,18 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-
   }
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2019-02-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIpAddresses@2019-02-01' = {
+  name: publicIpAddressName_var
   location: location
   properties: {
-    publicIpAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Dynamic'
   }
   sku: {
     name: 'Basic'
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: vmName
   location: location
   properties: {
@@ -218,7 +213,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
@@ -233,10 +228,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     publisher: 'microsoft_iot_edge'
     product: 'iot_edge_vm_ubuntu'
   }
-  dependsOn: [
-    networkInterfaceName_resource
-    IoTHubname_resource
-  ]
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

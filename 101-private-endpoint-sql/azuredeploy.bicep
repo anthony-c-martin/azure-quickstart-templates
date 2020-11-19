@@ -33,26 +33,26 @@ param location string {
   default: resourceGroup().location
 }
 
-var vnetName = 'myVirtualNetwork'
+var vnetName_var = 'myVirtualNetwork'
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnet1Prefix = '10.0.0.0/24'
 var subnet1Name = 'mySubnet'
-var sqlServerName = 'sqlserver${uniqueString(resourceGroup().id)}'
-var databaseName = '${sqlServerName}/sample-db'
-var privateEndpointName = 'myPrivateEndpoint'
-var privateDnsZoneName = 'privatelink${environment().suffixes.sqlServerHostname}'
-var pvtendpointdnsgroupname = '${privateEndpointName}/mydnsgroupname'
-var vmName = take('myVm${uniqueString(resourceGroup().id)}', 15)
-var publicIpAddressName = '${vmName}PublicIP'
-var networkInterfaceName = '${vmName}NetInt'
+var sqlServerName_var = 'sqlserver${uniqueString(resourceGroup().id)}'
+var databaseName_var = '${sqlServerName_var}/sample-db'
+var privateEndpointName_var = 'myPrivateEndpoint'
+var privateDnsZoneName_var = 'privatelink${environment().suffixes.sqlServerHostname}'
+var pvtendpointdnsgroupname_var = '${privateEndpointName_var}/mydnsgroupname'
+var vmName_var = take('myVm${uniqueString(resourceGroup().id)}', 15)
+var publicIpAddressName_var = '${vmName_var}PublicIP'
+var networkInterfaceName_var = '${vmName_var}NetInt'
 var osDiskType = 'Standard_LRS'
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
-  name: sqlServerName
+resource sqlServerName 'Microsoft.Sql/servers@2020-02-02-preview' = {
+  name: sqlServerName_var
   location: location
   kind: 'v12.0'
   tags: {
-    displayName: sqlServerName
+    displayName: sqlServerName_var
   }
   properties: {
     administratorLogin: sqlAdministratorLogin
@@ -62,8 +62,8 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
   }
 }
 
-resource databaseName_resource 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
-  name: databaseName
+resource databaseName 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
+  name: databaseName_var
   location: location
   sku: {
     name: 'Basic'
@@ -71,7 +71,7 @@ resource databaseName_resource 'Microsoft.Sql/servers/databases@2020-02-02-previ
     capacity: 5
   }
   tags: {
-    displayName: databaseName
+    displayName: databaseName_var
   }
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
@@ -80,13 +80,10 @@ resource databaseName_resource 'Microsoft.Sql/servers/databases@2020-02-02-previ
     requestedServiceObjectiveName: 'Basic'
     sampleName: 'AdventureWorksLT'
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -98,19 +95,16 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
 }
 
 resource vnetName_subnet1Name 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  name: '${vnetName}/${subnet1Name}'
+  name: '${vnetName_var}/${subnet1Name}'
   location: location
   properties: {
     addressPrefix: subnet1Prefix
     privateEndpointNetworkPolicies: 'Disabled'
   }
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
-resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-06-01' = {
-  name: privateEndpointName
+resource privateEndpointName 'Microsoft.Network/privateEndpoints@2020-06-01' = {
+  name: privateEndpointName_var
   location: location
   properties: {
     subnet: {
@@ -118,9 +112,9 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-0
     }
     privateLinkServiceConnections: [
       {
-        name: privateEndpointName
+        name: privateEndpointName_var
         properties: {
-          privateLinkServiceId: sqlServerName_resource.id
+          privateLinkServiceId: sqlServerName.id
           groupIds: [
             'sqlServer'
           ]
@@ -128,74 +122,59 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-0
       }
     ]
   }
-  dependsOn: [
-    vnetName_resource
-    sqlServerName_resource
-  ]
 }
 
-resource privateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020-01-01' = {
-  name: privateDnsZoneName
+resource privateDnsZoneName 'Microsoft.Network/privateDnsZones@2020-01-01' = {
+  name: privateDnsZoneName_var
   location: 'global'
   properties: ''
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
 resource privateDnsZoneName_privateDnsZoneName_link 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-01-01' = {
-  name: '${privateDnsZoneName}/${privateDnsZoneName}-link'
+  name: '${privateDnsZoneName_var}/${privateDnsZoneName_var}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: vnetName_resource.id
+      id: vnetName.id
     }
   }
-  dependsOn: [
-    privateDnsZoneName_resource
-    vnetName_resource
-  ]
 }
 
-resource pvtendpointdnsgroupname_resource 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
-  name: pvtendpointdnsgroupname
+resource pvtendpointdnsgroupname 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+  name: pvtendpointdnsgroupname_var
   location: location
   properties: {
     privateDnsZoneConfigs: [
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: privateDnsZoneName_resource.id
+          privateDnsZoneId: privateDnsZoneName.id
         }
       }
     ]
   }
-  dependsOn: [
-    privateDnsZoneName_resource
-    privateEndpointName_resource
-  ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIpAddressName_var
   location: location
   tags: {
-    displayName: publicIpAddressName
+    displayName: publicIpAddressName_var
   }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: toLower(vmName)
+      domainNameLabel: toLower(vmName_var)
     }
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   tags: {
-    displayName: networkInterfaceName
+    displayName: networkInterfaceName_var
   }
   properties: {
     ipConfigurations: [
@@ -204,7 +183,7 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIpAddressName_resource.id
+            id: publicIpAddressName.id
           }
           subnet: {
             id: vnetName_subnet1Name.id
@@ -213,24 +192,20 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
       }
     ]
   }
-  dependsOn: [
-    publicIpAddressName_resource
-    vnetName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName_var
   location: location
   tags: {
-    displayName: vmName
+    displayName: vmName_var
   }
   properties: {
     hardwareProfile: {
       vmSize: VmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmAdminUsername
       adminPassword: vmAdminPassword
     }
@@ -242,7 +217,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}OsDisk'
+        name: '${vmName_var}OsDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -254,12 +229,9 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }

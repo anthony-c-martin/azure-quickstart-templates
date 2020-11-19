@@ -23,7 +23,7 @@ param location string {
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var authRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceName, defaultSASKeyName)
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -47,9 +47,6 @@ resource serviceBusNamespaceName_serviceBusQueueName1 'Microsoft.ServiceBus/name
     enablePartitioning: 'false'
     enableExpress: 'false'
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }
 
 resource serviceBusNamespaceName_serviceBusQueueName2 'Microsoft.ServiceBus/namespaces/Queues@2017-04-01' = {
@@ -69,10 +66,6 @@ resource serviceBusNamespaceName_serviceBusQueueName2 'Microsoft.ServiceBus/name
     forwardTo: serviceBusQueueName1
     forwardDeadLetteredMessagesTo: serviceBusQueueName1
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-    serviceBusNamespaceName_serviceBusQueueName1
-  ]
 }
 
 output NamespaceConnectionString string = listkeys(authRuleResourceId, '2017-04-01').primaryConnectionString

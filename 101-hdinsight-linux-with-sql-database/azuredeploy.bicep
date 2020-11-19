@@ -84,7 +84,7 @@ resource defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-0
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -141,9 +141,6 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    defaultStorageAccount_name
-  ]
 }
 
 resource sqlDatabase_serverName 'Microsoft.Sql/servers@2020-02-02-preview' = {
@@ -171,9 +168,6 @@ resource sqlDatabase_serverName_sqlDatabase_databaseName 'Microsoft.Sql/servers/
     maxSizeBytes: '1073741824'
     requestedServiceObjectiveName: 'Basic'
   }
-  dependsOn: [
-    sqlDatabase_serverName
-  ]
 }
 
 resource sqlDatabase_serverName_sqlDatabase_databaseName_Import 'Microsoft.Sql/servers/databases/extensions@2014-04-01' = {
@@ -186,9 +180,6 @@ resource sqlDatabase_serverName_sqlDatabase_databaseName_Import 'Microsoft.Sql/s
     administratorLoginPassword: sqlAdminPassword
     storageUri: '${artifactsLocation}Bacpac/${bacpacFileName}'
   }
-  dependsOn: [
-    sqlDatabase_serverName_sqlDatabase_databaseName
-  ]
 }
 
 resource sqlDatabase_serverName_AllowAllAzureIps 'Microsoft.Sql/servers/firewallrules@2020-02-02-preview' = {
@@ -198,11 +189,8 @@ resource sqlDatabase_serverName_AllowAllAzureIps 'Microsoft.Sql/servers/firewall
     startIpAddress: '0.0.0.0'
     endIpAddress: '0.0.0.0'
   }
-  dependsOn: [
-    sqlDatabase_serverName
-  ]
 }
 
 output storage object = defaultStorageAccount_name.properties
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties
 output sqlSvrFqdn string = sqlDatabase_serverName.properties.fullyQualifiedDomainName

@@ -71,7 +71,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2015-03-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -132,4 +132,4 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2015-03-01-preview' 
   dependsOn: []
 }
 
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties

@@ -43,7 +43,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource sqlServerName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   name: sqlServerName
   location: location
   properties: {
@@ -66,9 +66,6 @@ resource sqlServerName_dataWarehouseName 'Microsoft.Sql/servers/databases@2020-0
     zoneRedundant: false
     isUpgradeRequested: false
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_dataWarehouseName_current 'Microsoft.Sql/servers/databases/transparentDataEncryption@2017-03-01-preview' = {
@@ -76,7 +73,4 @@ resource sqlServerName_dataWarehouseName_current 'Microsoft.Sql/servers/database
   properties: {
     status: transparentDataEncryption
   }
-  dependsOn: [
-    sqlServerName_dataWarehouseName
-  ]
 }

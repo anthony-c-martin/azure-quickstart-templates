@@ -55,69 +55,69 @@ var vmStorageAccountContainerName = 'vhds'
 var platformOSDiskName = 'platformosdisk'
 var domainControllerOSDiskName = 'domaincontrollerosdisk'
 var centOSDiskName = 'centosdisk'
-var virtualNetworkName = 'apprendavnet'
-var vnetID = virtualNetworkName_resource.id
+var virtualNetworkName_var = 'apprendavnet'
+var vnetID = virtualNetworkName.id
 var customScriptExtensionVersion = '2.0'
-var platformPIPName = '${platformNode}pubIP'
+var platformPIPName_var = '${platformNode_var}pubIP'
 var platformPIPType = 'Dynamic'
-var domainPIPName = '${domainControllerNode}pubIP'
+var domainPIPName_var = '${domainControllerNode_var}pubIP'
 var domainPIPType = 'Dynamic'
-var centosPIPName = '${centOSNode}pubIP'
+var centosPIPName_var = '${centOSNode_var}pubIP'
 var centosPIPType = 'Dynamic'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var subnet1Prefix = '10.0.0.0/24'
-var nicName = '${vmName}Nic'
-var dcNic = 'dcNic'
-var coNic = 'coNic'
-var platformNode = concat(vmName)
-var domainControllerNode = '${vmName}dc'
-var centOSNode = '${vmName}centos'
+var nicName_var = '${vmName}Nic'
+var dcNic_var = 'dcNic'
+var coNic_var = 'coNic'
+var platformNode_var = concat(vmName)
+var domainControllerNode_var = '${vmName}dc'
+var centOSNode_var = '${vmName}centos'
 var scriptURL = 'http://apprendaconfigfiles.blob.core.windows.net/configurationfiles/apprenda60PlatformNode.ps1'
 var scriptName = 'apprenda60PlatformNode.ps1'
-var scriptArgs = '-platformAdminFirstName ${platformAdminFirstName} -platformAdminLastName ${platformAdminLastName} -platformAdminEmailAddress ${platformAdminEmailAddress} -platformAdminPassword ${platformAdminPassword} -domaincontrollerserver ${domainControllerNode} -domainUserName ${adminUsername} -domainPassword ${adminPassword}'
+var scriptArgs = '-platformAdminFirstName ${platformAdminFirstName} -platformAdminLastName ${platformAdminLastName} -platformAdminEmailAddress ${platformAdminEmailAddress} -platformAdminPassword ${platformAdminPassword} -domaincontrollerserver ${domainControllerNode_var} -domainUserName ${adminUsername} -domainPassword ${adminPassword}'
 var dcScriptURL = 'http://apprendaconfigfiles.blob.core.windows.net/configurationfiles/domainControllerSetup.ps1'
 var dcScriptName = 'domainControllerSetup.ps1'
 var dcScriptArgs = '-dcpassword ${adminPassword}'
 var centosScriptURL = 'http://apprendaconfigfiles.blob.core.windows.net/configurationfiles/linuxSetup.sh'
 var centosScriptName = 'linuxSetup.sh'
 
-resource platformPIPName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: platformPIPName
+resource platformPIPName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: platformPIPName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: platformPIPType
     dnsSettings: {
-      domainNameLabel: platformNode
+      domainNameLabel: platformNode_var
     }
   }
 }
 
-resource domainPIPName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: domainPIPName
+resource domainPIPName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: domainPIPName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: domainPIPType
     dnsSettings: {
-      domainNameLabel: domainControllerNode
+      domainNameLabel: domainControllerNode_var
     }
   }
 }
 
-resource centosPIPName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: centosPIPName
+resource centosPIPName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: centosPIPName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: centosPIPType
     dnsSettings: {
-      domainNameLabel: centOSNode
+      domainNameLabel: centOSNode_var
     }
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -136,8 +136,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -146,7 +146,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: platformPIPName_resource.id
+            id: platformPIPName.id
           }
           subnet: {
             id: subnet1Ref
@@ -155,14 +155,10 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    platformPIPName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource dcNic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: dcNic
+resource dcNic 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: dcNic_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -177,14 +173,10 @@ resource dcNic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview'
       }
     ]
   }
-  dependsOn: [
-    domainPIPName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource coNic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: coNic
+resource coNic 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: coNic_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -199,21 +191,17 @@ resource coNic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview'
       }
     ]
   }
-  dependsOn: [
-    centosPIPName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource platformNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: platformNode
+resource platformNode 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: platformNode_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: platformNode
+      computerName: platformNode_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -225,7 +213,7 @@ resource platformNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = 
         version: 'latest'
       }
       osDisk: {
-        name: '${platformNode}_OSDisk'
+        name: '${platformNode_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -236,25 +224,22 @@ resource platformNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
-resource domainControllerNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: domainControllerNode
+resource domainControllerNode 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: domainControllerNode_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: domainControllerNode
+      computerName: domainControllerNode_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -266,7 +251,7 @@ resource domainControllerNode_resource 'Microsoft.Compute/virtualMachines@2017-0
         version: 'latest'
       }
       osDisk: {
-        name: '${domainControllerNode}_OSDisk'
+        name: '${domainControllerNode_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -277,25 +262,22 @@ resource domainControllerNode_resource 'Microsoft.Compute/virtualMachines@2017-0
     networkProfile: {
       networkInterfaces: [
         {
-          id: dcNic_resource.id
+          id: dcNic.id
         }
       ]
     }
   }
-  dependsOn: [
-    dcNic_resource
-  ]
 }
 
-resource centOSNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: centOSNode
+resource centOSNode 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: centOSNode_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: centOSNode
+      computerName: centOSNode_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -307,7 +289,7 @@ resource centOSNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${centOSNode}_OSDisk'
+        name: '${centOSNode_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -318,18 +300,15 @@ resource centOSNode_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: coNic_resource.id
+          id: coNic.id
         }
       ]
     }
   }
-  dependsOn: [
-    coNic_resource
-  ]
 }
 
 resource platformNode_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${platformNode}/CustomScriptExtension'
+  name: '${platformNode_var}/CustomScriptExtension'
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Compute'
@@ -342,13 +321,10 @@ resource platformNode_CustomScriptExtension 'Microsoft.Compute/virtualMachines/e
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted -file ${scriptName} ${scriptArgs}'
     }
   }
-  dependsOn: [
-    platformNode_resource
-  ]
 }
 
 resource domainControllerNode_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${domainControllerNode}/CustomScriptExtension'
+  name: '${domainControllerNode_var}/CustomScriptExtension'
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -362,13 +338,10 @@ resource domainControllerNode_CustomScriptExtension 'Microsoft.Compute/virtualMa
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted -file ${dcScriptName} ${dcScriptArgs}'
     }
   }
-  dependsOn: [
-    domainControllerNode_resource
-  ]
 }
 
 resource centOSNode_CustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${centOSNode}/CustomScriptExtension'
+  name: '${centOSNode_var}/CustomScriptExtension'
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -382,7 +355,4 @@ resource centOSNode_CustomScriptExtension 'Microsoft.Compute/virtualMachines/ext
       commandToExecute: 'sh ${centosScriptName}'
     }
   }
-  dependsOn: [
-    centOSNode_resource
-  ]
 }

@@ -66,7 +66,7 @@ param quickstartTags object
 
 var storageApiVersion = '2015-06-15'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/datafactories@2015-10-01' = {
   name: dataFactoryName
   location: 'westus'
   tags: {
@@ -84,9 +84,6 @@ resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafac
       connectionString: 'DefaultEndpointsProtocol=https;AccountName=${adfstorageAccountName};AccountKey=${listKeys(resourceId('Microsoft.Storage/storageAccounts', adfstorageAccountName), storageApiVersion).key1}'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_hivestoredlinkedservice 'Microsoft.DataFactory/datafactories/linkedservices@[parameters(\'apiVersion\')]' = {
@@ -97,9 +94,6 @@ resource dataFactoryName_hivestoredlinkedservice 'Microsoft.DataFactory/datafact
       connectionString: 'DefaultEndpointsProtocol=https;AccountName=hivestorage45;AccountKey=HxaJ9xKgO3/1PS5bRO6fc+rTdS+KXWhGsxLubXweQaw75qbFu3AWHwuR6IggpKZeXtspV+RYfffDtFBO5pMRXA=='
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@[parameters(\'apiVersion\')]' = {
@@ -114,10 +108,6 @@ resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFacto
       linkedServiceName: storageLinkedServiceName
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_azureSqlDWLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@[parameters(\'apiVersion\')]' = {
@@ -128,9 +118,6 @@ resource dataFactoryName_azureSqlDWLinkedServiceName 'Microsoft.DataFactory/data
       connectionString: azureSqlDWLinkedServiceConnectionString
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_blobInputDataset 'Microsoft.DataFactory/datafactories/datasets@[parameters(\'apiVersion\')]' = {
@@ -152,10 +139,6 @@ resource dataFactoryName_blobInputDataset 'Microsoft.DataFactory/datafactories/d
     external: true
     policy: {}
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_blobOutputDataset 'Microsoft.DataFactory/datafactories/datasets@[parameters(\'apiVersion\')]' = {
@@ -176,10 +159,6 @@ resource dataFactoryName_blobOutputDataset 'Microsoft.DataFactory/datafactories/
       interval: interval
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_sqlDWOutputDataset 'Microsoft.DataFactory/datafactories/datasets@[parameters(\'apiVersion\')]' = {
@@ -196,10 +175,6 @@ resource dataFactoryName_sqlDWOutputDataset 'Microsoft.DataFactory/datafactories
       interval: interval
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureSqlDWLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_dataFactoryName 'Microsoft.DataFactory/datafactories/datapipelines@[parameters(\'apiVersion\')]' = {
@@ -276,15 +251,6 @@ resource dataFactoryName_dataFactoryName 'Microsoft.DataFactory/datafactories/da
     end: end
     isPaused: false
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-    dataFactoryName_hdInsightOnDemandLinkedServiceName
-    dataFactoryName_azureSqlDWLinkedServiceName
-    dataFactoryName_blobInputDataset
-    dataFactoryName_blobOutputDataset
-    dataFactoryName_sqlDWOutputDataset
-  ]
 }
 
 output ucpConsoleAddress string = script

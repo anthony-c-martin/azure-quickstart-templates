@@ -71,7 +71,7 @@ var deployTypeParam = {
 var deployTypeParamValue = deployTypeParam[deploymentType]
 var templateDeployUrl = uri(artifactsLocation, concat(deployTypeParamValue, artifactsLocationSasToken))
 
-module rancherdeploy '<failed to parse [variables(\'templateDeployUrl\')]>' = {
+module rancherdeploy '?' /*TODO: replace with correct path to [variables('templateDeployUrl')]*/ = {
   name: 'rancherdeploy'
   params: {
     adminUsername: adminUsername

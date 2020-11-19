@@ -15,7 +15,7 @@ param vmSku string {
   default: 'Standard_D1_v2'
 }
 
-resource existingVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource existingVMSSName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: existingVMSSName
   location: resourceGroup().location
   sku: {

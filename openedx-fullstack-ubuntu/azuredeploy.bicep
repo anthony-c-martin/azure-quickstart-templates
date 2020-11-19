@@ -70,21 +70,21 @@ var openedxVersion = 'open-release/ficus.master'
 var scriptDownloadUri = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/openedx-fullstack-ubuntu/'
 var installScript = 'install-openedx.sh'
 var installCommand = 'bash -c \'nohup ./${installScript} ${openedxVersion} </dev/null &>/var/log/azure/openedx-install.log &\''
-var vmName = 'jumpbox2'
+var vmName_var = 'jumpbox2'
 var osImagePublisher = 'Canonical'
 var osImageOffer = 'UbuntuServer'
 var osImageSKU = '16.04-LTS'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var publicIPAddressType = 'Dynamic'
-var virtualNetworkName = 'VNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'VNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var subnetName = 'Subnet'
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var nsgName = 'node-nsg'
-var nsgID = nsgName_resource.id
+var nsgName_var = 'node-nsg'
+var nsgID = nsgName.id
 var storageAccountType = 'Standard_LRS'
-var storageAccountName = '${uniqueString(resourceGroup().id)}vhdsa'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}vhdsa'
 var vhdBlobContainer = 'vhds'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -98,16 +98,16 @@ var linuxConfiguration = {
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -117,8 +117,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -143,8 +143,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -195,7 +195,7 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' =
 }
 
 resource vmName_nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: '${vmName}-nic'
+  name: '${vmName_var}-nic'
   location: location
   properties: {
     ipConfigurations: [
@@ -204,7 +204,7 @@ resource vmName_nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -213,21 +213,17 @@ resource vmName_nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -240,7 +236,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -254,13 +250,12 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    'Microsoft.Network/networkInterfaces/${vmName}-nic'
+    'Microsoft.Network/networkInterfaces/${vmName_var}-nic'
   ]
 }
 
 resource vmName_installscript 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/installscript'
+  name: '${vmName_var}/installscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -275,7 +270,4 @@ resource vmName_installscript 'Microsoft.Compute/virtualMachines/extensions@2015
       commandToExecute: installCommand
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

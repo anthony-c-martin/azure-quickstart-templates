@@ -105,10 +105,10 @@ param privateLinkConnection_name string {
 }
 
 var webapp_dns_name = '.azurewebsites.net'
-var privateDNSZone_name = 'privatelink.azurewebsites.net'
+var privateDNSZone_name_var = 'privatelink.azurewebsites.net'
 var SKU_tier = 'PremiumV2'
 
-resource virtualNetwork_name_resource 'Microsoft.Network/virtualNetworks@2020-04-01' = {
+resource virtualNetwork_name_res 'Microsoft.Network/virtualNetworks@2020-04-01' = {
   name: virtualNetwork_name
   location: location
   properties: {
@@ -126,9 +126,6 @@ resource virtualNetwork_name_subnet1_name 'Microsoft.Network/virtualNetworks/sub
     addressPrefix: subnet1_CIDR
     privateEndpointNetworkPolicies: 'Disabled'
   }
-  dependsOn: [
-    virtualNetwork_name_resource
-  ]
 }
 
 resource virtualNetwork_name_subnet2_name 'Microsoft.Network/virtualNetworks/subnets@2020-04-01' = {
@@ -145,13 +142,9 @@ resource virtualNetwork_name_subnet2_name 'Microsoft.Network/virtualNetworks/sub
     ]
     privateEndpointNetworkPolicies: 'Enabled'
   }
-  dependsOn: [
-    virtualNetwork_name_resource
-    virtualNetwork_name_subnet1_name
-  ]
 }
 
-resource serverFarm_name_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
+resource serverFarm_name_res 'Microsoft.Web/serverfarms@2019-08-01' = {
   name: serverFarm_name
   location: location
   sku: {
@@ -164,28 +157,22 @@ resource serverFarm_name_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   kind: 'app'
 }
 
-resource site1_name_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource site1_name_res 'Microsoft.Web/sites@2019-08-01' = {
   name: site1_name
   location: location
   kind: 'app'
   properties: {
-    serverFarmId: serverFarm_name_resource.id
+    serverFarmId: serverFarm_name_res.id
   }
-  dependsOn: [
-    serverFarm_name_resource
-  ]
 }
 
-resource site2_name_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource site2_name_res 'Microsoft.Web/sites@2019-08-01' = {
   name: site2_name
   location: location
   kind: 'app'
   properties: {
-    serverFarmId: serverFarm_name_resource.id
+    serverFarmId: serverFarm_name_res.id
   }
-  dependsOn: [
-    serverFarm_name_resource
-  ]
 }
 
 resource site2_name_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
@@ -194,9 +181,6 @@ resource site2_name_appsettings 'Microsoft.Web/sites/config@2018-11-01' = {
     WEBSITE_DNS_SERVER: '168.63.129.16'
     WEBSITE_VNET_ROUTE_ALL: '1'
   }
-  dependsOn: [
-    site2_name_resource
-  ]
 }
 
 resource site1_name_web 'Microsoft.Web/sites/config@2019-08-01' = {
@@ -205,9 +189,6 @@ resource site1_name_web 'Microsoft.Web/sites/config@2019-08-01' = {
   properties: {
     ftpsState: 'AllAllowed'
   }
-  dependsOn: [
-    site1_name_resource
-  ]
 }
 
 resource site2_name_web 'Microsoft.Web/sites/config@2019-08-01' = {
@@ -216,9 +197,6 @@ resource site2_name_web 'Microsoft.Web/sites/config@2019-08-01' = {
   properties: {
     ftpsState: 'AllAllowed'
   }
-  dependsOn: [
-    site2_name_resource
-  ]
 }
 
 resource site1_name_site1_name_webapp_dns_name 'Microsoft.Web/sites/hostNameBindings@2019-08-01' = {
@@ -228,9 +206,6 @@ resource site1_name_site1_name_webapp_dns_name 'Microsoft.Web/sites/hostNameBind
     siteName: site1_name
     hostNameType: 'Verified'
   }
-  dependsOn: [
-    site1_name_resource
-  ]
 }
 
 resource site2_name_site2_name_webapp_dns_name 'Microsoft.Web/sites/hostNameBindings@2019-08-01' = {
@@ -240,9 +215,6 @@ resource site2_name_site2_name_webapp_dns_name 'Microsoft.Web/sites/hostNameBind
     siteName: site2_name
     hostNameType: 'Verified'
   }
-  dependsOn: [
-    site2_name_resource
-  ]
 }
 
 resource site2_name_VirtualNetwork 'Microsoft.Web/sites/networkConfig@2019-08-01' = {
@@ -251,13 +223,9 @@ resource site2_name_VirtualNetwork 'Microsoft.Web/sites/networkConfig@2019-08-01
   properties: {
     subnetResourceId: virtualNetwork_name_subnet2_name.id
   }
-  dependsOn: [
-    virtualNetwork_name_subnet2_name
-    site2_name_resource
-  ]
 }
 
-resource privateEndpoint_name_resource 'Microsoft.Network/privateEndpoints@2020-05-01' = {
+resource privateEndpoint_name_res 'Microsoft.Network/privateEndpoints@2020-05-01' = {
   name: privateEndpoint_name
   location: location
   properties: {
@@ -268,7 +236,7 @@ resource privateEndpoint_name_resource 'Microsoft.Network/privateEndpoints@2020-
       {
         name: privateLinkConnection_name
         properties: {
-          privateLinkServiceId: site1_name_resource.id
+          privateLinkServiceId: site1_name_res.id
           groupIds: [
             'sites'
           ]
@@ -276,33 +244,22 @@ resource privateEndpoint_name_resource 'Microsoft.Network/privateEndpoints@2020-
       }
     ]
   }
-  dependsOn: [
-    site1_name_resource
-    virtualNetwork_name_subnet1_name
-  ]
 }
 
-resource privateDNSZone_name_resource 'Microsoft.Network/privateDnsZones@2018-09-01' = {
-  name: privateDNSZone_name
+resource privateDNSZone_name 'Microsoft.Network/privateDnsZones@2018-09-01' = {
+  name: privateDNSZone_name_var
   location: 'global'
-  dependsOn: [
-    virtualNetwork_name_resource
-  ]
 }
 
 resource privateDNSZone_name_privateDNSZone_name_link 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {
-  name: '${privateDNSZone_name}/${privateDNSZone_name}-link'
+  name: '${privateDNSZone_name_var}/${privateDNSZone_name_var}-link'
   location: 'global'
   properties: {
     registrationEnabled: false
     virtualNetwork: {
-      id: virtualNetwork_name_resource.id
+      id: virtualNetwork_name_res.id
     }
   }
-  dependsOn: [
-    privateDNSZone_name_resource
-    virtualNetwork_name_resource
-  ]
 }
 
 resource privateEndpoint_name_dnsgroupname 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
@@ -313,13 +270,9 @@ resource privateEndpoint_name_dnsgroupname 'Microsoft.Network/privateEndpoints/p
       {
         name: 'config1'
         properties: {
-          privateDnsZoneId: privateDNSZone_name_resource.id
+          privateDnsZoneId: privateDNSZone_name.id
         }
       }
     ]
   }
-  dependsOn: [
-    privateDNSZone_name_resource
-    privateEndpoint_name_resource
-  ]
 }

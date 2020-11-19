@@ -86,7 +86,7 @@ var provisionNetworkURL = uri(artifactsLocation, 'nested/provisionNetwork.json${
 var provisionServerUrl = uri(artifactsLocation, 'nested/provisionServer.json${artifactsLocationSasToken}')
 var provisionDNSUrl = uri(artifactsLocation, 'nested/provisionDNS.json${artifactsLocationSasToken}')
 
-module provisionConfiguration '<failed to parse [variables(\'provisionConfigurationURL\')]>' = {
+module provisionConfiguration '?' /*TODO: replace with correct path to [variables('provisionConfigurationURL')]*/ = {
   name: 'provisionConfiguration'
   params: {
     '_artifactsLocation': artifactsLocation
@@ -100,7 +100,7 @@ module provisionConfiguration '<failed to parse [variables(\'provisionConfigurat
   }
 }
 
-module provisionNetwork '<failed to parse [variables(\'provisionNetworkURL\')]>' = {
+module provisionNetwork '?' /*TODO: replace with correct path to [variables('provisionNetworkURL')]*/ = {
   name: 'provisionNetwork'
   params: {
     location: location
@@ -115,7 +115,7 @@ module provisionNetwork '<failed to parse [variables(\'provisionNetworkURL\')]>'
   }
 }
 
-module provisionServer '<failed to parse [variables(\'provisionServerUrl\')]>' = {
+module provisionServer '?' /*TODO: replace with correct path to [variables('provisionServerUrl')]*/ = {
   name: 'provisionServer'
   params: {
     location: location
@@ -132,7 +132,7 @@ module provisionServer '<failed to parse [variables(\'provisionServerUrl\')]>' =
   ]
 }
 
-module provisionDNS '<failed to parse [variables(\'provisionDNSUrl\')]>' = {
+module provisionDNS '?' /*TODO: replace with correct path to [variables('provisionDNSUrl')]*/ = {
   name: 'provisionDNS'
   params: {
     location: location

@@ -75,7 +75,7 @@ param meterCategoryFilterValues array {
   }
 }
 
-resource budgetName_resource 'Microsoft.Consumption/budgets@2019-10-01' = {
+resource budgetName_res 'Microsoft.Consumption/budgets@2019-10-01' = {
   name: budgetName
   properties: {
     timePeriod: {

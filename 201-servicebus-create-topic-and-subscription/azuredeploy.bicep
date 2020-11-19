@@ -20,7 +20,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource service_BusNamespace_Name_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource service_BusNamespace_Name_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: service_BusNamespace_Name
   location: location
   sku: {
@@ -42,9 +42,6 @@ resource service_BusNamespace_Name_serviceBusTopicName 'Microsoft.ServiceBus/nam
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    service_BusNamespace_Name_resource
-  ]
 }
 
 resource service_BusNamespace_Name_serviceBusTopicName_serviceBusSubscriptionName 'Microsoft.ServiceBus/namespaces/topics/Subscriptions@2017-04-01' = {
@@ -58,7 +55,4 @@ resource service_BusNamespace_Name_serviceBusTopicName_serviceBusSubscriptionNam
     enableBatchedOperations: false
     autoDeleteOnIdle: 'P10675199DT2H48M5.4775807S'
   }
-  dependsOn: [
-    service_BusNamespace_Name_serviceBusTopicName
-  ]
 }

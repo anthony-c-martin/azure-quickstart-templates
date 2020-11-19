@@ -89,7 +89,7 @@ var nestedTemplates = {
   omsAlerts: uri('${artifactsLocation}/', 'nested/omsAlerts.json${artifactsLocationSasToken}')
 }
 
-module omsWorkspace '<failed to parse [variables(\'nestedTemplates\').omsWorkspace]>' = {
+module omsWorkspace '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsWorkspace]*/ = {
   name: 'omsWorkspace'
   params: {
     omsWorkspaceName: omsWorkspaceName
@@ -99,7 +99,7 @@ module omsWorkspace '<failed to parse [variables(\'nestedTemplates\').omsWorkspa
   }
 }
 
-module omsSavedSearches '<failed to parse [variables(\'nestedTemplates\').omsSavedSearches]>' = {
+module omsSavedSearches '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsSavedSearches]*/ = {
   name: 'omsSavedSearches'
   params: {
     omsWorkspaceName: omsWorkspaceName
@@ -109,7 +109,7 @@ module omsSavedSearches '<failed to parse [variables(\'nestedTemplates\').omsSav
   ]
 }
 
-module omsCustomViews '<failed to parse [variables(\'nestedTemplates\').omsCustomViews]>' = {
+module omsCustomViews '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsCustomViews]*/ = {
   name: 'omsCustomViews'
   params: {
     omsWorkspaceName: omsWorkspaceName
@@ -122,7 +122,7 @@ module omsCustomViews '<failed to parse [variables(\'nestedTemplates\').omsCusto
   ]
 }
 
-module omsAlerts '<failed to parse [variables(\'nestedTemplates\').omsAlerts]>' = {
+module omsAlerts '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsAlerts]*/ = {
   name: 'omsAlerts'
   params: {
     omsWorkspaceName: omsWorkspaceName

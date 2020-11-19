@@ -10,7 +10,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource accountName_resource 'Microsoft.DataLakeStore/accounts@2016-11-01' = {
+resource accountName_res 'Microsoft.DataLakeStore/accounts@2016-11-01' = {
   name: accountName
   location: location
   properties: {

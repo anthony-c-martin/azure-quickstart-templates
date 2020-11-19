@@ -58,15 +58,15 @@ param virtualMachineSize string {
 }
 
 var resourcePrefix = 'jenkins'
-var acrStorageAccountName = 'registry${uniqueString(resourceGroup().id)}'
-var acrName = uniqueString(resourceGroup().id)
-var nicName = '${resourcePrefix}VMNic'
+var acrStorageAccountName_var = 'registry${uniqueString(resourceGroup().id)}'
+var acrName_var = uniqueString(resourceGroup().id)
+var nicName_var = '${resourcePrefix}VMNic'
 var subnetName = '${resourcePrefix}Subnet'
-var publicIPAddressName = '${resourcePrefix}PublicIP'
-var vmName = '${resourcePrefix}VM'
+var publicIPAddressName_var = '${resourcePrefix}PublicIP'
+var vmName_var = '${resourcePrefix}VM'
 var vmExtensionName = '${resourcePrefix}Init'
-var virtualNetworkName = '${resourcePrefix}VNET'
-var frontEndNSGName = '${resourcePrefix}NSG'
+var virtualNetworkName_var = '${resourcePrefix}VNET'
+var frontEndNSGName_var = '${resourcePrefix}NSG'
 var artifactsLocation = 'https://raw.githubusercontent.com/Azure/azure-devops-utils/v0.30.0/'
 var extensionScript = '201-jenkins-acr.sh'
 var linuxConfiguration = {
@@ -80,10 +80,10 @@ var linuxConfiguration = {
     ]
   }
 }
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 
-resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-04-01' = {
-  name: acrStorageAccountName
+resource acrStorageAccountName 'Microsoft.Storage/storageAccounts@2019-04-01' = {
+  name: acrStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -101,8 +101,8 @@ resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-
   }
 }
 
-resource acrName_resource 'Microsoft.ContainerRegistry/registries@2017-10-01' = {
-  name: acrName
+resource acrName 'Microsoft.ContainerRegistry/registries@2017-10-01' = {
+  name: acrName_var
   location: location
   sku: {
     name: 'Basic'
@@ -111,13 +111,10 @@ resource acrName_resource 'Microsoft.ContainerRegistry/registries@2017-10-01' = 
   properties: {
     adminUserEnabled: false
   }
-  dependsOn: [
-    acrStorageAccountName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2019-04-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -127,8 +124,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2019-04-01' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2019-04-01' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'NSG - Front End'
@@ -167,8 +164,8 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2019-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-04-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -182,19 +179,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-04-
         properties: {
           addressPrefix: '10.0.0.0/24'
           networkSecurityGroup: {
-            id: frontEndNSGName_resource.id
+            id: frontEndNSGName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    frontEndNSGName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2019-04-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2019-04-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -203,7 +197,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2019-04-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -212,21 +206,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2019-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: virtualMachineSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -250,19 +240,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-    acrName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -275,14 +261,11 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} -jf "${reference(publicIPAddressName).dnsSettings.fqdn}" -u "${adminUsername}" -g "${gitRepository}" -r "https://${acrName_resource.properties.loginServer}" -ru "${servicePrincipalAppId}" -rp "${servicePrincipalAppKey}" -al "${artifactsLocation}"'
+      commandToExecute: './${extensionScript} -jf "${reference(publicIPAddressName_var).dnsSettings.fqdn}" -u "${adminUsername}" -g "${gitRepository}" -r "https://${acrName.properties.loginServer}" -ru "${servicePrincipalAppId}" -rp "${servicePrincipalAppKey}" -al "${artifactsLocation}"'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-output jenkinsURL string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}'
-output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
-output azureContainerRegistryUrl string = acrName_resource.properties.loginServer
+output jenkinsURL string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output azureContainerRegistryUrl string = acrName.properties.loginServer

@@ -62,7 +62,7 @@ param location string {
 
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, 'GatewaySubnet')
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -82,7 +82,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource gatewayPublicIPName_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: gatewayPublicIPName
   location: location
   properties: {
@@ -90,7 +90,7 @@ resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
+resource gatewayName_res 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
   name: gatewayName
   location: location
   properties: {
@@ -102,7 +102,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-
             id: gatewaySubnetRef
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName_res.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -125,7 +125,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-
         {
           name: clientRootCertName
           properties: {
-            PublicCertData: clientRootCertData
+            publicCertData: clientRootCertData
           }
         }
       ]
@@ -133,14 +133,10 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-
         {
           name: revokedCertName
           properties: {
-            Thumbprint: revokedCertThumbprint
+            thumbprint: revokedCertThumbprint
           }
         }
       ]
     }
   }
-  dependsOn: [
-    gatewayPublicIPName_resource
-    virtualNetworkName_resource
-  ]
 }

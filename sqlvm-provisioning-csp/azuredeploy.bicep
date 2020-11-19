@@ -96,12 +96,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var vmnic = '${vmName}devnic'
+var vmnic_var = '${vmName}devnic'
 var vmosdisk = '${vmName}osdisk'
 var vnetSubNetID = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
-var networkSecurityGroupName = '${subnetName}-nsg'
+var networkSecurityGroupName_var = '${subnetName}-nsg'
 
-resource storageName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource storageName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: storageName
   location: location
   properties: {
@@ -109,7 +109,7 @@ resource storageName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-prev
   }
 }
 
-resource publicDnsName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+resource publicDnsName_res 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
   name: publicDnsName
   location: location
   properties: {
@@ -120,8 +120,8 @@ resource publicDnsName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -142,7 +142,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   name: vnetName
   location: location
   properties: {
@@ -157,19 +157,16 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview
         properties: {
           addressPrefix: subnetAddressPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource vmnic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: vmnic
+resource vmnic 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: vmnic_var
   location: location
   properties: {
     ipConfigurations: [
@@ -178,7 +175,7 @@ resource vmnic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview'
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicDnsName_resource.id
+            id: publicDnsName_res.id
           }
           subnet: {
             id: vnetSubNetID
@@ -187,13 +184,9 @@ resource vmnic_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview'
       }
     ]
   }
-  dependsOn: [
-    publicDnsName_resource
-    vnetName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   properties: {
@@ -221,13 +214,9 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmnic_resource.id
+          id: vmnic.id
         }
       ]
     }
   }
-  dependsOn: [
-    storageName_resource
-    vmnic_resource
-  ]
 }

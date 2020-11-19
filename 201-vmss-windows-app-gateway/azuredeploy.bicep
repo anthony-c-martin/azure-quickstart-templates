@@ -39,32 +39,32 @@ param adminPassword string {
   secure: true
 }
 
-var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
+var namingInfix_var = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.8.0/21'
-var virtualNetworkName = '${namingInfix}vnet'
-var subnetName = '${namingInfix}subnet'
-var nicName = '${namingInfix}nic'
-var ipConfigName = '${namingInfix}ipconfig'
+var virtualNetworkName_var = '${namingInfix_var}vnet'
+var subnetName = '${namingInfix_var}subnet'
+var nicName = '${namingInfix_var}nic'
+var ipConfigName = '${namingInfix_var}ipconfig'
 var imageReference = {
   publisher: 'MicrosoftWindowsServer'
   offer: 'WindowsServer'
   sku: windowsOSVersion
   version: 'latest'
 }
-var appGwPublicIPAddressName = '${namingInfix}appGwPip'
-var appGwName = '${namingInfix}appGw'
-var appGwPublicIPAddressID = appGwPublicIPAddressName_resource.id
-var appGwID = appGwName_resource.id
-var appGwSubnetName = '${namingInfix}appGwSubnet'
+var appGwPublicIPAddressName_var = '${namingInfix_var}appGwPip'
+var appGwName_var = '${namingInfix_var}appGw'
+var appGwPublicIPAddressID = appGwPublicIPAddressName.id
+var appGwID = appGwName.id
+var appGwSubnetName = '${namingInfix_var}appGwSubnet'
 var appGwSubnetPrefix = '10.0.1.0/24'
-var appGwSubnetID = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, appGwSubnetName)
+var appGwSubnetID = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, appGwSubnetName)
 var appGwFrontendPort = 80
 var appGwBackendPort = 80
-var appGwBePoolName = '${namingInfix}appGwBepool'
+var appGwBePoolName = '${namingInfix_var}appGwBepool'
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-30' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-03-30' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -89,16 +89,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-
   }
 }
 
-resource appGwPublicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: appGwPublicIPAddressName
+resource appGwPublicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: appGwPublicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' = {
-  name: appGwName
+resource appGwName 'Microsoft.Network/applicationGateways@2016-03-30' = {
+  name: appGwName_var
   location: resourceGroup().location
   properties: {
     sku: {
@@ -120,7 +120,7 @@ resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' =
       {
         name: 'appGwFrontendIP'
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: appGwPublicIPAddressID
           }
         }
@@ -130,7 +130,7 @@ resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' =
       {
         name: 'appGwFrontendPort'
         properties: {
-          Port: appGwFrontendPort
+          port: appGwFrontendPort
         }
       }
     ]
@@ -143,9 +143,9 @@ resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' =
       {
         name: 'appGwBackendHttpSettings'
         properties: {
-          Port: appGwBackendPort
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
+          port: appGwBackendPort
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
         }
       }
     ]
@@ -153,22 +153,22 @@ resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' =
       {
         name: 'appGwHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            Id: '${appGwID}/frontendIPConfigurations/appGwFrontendIP'
+          frontendIPConfiguration: {
+            id: '${appGwID}/frontendIPConfigurations/appGwFrontendIP'
           }
-          FrontendPort: {
-            Id: '${appGwID}/frontendPorts/appGwFrontendPort'
+          frontendPort: {
+            id: '${appGwID}/frontendPorts/appGwFrontendPort'
           }
-          Protocol: 'Http'
-          SslCertificate: null
+          protocol: 'Http'
+          sslCertificate: null
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: '${appGwID}/httpListeners/appGwHttpListener'
           }
@@ -182,14 +182,10 @@ resource appGwName_resource 'Microsoft.Network/applicationGateways@2016-03-30' =
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    appGwPublicIPAddressName_resource
-  ]
 }
 
-resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
-  name: namingInfix
+resource namingInfix 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
+  name: namingInfix_var
   location: resourceGroup().location
   sku: {
     name: vmSku
@@ -197,7 +193,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
     capacity: instanceCount
   }
   properties: {
-    overprovision: 'true'
+    overProvision: 'true'
     singlePlacementGroup: 'false'
     upgradePolicy: {
       mode: 'Automatic'
@@ -212,7 +208,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
         imageReference: imageReference
       }
       osProfile: {
-        computerNamePrefix: namingInfix
+        computerNamePrefix: namingInfix_var
         adminUsername: adminUsername
         adminPassword: adminPassword
       }
@@ -227,11 +223,11 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName}/subnets/${subnetName}'
+                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName_var}/subnets/${subnetName}'
                     }
-                    ApplicationGatewayBackendAddressPools: [
+                    applicationGatewayBackendAddressPools: [
                       {
-                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/applicationGateways/${appGwName}/backendAddressPools/${appGwBePoolName}'
+                        id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/applicationGateways/${appGwName_var}/backendAddressPools/${appGwBePoolName}'
                       }
                     ]
                   }
@@ -243,8 +239,4 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
       }
     }
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    appGwName_resource
-  ]
 }

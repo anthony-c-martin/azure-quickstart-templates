@@ -145,11 +145,11 @@ var names = {
 var powerShell = {
   script: 'InstallVstsAgent.ps1'
   folder: 'scripts'
-  parameters: '-vstsAccount ${vstsAccount} -personalAccessToken ${vstsPersonalAccessToken} -AgentName ${names.vsts} -PoolName ${vstsPoolName} -AgentCount ${vstsAgentCount} -AdminUser ${vmAdminUser} -Modules ${modules_variable}'
+  parameters: '-vstsAccount ${vstsAccount} -personalAccessToken ${vstsPersonalAccessToken} -AgentName ${names.vsts} -PoolName ${vstsPoolName} -AgentCount ${vstsAgentCount} -AdminUser ${vmAdminUser} -Modules ${modules_var}'
 }
 var singleQuote = '\''
-var modules_variable = replace(replace(replace(replace(replace(string(modules), '[{"', '@(@{'), '":"', ' = ${singleQuote}'), '","', '${singleQuote}; '), '"},{"', '${singleQuote}}, @{'), '"}]', '${singleQuote}})')
-var networkSecurityGroupName = 'default-NSG'
+var modules_var = replace(replace(replace(replace(replace(string(modules), '[{"', '@(@{'), '":"', ' = ${singleQuote}'), '","', '${singleQuote}; '), '"},{"', '${singleQuote}}, @{'), '"}]', '${singleQuote}})')
+var networkSecurityGroupName_var = 'default-NSG'
 
 resource names_avs 'Microsoft.Compute/availabilitySets@2017-12-01' = {
   name: names.avs
@@ -184,8 +184,8 @@ resource names_pip 'Microsoft.Network/publicIPAddresses@2017-10-01' = {
   dependsOn: []
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -224,15 +224,12 @@ resource names_vnet_name 'Microsoft.Network/virtualNetworks@2017-10-01' = {
         properties: {
           addressPrefix: names.vnet.subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
 resource names_nic 'Microsoft.Network/networkInterfaces@2017-10-01' = {
@@ -261,10 +258,6 @@ resource names_nic 'Microsoft.Network/networkInterfaces@2017-10-01' = {
     }
     enableIPForwarding: false
   }
-  dependsOn: [
-    names_pip
-    names_vnet_name
-  ]
 }
 
 resource names_vm 'Microsoft.Compute/virtualMachines@2017-12-01' = {
@@ -311,10 +304,6 @@ resource names_vm 'Microsoft.Compute/virtualMachines@2017-12-01' = {
       ]
     }
   }
-  dependsOn: [
-    names_avs
-    names_nic
-  ]
 }
 
 resource names_vm_vstsAgent 'Microsoft.Compute/virtualMachines/extensions@2017-12-01' = {
@@ -333,9 +322,6 @@ resource names_vm_vstsAgent 'Microsoft.Compute/virtualMachines/extensions@2017-1
       commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -Command "& {./${powerShell.script} ${powerShell.parameters}}"'
     }
   }
-  dependsOn: [
-    names_vm
-  ]
 }
 
-output Modules_output string = modules_variable
+output Modules_out string = modules_var

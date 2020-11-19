@@ -78,7 +78,7 @@ param location string {
 
 var cdnApiVersion = '2015-06-01'
 
-resource profileName_resource 'Microsoft.Cdn/profiles@2015-06-01' = {
+resource profileName_res 'Microsoft.Cdn/profiles@2015-06-01' = {
   name: profileName
   location: location
   properties: {
@@ -107,7 +107,4 @@ resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2015-06-01' 
       }
     ]
   }
-  dependsOn: [
-    profileName_resource
-  ]
 }

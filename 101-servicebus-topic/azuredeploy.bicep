@@ -15,7 +15,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
   properties: {}
@@ -26,7 +26,4 @@ resource serviceBusNamespaceName_serviceBusTopicName 'Microsoft.ServiceBus/names
   properties: {
     path: serviceBusTopicName
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }

@@ -24,10 +24,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName_variable = toLower('sawithsse${substring(storageAccountType, 0, 2)}${uniqueString(subscription().id, resourceGroup().id)}')
+var storageAccountName_var = toLower('sawithsse${substring(storageAccountType, 0, 2)}${uniqueString(subscription().id, resourceGroup().id)}')
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-12-01' = {
-  name: storageAccountName_variable
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2016-12-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -45,4 +45,4 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-12-
   }
 }
 
-output storageAccountName string = storageAccountName_variable
+output storageAccountName string = storageAccountName_var

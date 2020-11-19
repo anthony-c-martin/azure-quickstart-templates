@@ -70,7 +70,7 @@ param allowedOrigins array {
   ]
 }
 
-resource name_resource 'Microsoft.SignalRService/SignalR@2020-07-01-preview' = {
+resource name_res 'Microsoft.SignalRService/SignalR@2020-07-01-preview' = {
   name: name
   location: location
   sku: {

@@ -102,11 +102,11 @@ param location string {
 }
 
 var appInsightsRegion = location
-var storageAccountName = '${uniqueString(resourceGroup().id)}standardsa'
-var umbracoAdminWebAppName = '${appName}adminapp'
-var appServicePlanName = '${appName}serviceplan'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}standardsa'
+var umbracoAdminWebAppName_var = '${appName}adminapp'
+var appServicePlanName_var = '${appName}serviceplan'
 
-resource redisCacheName_resource 'Microsoft.Cache/Redis@2014-04-01-preview' = {
+resource redisCacheName_res 'Microsoft.Cache/Redis@2014-04-01-preview' = {
   name: redisCacheName
   location: location
   properties: {
@@ -120,7 +120,7 @@ resource redisCacheName_resource 'Microsoft.Cache/Redis@2014-04-01-preview' = {
   }
 }
 
-resource dbServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
+resource dbServerName_res 'Microsoft.Sql/servers@2014-04-01-preview' = {
   name: dbServerName
   location: location
   properties: {
@@ -138,9 +138,6 @@ resource dbServerName_dbName 'Microsoft.Sql/servers/databases@2014-04-01-preview
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     requestedServiceObjectiveId: 'F1173C43-91BD-4AAA-973C-54E79E15235B'
   }
-  dependsOn: [
-    dbServerName_resource
-  ]
 }
 
 resource dbServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrules@2014-04-01-preview' = {
@@ -150,24 +147,21 @@ resource dbServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrul
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
   }
-  dependsOn: [
-    dbServerName_resource
-  ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
-  name: appServicePlanName
+resource appServicePlanName 'Microsoft.Web/serverfarms@2014-06-01' = {
+  name: appServicePlanName_var
   location: location
   properties: {
-    name: appServicePlanName
+    name: appServicePlanName_var
     appServiceTier: appServiceTier
     workerSize: appServiceWorkerSize
     hostingEnvironment: ''
@@ -175,20 +169,17 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
   }
 }
 
-resource appName_resource 'Microsoft.Web/Sites@2015-02-01' = {
+resource appName_res 'Microsoft.Web/Sites@2015-02-01' = {
   name: appName
   location: location
   tags: {
-    'hidden-related:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}': 'empty'
+    'hidden-related:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}': 'empty'
   }
   properties: {
     name: appName
-    serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+    serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
     hostingEnvironment: ''
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource appName_MSDeploy 'Microsoft.Web/Sites/Extensions@2014-06-01' = {
@@ -205,21 +196,15 @@ resource appName_MSDeploy 'Microsoft.Web/Sites/Extensions@2014-06-01' = {
       'Database Password': nonAdminDatabasePassword
       'Database Administrator': dbAdministratorLogin
       'Database Administrator Password': dbAdministratorLoginPassword
-      azurestoragerootUrl: 'https://${storageAccountName}.blob.core.windows.net'
+      azurestoragerootUrl: 'https://${storageAccountName_var}.blob.core.windows.net'
       azurestoragecontainerName: 'media'
-      azurestorageconnectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys('Microsoft.Storage/storageAccounts/${storageAccountName}', '2015-05-01-preview').key1}'
+      azurestorageconnectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};AccountKey=${listKeys('Microsoft.Storage/storageAccounts/${storageAccountName_var}', '2015-05-01-preview').key1}'
       rediscachehost: '${redisCacheName}.redis.cache.windows.net'
       rediscacheport: '6379'
-      rediscacheaccessKey: listKeys(redisCacheName_resource.id, '2014-04-01').primaryKey
+      rediscacheaccessKey: listKeys(redisCacheName_res.id, '2014-04-01').primaryKey
       azurestoragecacheControl: '*|public, max-age=31536000;js|no-cache'
     }
   }
-  dependsOn: [
-    appName_resource
-    appName_web
-    dbServerName_dbName
-    storageAccountName_resource
-  ]
 }
 
 resource appName_connectionstrings 'Microsoft.Web/Sites/config@2015-04-01' = {
@@ -230,11 +215,6 @@ resource appName_connectionstrings 'Microsoft.Web/Sites/config@2015-04-01' = {
       type: 'SQLAzure'
     }
   }
-  dependsOn: [
-    appName_resource
-    dbServerName_dbName
-    appName_MSDeploy
-  ]
 }
 
 resource appName_web 'Microsoft.Web/Sites/config@2014-06-01' = {
@@ -248,16 +228,13 @@ resource appName_web 'Microsoft.Web/Sites/config@2014-06-01' = {
     httpLoggingEnabled: true
     logsDirectorySizeLimit: 40
   }
-  dependsOn: [
-    appName_resource
-  ]
 }
 
 resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2014-04-01' = {
-  name: '${appServicePlanName}-scaleset'
+  name: '${appServicePlanName_var}-scaleset'
   location: appInsightsRegion
   tags: {
-    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}': 'Resource'
+    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}': 'Resource'
   }
   properties: {
     profiles: [
@@ -272,7 +249,7 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2014-
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT10M'
@@ -290,7 +267,7 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2014-
           {
             metricTrigger: {
               metricName: 'CpuPercentage'
-              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+              metricResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT1H'
@@ -309,12 +286,9 @@ resource appServicePlanName_scaleset 'microsoft.insights/autoscalesettings@2014-
       }
     ]
     enabled: false
-    name: '${appServicePlanName}-scaleset'
-    targetResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+    name: '${appServicePlanName_var}-scaleset'
+    targetResourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource ServerErrors_appName 'microsoft.insights/alertrules@2014-04-01' = {
@@ -344,9 +318,6 @@ resource ServerErrors_appName 'microsoft.insights/alertrules@2014-04-01' = {
       customEmails: []
     }
   }
-  dependsOn: [
-    appName_resource
-  ]
 }
 
 resource ForbiddenRequests_appName 'microsoft.insights/alertrules@2014-04-01' = {
@@ -376,26 +347,23 @@ resource ForbiddenRequests_appName 'microsoft.insights/alertrules@2014-04-01' = 
       customEmails: []
     }
   }
-  dependsOn: [
-    appName_resource
-  ]
 }
 
 resource CPUHigh_appServicePlanName 'microsoft.insights/alertrules@2014-04-01' = {
-  name: 'CPUHigh ${appServicePlanName}'
+  name: 'CPUHigh ${appServicePlanName_var}'
   location: appInsightsRegion
   tags: {
-    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}': 'Resource'
+    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}': 'Resource'
   }
   properties: {
-    name: 'CPUHigh ${appServicePlanName}'
-    description: 'The average CPU is high across all the instances of ${appServicePlanName}'
+    name: 'CPUHigh ${appServicePlanName_var}'
+    description: 'The average CPU is high across all the instances of ${appServicePlanName_var}'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
         metricName: 'CpuPercentage'
       }
       operator: 'GreaterThan'
@@ -408,26 +376,23 @@ resource CPUHigh_appServicePlanName 'microsoft.insights/alertrules@2014-04-01' =
       customEmails: []
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource LongHttpQueue_appServicePlanName 'microsoft.insights/alertrules@2014-04-01' = {
-  name: 'LongHttpQueue ${appServicePlanName}'
+  name: 'LongHttpQueue ${appServicePlanName_var}'
   location: appInsightsRegion
   tags: {
-    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}': 'Resource'
+    'hidden-link:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}': 'Resource'
   }
   properties: {
-    name: 'LongHttpQueue ${appServicePlanName}'
-    description: 'The HTTP queue for the instances of ${appServicePlanName} has a large number of pending requests.'
+    name: 'LongHttpQueue ${appServicePlanName_var}'
+    description: 'The HTTP queue for the instances of ${appServicePlanName_var} has a large number of pending requests.'
     isEnabled: false
     condition: {
       'odata.type': 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition'
       dataSource: {
         'odata.type': 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource'
-        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+        resourceUri: '${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
         metricName: 'HttpQueueLength'
       }
       operator: 'GreaterThan'
@@ -440,9 +405,6 @@ resource LongHttpQueue_appServicePlanName 'microsoft.insights/alertrules@2014-04
       customEmails: []
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource appName_appin 'microsoft.insights/components@2014-04-01' = {
@@ -454,75 +416,58 @@ resource appName_appin 'microsoft.insights/components@2014-04-01' = {
   properties: {
     applicationId: appName
   }
-  dependsOn: [
-    appName_resource
-  ]
 }
 
-resource umbracoAdminWebAppName_resource 'Microsoft.Web/Sites@2015-02-01' = {
-  name: umbracoAdminWebAppName
+resource umbracoAdminWebAppName 'Microsoft.Web/Sites@2015-02-01' = {
+  name: umbracoAdminWebAppName_var
   location: location
   tags: {
-    'hidden-related:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}': 'empty'
+    'hidden-related:/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}': 'empty'
   }
   properties: {
-    name: umbracoAdminWebAppName
-    serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName}'
+    name: umbracoAdminWebAppName_var
+    serverFarmId: '/subscriptions/${subscription().subscriptionId}/resourcegroups/${resourceGroup().name}/providers/Microsoft.Web/serverfarms/${appServicePlanName_var}'
     hostingEnvironment: ''
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }
 
 resource umbracoAdminWebAppName_MSDeploy 'Microsoft.Web/Sites/Extensions@2014-06-01' = {
-  name: '${umbracoAdminWebAppName}/MSDeploy'
+  name: '${umbracoAdminWebAppName_var}/MSDeploy'
   properties: {
     packageUri: 'https://auxmktplceprod.blob.core.windows.net/packages/ScalableUmbracoCms.WebPI.7.4.3.zip'
     dbType: 'SQL'
     connectionString: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${dbServerName}').fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
     setParameters: {
-      'Application Path': umbracoAdminWebAppName
+      'Application Path': umbracoAdminWebAppName_var
       'Database Server': reference('Microsoft.Sql/servers/${dbServerName}').fullyQualifiedDomainName
       'Database Name': dbName
       'Database Username': '${nonAdminDatabaseUsername}admin'
       'Database Password': nonAdminDatabasePassword
       'Database Administrator': dbAdministratorLogin
       'Database Administrator Password': dbAdministratorLoginPassword
-      azurestoragerootUrl: 'https://${storageAccountName}.blob.core.windows.net'
+      azurestoragerootUrl: 'https://${storageAccountName_var}.blob.core.windows.net'
       azurestoragecontainerName: 'media'
-      azurestorageconnectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listKeys('Microsoft.Storage/storageAccounts/${storageAccountName}', '2015-05-01-preview').key1}'
+      azurestorageconnectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};AccountKey=${listKeys('Microsoft.Storage/storageAccounts/${storageAccountName_var}', '2015-05-01-preview').key1}'
       rediscachehost: '${redisCacheName}.redis.cache.windows.net'
       rediscacheport: '6379'
-      rediscacheaccessKey: listKeys(redisCacheName_resource.id, '2014-04-01').primaryKey
+      rediscacheaccessKey: listKeys(redisCacheName_res.id, '2014-04-01').primaryKey
       azurestoragecacheControl: '*|public, max-age=31536000;js|no-cache'
     }
   }
-  dependsOn: [
-    umbracoAdminWebAppName_resource
-    umbracoAdminWebAppName_web
-    dbServerName_dbName
-    storageAccountName_resource
-  ]
 }
 
 resource umbracoAdminWebAppName_connectionstrings 'Microsoft.Web/Sites/config@2015-04-01' = {
-  name: '${umbracoAdminWebAppName}/connectionstrings'
+  name: '${umbracoAdminWebAppName_var}/connectionstrings'
   properties: {
     defaultConnection: {
       value: 'Data Source=tcp:${reference('Microsoft.Sql/servers/${dbServerName}').fullyQualifiedDomainName},1433;Initial Catalog=${dbName};User Id=${dbAdministratorLogin}@${dbServerName};Password=${dbAdministratorLoginPassword};'
       type: 'SQLAzure'
     }
   }
-  dependsOn: [
-    umbracoAdminWebAppName_resource
-    dbServerName_dbName
-    umbracoAdminWebAppName_MSDeploy
-  ]
 }
 
 resource umbracoAdminWebAppName_web 'Microsoft.Web/Sites/config@2014-06-01' = {
-  name: '${umbracoAdminWebAppName}/web'
+  name: '${umbracoAdminWebAppName_var}/web'
   properties: {
     phpVersion: 'off'
     netFrameworkVersion: 'v4.5'
@@ -532,7 +477,4 @@ resource umbracoAdminWebAppName_web 'Microsoft.Web/Sites/config@2014-06-01' = {
     httpLoggingEnabled: true
     logsDirectorySizeLimit: 40
   }
-  dependsOn: [
-    umbracoAdminWebAppName_resource
-  ]
 }

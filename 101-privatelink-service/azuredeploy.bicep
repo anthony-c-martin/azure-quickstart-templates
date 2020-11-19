@@ -22,8 +22,8 @@ param location string {
   default: resourceGroup().location
 }
 
-var vnetName = 'myVirtualNetwork'
-var vnetConsumerName = 'myPEVnet'
+var vnetName_var = 'myVirtualNetwork'
+var vnetConsumerName_var = 'myPEVnet'
 var vnetAddressPrefix = '10.0.0.0/16'
 var frontendSubnetPrefix = '10.0.1.0/24'
 var frontendSubnetName = 'frontendSubnet'
@@ -31,22 +31,22 @@ var backendSubnetPrefix = '10.0.2.0/24'
 var backendSubnetName = 'backendSubnet'
 var consumerSubnetPrefix = '10.0.0.0/24'
 var consumerSubnetName = 'myPESubnet'
-var loadbalancername = 'myILB'
+var loadbalancername_var = 'myILB'
 var backendpoolname = 'myBackEndPool'
 var loadBalancerFrontEndIpConfigurationName = 'myFrontEnd'
 var healthProbeName = 'myHealthProbe'
-var privateEndpointName = 'myPrivateEndpoint'
-var vmName = take('myVm${uniqueString(resourceGroup().id)}', 15)
-var networkInterfaceName = '${vmName}NetInt'
-var vmConsumerName = take('myConsumerVm${uniqueString(resourceGroup().id)}', 15)
-var publicIpAddressConsumerName = '${vmConsumerName}PublicIP'
-var networkInterfaceConsumerName = '${vmConsumerName}NetInt'
+var privateEndpointName_var = 'myPrivateEndpoint'
+var vmName_var = take('myVm${uniqueString(resourceGroup().id)}', 15)
+var networkInterfaceName_var = '${vmName_var}NetInt'
+var vmConsumerName_var = take('myConsumerVm${uniqueString(resourceGroup().id)}', 15)
+var publicIpAddressConsumerName_var = '${vmConsumerName_var}PublicIP'
+var networkInterfaceConsumerName_var = '${vmConsumerName_var}NetInt'
 var osDiskType = 'Standard_LRS'
-var privatelinkservicename = 'myPLS'
-var loadbalancerId = loadbalancername_resource.id
+var privatelinkservicename_var = 'myPLS'
+var loadbalancerId = loadbalancername.id
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -72,8 +72,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   }
 }
 
-resource loadbalancername_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
-  name: loadbalancername
+resource loadbalancername 'Microsoft.Network/loadBalancers@2020-06-01' = {
+  name: loadbalancername_var
   location: location
   sku: {
     name: 'Standard'
@@ -85,7 +85,7 @@ resource loadbalancername_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, frontendSubnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, frontendSubnetName)
           }
         }
       }
@@ -100,7 +100,7 @@ resource loadbalancername_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
         name: 'RDP-VM0'
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername, loadBalancerFrontEndIpConfigurationName)
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername_var, loadBalancerFrontEndIpConfigurationName)
           }
           protocol: 'Tcp'
           frontendPort: 3389
@@ -111,16 +111,16 @@ resource loadbalancername_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
     ]
     loadBalancingRules: [
       {
-        Name: 'myHTTPRule'
+        name: 'myHTTPRule'
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername, loadBalancerFrontEndIpConfigurationName)
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername_var, loadBalancerFrontEndIpConfigurationName)
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadbalancername, backendpoolname)
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadbalancername_var, backendpoolname)
           }
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', loadbalancername, healthProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', loadbalancername_var, healthProbeName)
           }
           protocol: 'Tcp'
           frontendPort: 80
@@ -141,16 +141,13 @@ resource loadbalancername_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
       }
     ]
   }
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   tags: {
-    displayName: networkInterfaceName
+    displayName: networkInterfaceName_var
   }
   properties: {
     ipConfigurations: [
@@ -159,39 +156,36 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, backendSubnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, backendSubnetName)
           }
           loadBalancerBackendAddressPools: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadbalancername, backendpoolname)
+              id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadbalancername_var, backendpoolname)
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules/', loadbalancername, 'RDP-VM0')
+              id: resourceId('Microsoft.Network/loadBalancers/inboundNatRules/', loadbalancername_var, 'RDP-VM0')
             }
           ]
         }
       }
     ]
   }
-  dependsOn: [
-    loadbalancername_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName_var
   location: location
   tags: {
-    displayName: vmName
+    displayName: vmName_var
   }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmAdminUsername
       adminPassword: vmAdminPassword
     }
@@ -203,7 +197,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}OsDisk'
+        name: '${vmName_var}OsDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -215,18 +209,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
-  name: '${vmName}/installcustomscript'
+  name: '${vmName_var}/installcustomscript'
   location: location
   tags: {
     displayName: 'install software for Windows VM'
@@ -240,19 +231,16 @@ resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extension
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-resource privatelinkservicename_resource 'Microsoft.Network/privateLinkServices@2020-06-01' = {
-  name: privatelinkservicename
+resource privatelinkservicename 'Microsoft.Network/privateLinkServices@2020-06-01' = {
+  name: privatelinkservicename_var
   location: location
   properties: {
     enableProxyProtocol: false
     loadBalancerFrontendIpConfigurations: [
       {
-        id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername, loadBalancerFrontEndIpConfigurationName)
+        id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', loadbalancername_var, loadBalancerFrontEndIpConfigurationName)
       }
     ]
     ipConfigurations: [
@@ -271,8 +259,8 @@ resource privatelinkservicename_resource 'Microsoft.Network/privateLinkServices@
   }
 }
 
-resource vnetConsumerName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetConsumerName
+resource vnetConsumerName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnetConsumerName_var
   location: location
   properties: {
     addressSpace: {
@@ -298,25 +286,25 @@ resource vnetConsumerName_resource 'Microsoft.Network/virtualNetworks@2020-06-01
   }
 }
 
-resource publicIpAddressConsumerName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIpAddressConsumerName
+resource publicIpAddressConsumerName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIpAddressConsumerName_var
   location: location
   tags: {
-    displayName: publicIpAddressConsumerName
+    displayName: publicIpAddressConsumerName_var
   }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: toLower(vmConsumerName)
+      domainNameLabel: toLower(vmConsumerName_var)
     }
   }
 }
 
-resource networkInterfaceConsumerName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceConsumerName
+resource networkInterfaceConsumerName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceConsumerName_var
   location: location
   tags: {
-    displayName: networkInterfaceConsumerName
+    displayName: networkInterfaceConsumerName_var
   }
   properties: {
     ipConfigurations: [
@@ -325,33 +313,29 @@ resource networkInterfaceConsumerName_resource 'Microsoft.Network/networkInterfa
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIpAddressConsumerName_resource.id
+            id: publicIpAddressConsumerName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetConsumerName, consumerSubnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetConsumerName_var, consumerSubnetName)
           }
         }
       }
     ]
   }
-  dependsOn: [
-    vnetConsumerName_resource
-    publicIpAddressConsumerName_resource
-  ]
 }
 
-resource vmConsumerName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmConsumerName
+resource vmConsumerName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmConsumerName_var
   location: location
   tags: {
-    displayName: vmConsumerName
+    displayName: vmConsumerName_var
   }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmConsumerName
+      computerName: vmConsumerName_var
       adminUsername: vmAdminUsername
       adminPassword: vmAdminPassword
     }
@@ -363,7 +347,7 @@ resource vmConsumerName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' 
         version: 'latest'
       }
       osDisk: {
-        name: '${vmConsumerName}OsDisk'
+        name: '${vmConsumerName_var}OsDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -375,34 +359,27 @@ resource vmConsumerName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceConsumerName_resource.id
+          id: networkInterfaceConsumerName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceConsumerName_resource
-  ]
 }
 
-resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-06-01' = {
-  name: privateEndpointName
+resource privateEndpointName 'Microsoft.Network/privateEndpoints@2020-06-01' = {
+  name: privateEndpointName_var
   location: location
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetConsumerName, consumerSubnetName)
+      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetConsumerName_var, consumerSubnetName)
     }
     privateLinkServiceConnections: [
       {
-        name: privateEndpointName
+        name: privateEndpointName_var
         properties: {
-          privateLinkServiceId: privatelinkservicename_resource.id
+          privateLinkServiceId: privatelinkservicename.id
         }
       }
     ]
   }
-  dependsOn: [
-    vnetConsumerName_resource
-    privatelinkservicename_resource
-  ]
 }

@@ -17,14 +17,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var vnetName = 'vnet'
+var vnetName_var = 'vnet'
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnetName = 'myappservice'
 var subnetAddressPrefix = '10.0.0.0/24'
 var appServicePlanSku = 'S1'
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -51,7 +51,7 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   }
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2019-08-01' = {
   name: appServicePlanName
   location: location
   sku: {
@@ -60,26 +60,19 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   kind: 'app'
 }
 
-resource appName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource appName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: appName
   location: location
   kind: 'app'
   properties: {
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName_res.id
   }
-  dependsOn: [
-    appServicePlanName_resource
-    vnetName_resource
-  ]
 }
 
 resource appName_virtualNetwork 'Microsoft.Web/sites/config@2019-08-01' = {
   name: '${appName}/virtualNetwork'
   properties: {
-    subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+    subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
     swiftSupported: true
   }
-  dependsOn: [
-    appName_resource
-  ]
 }

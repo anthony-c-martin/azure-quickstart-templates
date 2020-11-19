@@ -54,29 +54,26 @@ param branch string {
   default: 'master'
 }
 
-var hostingPlanName = 'hpn-${resourceGroup().name}'
+var hostingPlanName_var = 'hpn-${resourceGroup().name}'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: sku
     capacity: workerSize
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource siteName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: siteName
   location: location
   properties: {
-    serverFarmId: hostingPlanName
+    serverFarmId: hostingPlanName_var
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
 resource siteName_web 'Microsoft.Web/sites/sourcecontrols@2020-06-01' = {
@@ -87,7 +84,4 @@ resource siteName_web 'Microsoft.Web/sites/sourcecontrols@2020-06-01' = {
     branch: branch
     isManualIntegration: true
   }
-  dependsOn: [
-    siteName_resource
-  ]
 }

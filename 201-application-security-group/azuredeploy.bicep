@@ -51,17 +51,17 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var vnetName = 'vnet'
+var vnetName_var = 'vnet'
 var vNetAddressSpace = '10.0.0.0/16'
 var subnetName = 'subnet01'
 var subnetAdressPrefix = '10.0.0.0/24'
-var subnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
-var asgName = 'webServersAsg'
-var asgId = asgName_resource.id
-var nsgName = 'webNsg'
-var nsgId = nsgName_resource.id
-var pipName = 'webServerPip'
-var pipId = pipName_resource.id
+var subnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
+var asgName_var = 'webServersAsg'
+var asgId = asgName.id
+var nsgName_var = 'webNsg'
+var nsgId = nsgName.id
+var pipName_var = 'webServerPip'
+var pipId = pipName.id
 var imageInfo = {
   publisher: 'OpenLogic'
   offer: 'CentOS'
@@ -82,14 +82,14 @@ var linuxConfiguration = {
   }
 }
 
-resource asgName_resource 'Microsoft.Network/applicationSecurityGroups@2020-05-01' = {
-  name: asgName
+resource asgName 'Microsoft.Network/applicationSecurityGroups@2020-05-01' = {
+  name: asgName_var
   location: location
   properties: {}
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -131,13 +131,10 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' =
       }
     ]
   }
-  dependsOn: [
-    asgName_resource
-  ]
 }
 
-resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vnetName
+resource vNetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -157,13 +154,10 @@ resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    nsgName_resource
-  ]
 }
 
-resource pipName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: pipName
+resource pipName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: pipName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -194,13 +188,9 @@ resource vmName_NIC 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    vNetName_resource
-    pipName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -232,9 +222,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    vmName_NIC
-  ]
 }
 
 resource vmName_linuxconfig 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
@@ -252,7 +239,4 @@ resource vmName_linuxconfig 'Microsoft.Compute/virtualMachines/extensions@2020-0
       commandToExecute: 'sh install_nginx.sh'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

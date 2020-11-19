@@ -52,7 +52,7 @@ param omsSku string {
 
 var diagnosticSettingsName = 'SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1'
 
-resource omsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@2017-04-26-preview' = {
+resource omsWorkspaceName_res 'Microsoft.OperationalInsights/workspaces@2017-04-26-preview' = {
   name: omsWorkspaceName
   location: workspaceRegion
   properties: {
@@ -62,7 +62,7 @@ resource omsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@201
   }
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2015-05-01-preview' = {
+resource sqlServerName_res 'Microsoft.Sql/servers@2015-05-01-preview' = {
   location: location
   name: sqlServerName
   properties: {
@@ -79,16 +79,13 @@ resource sqlServerName_master 'Microsoft.Sql/servers/databases@2017-03-01-previe
   location: location
   name: '${sqlServerName}/master'
   properties: {}
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_master_microsoft_insights_diagnosticSettingsName 'Microsoft.Sql/servers/databases/providers/diagnosticSettings@2017-05-01-preview' = {
   name: '${sqlServerName}/master/microsoft.insights/${diagnosticSettingsName}'
   properties: {
     name: diagnosticSettingsName
-    workspaceId: omsWorkspaceName_resource.id
+    workspaceId: omsWorkspaceName_res.id
     logs: [
       {
         category: 'SQLSecurityAuditEvents'
@@ -100,21 +97,13 @@ resource sqlServerName_master_microsoft_insights_diagnosticSettingsName 'Microso
       }
     ]
   }
-  dependsOn: [
-    sqlServerName_resource
-    omsWorkspaceName_resource
-    sqlServerName_master
-  ]
 }
 
 resource sqlServerName_DefaultAuditingSettings 'Microsoft.Sql/servers/auditingSettings@2017-03-01-preview' = {
   name: '${sqlServerName}/DefaultAuditingSettings'
   properties: {
-    State: 'Enabled'
+    state: 'Enabled'
     auditActionsAndGroups: null
     isAzureMonitorTargetEnabled: true
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }

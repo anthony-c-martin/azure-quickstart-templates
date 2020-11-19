@@ -38,7 +38,7 @@ param version string = '12.0'
 param informaticaTags object
 param quickstartTags object
 
-resource sqlDWServerName_resource 'Microsoft.Sql/servers@2014-04-01' = {
+resource sqlDWServerName_res 'Microsoft.Sql/servers@2014-04-01' = {
   name: sqlDWServerName
   location: location
   tags: {
@@ -67,9 +67,6 @@ resource sqlDWServerName_sqlDWDBName 'Microsoft.Sql/servers/databases@[parameter
     maxSizeBytes: maxSizeBytes
     serviceLevelObjective: serviceLevelObjective
   }
-  dependsOn: [
-    sqlDWServerName_resource
-  ]
 }
 
 resource sqlDWServerName_AllowAllAzureIps 'Microsoft.Sql/servers/firewallrules@[parameters(\'sqlfirewallrules-api-version\')]' = {
@@ -79,7 +76,4 @@ resource sqlDWServerName_AllowAllAzureIps 'Microsoft.Sql/servers/firewallrules@[
     endIpAddress: endIpAddress
     startIpAddress: startIpAddress
   }
-  dependsOn: [
-    sqlDWServerName_resource
-  ]
 }

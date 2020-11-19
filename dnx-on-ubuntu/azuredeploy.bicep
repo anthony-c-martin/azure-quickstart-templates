@@ -33,12 +33,12 @@ param adminPasswordOrKey string {
 }
 
 var prefix = 'dnx-on-ubuntu'
-var nicName = '${prefix}-nic'
-var nsgName = '${prefix}-nsg'
-var pipName = '${prefix}-pip'
-var vnetName = '${prefix}-vnet'
-var storageAccountDiagnostics = '${uniqueString(resourceGroup().id)}diagsa'
-var storageAccountVms = '${uniqueString(resourceGroup().id)}vmsa'
+var nicName_var = '${prefix}-nic'
+var nsgName_var = '${prefix}-nsg'
+var pipName_var = '${prefix}-pip'
+var vnetName_var = '${prefix}-vnet'
+var storageAccountDiagnostics_var = '${uniqueString(resourceGroup().id)}diagsa'
+var storageAccountVms_var = '${uniqueString(resourceGroup().id)}vmsa'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -51,7 +51,7 @@ var linuxConfiguration = {
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   properties: {
@@ -82,15 +82,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    storageAccountVms_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -108,13 +104,10 @@ resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extension
       commandToExecute: '/bin/bash post_deployment.sh ${vmAdminUsername}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -124,10 +117,10 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
           privateIPAddress: '10.2.0.4'
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: pipName_resource.id
+            id: pipName.id
           }
           subnet: {
-            id: '${vnetName_resource.id}/subnets/default'
+            id: '${vnetName.id}/subnets/default'
           }
         }
       }
@@ -137,18 +130,13 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     }
     enableIPForwarding: false
     networkSecurityGroup: {
-      id: nsgName_resource.id
+      id: nsgName.id
     }
   }
-  dependsOn: [
-    pipName_resource
-    vnetName_resource
-    nsgName_resource
-  ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -170,8 +158,8 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' =
   dependsOn: []
 }
 
-resource pipName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: pipName
+resource pipName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: pipName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -180,8 +168,8 @@ resource pipName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   dependsOn: []
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -201,8 +189,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   dependsOn: []
 }
 
-resource storageAccountDiagnostics_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountDiagnostics
+resource storageAccountDiagnostics 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountDiagnostics_var
   location: location
   tags: {}
   properties: {
@@ -211,8 +199,8 @@ resource storageAccountDiagnostics_resource 'Microsoft.Storage/storageAccounts@2
   dependsOn: []
 }
 
-resource storageAccountVms_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountVms
+resource storageAccountVms 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountVms_var
   location: location
   tags: {}
   properties: {

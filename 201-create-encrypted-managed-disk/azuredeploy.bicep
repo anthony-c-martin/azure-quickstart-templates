@@ -43,7 +43,7 @@ param kekVaultResourceID string {
 
 var createDiskUrl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-create-encrypted-managed-disk/CreateEncryptedManagedDisk-${useExistingKek}.json'
 
-module CreateEncryptedManagedDisk '<failed to parse [variables(\'createDiskUrl\')]>' = {
+module CreateEncryptedManagedDisk '?' /*TODO: replace with correct path to [variables('createDiskUrl')]*/ = {
   name: 'CreateEncryptedManagedDisk'
   params: {
     vhdUri: vhdUri

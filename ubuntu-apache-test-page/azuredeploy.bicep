@@ -83,20 +83,20 @@ param adminPasswordOrKey string {
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var OSDiskName = 'webtestosdisk-${dnsNameForPublicIP}'
-var nicName = 'webtestnic-${dnsNameForPublicIP}-${uniqueString(resourceGroup().id)}'
+var nicName_var = 'webtestnic-${dnsNameForPublicIP}-${uniqueString(resourceGroup().id)}'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var vhdStorageType = 'Standard_LRS'
 var publicIPAddressType = 'Dynamic'
 var vhdStorageContainerName = 'vhds'
-var vmName = 'webtestvm-${dnsNameForPublicIP}-${uniqueString(resourceGroup().id)}'
+var vmName_var = 'webtestvm-${dnsNameForPublicIP}-${uniqueString(resourceGroup().id)}'
 var vmSize = 'Standard_D2_v2'
-var virtualNetworkName = 'webtestvnet-${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var vhdStorageName = 'webtestvhd${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
+var virtualNetworkName_var = 'webtestvnet-${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var vhdStorageName_var = 'webtestvhd${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
 var singleQuote = '\''
-var frontEndNSGName = 'webtestnsg-${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
+var frontEndNSGName_var = 'webtestnsg-${uniqueString(resourceGroup().id, dnsNameForPublicIP)}'
 var testPageMarkup = '<html><head><title>${testPageTitle}</title></head><body>${testPageBody}</body></html>'
 var scriptFolder = 'scripts'
 var serverPrepareScriptFileName = 'prepwebserver.sh'
@@ -112,8 +112,8 @@ var linuxConfiguration = {
   }
 }
 
-resource vhdStorageName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: vhdStorageName
+resource vhdStorageName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: vhdStorageName_var
   location: location
   tags: {
     displayName: 'StorageAccount'
@@ -123,7 +123,7 @@ resource vhdStorageName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' 
   }
 }
 
-resource dnsNameForPublicIP_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+resource dnsNameForPublicIP_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: dnsNameForPublicIP
   location: location
   tags: {
@@ -137,8 +137,8 @@ resource dnsNameForPublicIP_resource 'Microsoft.Network/publicIPAddresses@2015-0
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     displayName: 'VirtualNetwork'
@@ -160,8 +160,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'NSG - Web Server'
@@ -200,8 +200,8 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   tags: {
     displayName: 'NetworkInterface'
@@ -213,7 +213,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: dnsNameForPublicIP_resource.id
+            id: dnsNameForPublicIP_res.id
           }
           subnet: {
             id: subnetRef
@@ -222,18 +222,13 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
     networkSecurityGroup: {
-      id: frontEndNSGName_resource.id
+      id: frontEndNSGName.id
     }
   }
-  dependsOn: [
-    dnsNameForPublicIP_resource
-    virtualNetworkName_resource
-    frontEndNSGName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   tags: {
     displayName: 'VirtualMachine'
@@ -243,7 +238,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -256,7 +251,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -264,19 +259,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vhdStorageName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_PrepareServer 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/PrepareServer'
+  name: '${vmName_var}/PrepareServer'
   location: location
   tags: {
     displayName: 'PrepareServer'
@@ -293,9 +284,6 @@ resource vmName_PrepareServer 'Microsoft.Compute/virtualMachines/extensions@2015
       commandToExecute: 'sh prepwebserver.sh ${string(installPHP)} ${singleQuote}${testPageMarkup}${singleQuote} ${testPage} ${singleQuote}${ubuntuOSVersion}${singleQuote}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
 output fqdn string = reference(dnsNameForPublicIP).dnsSettings.fqdn

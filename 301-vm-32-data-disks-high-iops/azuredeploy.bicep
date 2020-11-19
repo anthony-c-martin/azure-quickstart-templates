@@ -83,25 +83,25 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-var vmName = 'vm-high-iops'
+var vmName_var = 'vm-high-iops'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
 var imageSKU = '2016-Datacenter'
-var virtualNetworkName = 'highIopsVNET'
-var nicName = 'highIopsNIC'
+var virtualNetworkName_var = 'highIopsVNET'
+var nicName_var = 'highIopsNIC'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
-var publicIPAddressName = 'highIopsPubIP'
+var publicIPAddressName_var = 'highIopsPubIP'
 var publicIPAddressType = 'Dynamic'
 var configurationFunction = 'StoragePool.ps1\\StoragePool'
 var modulesUrl = uri(artifactsLocation, 'DSC/StoragePool.zip')
 var DscExtensionName = 'DscExtension'
-var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnet1Name)
-var networkSecurityGroupName = 'default-NSG'
+var subnet1Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnet1Name)
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-04-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -111,8 +111,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -133,8 +133,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2018-04-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -148,19 +148,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2018-04-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2018-04-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -169,7 +166,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -178,21 +175,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2018-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -217,7 +210,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
           input: {
             diskSizeGB: sizeOfEachDataDiskInGB
             lun: copyIndex('dataDisks')
-            name: '${vmName}_DataDisk${copyIndex('dataDisks')}'
+            name: '${vmName_var}_DataDisk${copyIndex('dataDisks')}'
             createOption: 'Empty'
             managedDisk: {
               storageAccountType: storageType
@@ -229,18 +222,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_DscExtensionName 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
-  name: '${vmName}/${DscExtensionName}'
+  name: '${vmName_var}/${DscExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -252,14 +242,11 @@ resource vmName_DscExtensionName 'Microsoft.Compute/virtualMachines/extensions@2
       SasToken: artifactsLocationSasToken
       ConfigurationFunction: configurationFunction
       Properties: {
-        MachineName: vmName
+        MachineName: vmName_var
       }
     }
     protectedSettings: null
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-output fqdn string = reference(publicIPAddressName).dnsSettings.fqdn
+output fqdn string = reference(publicIPAddressName_var).dnsSettings.fqdn

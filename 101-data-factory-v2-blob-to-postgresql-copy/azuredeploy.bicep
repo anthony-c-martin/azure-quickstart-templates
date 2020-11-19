@@ -64,7 +64,7 @@ var inputDatasetName = 'Tutorial2_InputBlobDataset'
 var outputDatasetName = 'Tutorial2_OutputPostgreSqlDataset'
 var pipelineName = 'Tutorial2-CopyFromBlobToPostgreSqlPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: dataFactoryName
   location: location
   properties: {}
@@ -82,9 +82,6 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
       }
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_azurePostgreSqlDatabaseLinkedServiceName 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
@@ -99,9 +96,6 @@ resource dataFactoryName_azurePostgreSqlDatabaseLinkedServiceName 'Microsoft.Dat
       }
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
@@ -134,10 +128,6 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
       type: 'LinkedServiceReference'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
@@ -152,10 +142,6 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
       type: 'LinkedServiceReference'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azurePostgreSqlDatabaseLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
@@ -190,9 +176,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
       }
     ]
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_inputDatasetName
-    dataFactoryName_outputDatasetName
-  ]
 }

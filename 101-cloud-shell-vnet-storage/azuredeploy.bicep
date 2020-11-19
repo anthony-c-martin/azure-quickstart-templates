@@ -34,7 +34,7 @@ param location string {
 var containerSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', existingVNETName, existingContainerSubnetName)
 var storageSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', existingVNETName, existingStorageSubnetName)
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -86,9 +86,6 @@ resource storageAccountName_default 'Microsoft.Storage/storageAccounts/blobServi
       enabled: false
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
 resource Microsoft_Storage_storageAccounts_fileServices_storageAccountName_default 'Microsoft.Storage/storageAccounts/fileServices@2019-06-01' = {
@@ -97,9 +94,6 @@ resource Microsoft_Storage_storageAccounts_fileServices_storageAccountName_defau
     name: 'Standard_LRS'
     tier: 'Standard'
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
 resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
@@ -107,8 +101,4 @@ resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAcco
   properties: {
     shareQuota: 6
   }
-  dependsOn: [
-    Microsoft_Storage_storageAccounts_fileServices_storageAccountName_default
-    storageAccountName_resource
-  ]
 }

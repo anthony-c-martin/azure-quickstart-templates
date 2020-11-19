@@ -61,7 +61,7 @@ param artifactsLocationSasToken string {
   default: ''
 }
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
   name: workspaceName
   location: location
   properties: {
@@ -76,7 +76,7 @@ resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-0
   }
 }
 
-resource automationAccountName_resource 'Microsoft.Automation/automationAccounts@2020-01-13-preview' = {
+resource automationAccountName_res 'Microsoft.Automation/automationAccounts@2020-01-13-preview' = {
   name: automationAccountName
   location: automationAccountLocation
   properties: {
@@ -84,9 +84,6 @@ resource automationAccountName_resource 'Microsoft.Automation/automationAccounts
       name: 'Basic'
     }
   }
-  dependsOn: [
-    workspaceName_resource
-  ]
 }
 
 resource automationAccountName_sampleGraphicalRunbookName 'Microsoft.Automation/automationAccounts/runbooks@2018-06-30' = {
@@ -102,9 +99,6 @@ resource automationAccountName_sampleGraphicalRunbookName 'Microsoft.Automation/
       version: '1.0.0.0'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_samplePowerShellRunbookName 'Microsoft.Automation/automationAccounts/runbooks@2018-06-30' = {
@@ -120,9 +114,6 @@ resource automationAccountName_samplePowerShellRunbookName 'Microsoft.Automation
       version: '1.0.0.0'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_samplePython2RunbookName 'Microsoft.Automation/automationAccounts/runbooks@2018-06-30' = {
@@ -138,19 +129,12 @@ resource automationAccountName_samplePython2RunbookName 'Microsoft.Automation/au
       version: '1.0.0.0'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource workspaceName_Automation 'Microsoft.OperationalInsights/workspaces/linkedServices@2020-08-01' = {
   name: '${workspaceName}/Automation'
   location: location
   properties: {
-    resourceId: automationAccountName_resource.id
+    resourceId: automationAccountName_res.id
   }
-  dependsOn: [
-    workspaceName_resource
-    automationAccountName_resource
-  ]
 }

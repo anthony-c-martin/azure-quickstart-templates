@@ -25,7 +25,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
 }
@@ -35,16 +35,10 @@ resource serviceBusNamespaceName_serviceBusTopicName 'Microsoft.ServiceBus/names
   properties: {
     path: serviceBusTopicName
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }
 
 resource serviceBusNamespaceName_serviceBusTopicName_serviceBusTopicSubscriptionName 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2017-04-01' = {
   name: '${serviceBusNamespaceName}/${serviceBusTopicName}/${serviceBusTopicSubscriptionName}'
-  dependsOn: [
-    serviceBusNamespaceName_serviceBusTopicName
-  ]
 }
 
 resource serviceBusNamespaceName_serviceBusTopicName_serviceBusTopicSubscriptionName_serviceBusTopicSubscriptionName_filter 'Microsoft.ServiceBus/namespaces/topics/subscriptions/Rules@2017-04-01' = {
@@ -54,7 +48,4 @@ resource serviceBusNamespaceName_serviceBusTopicName_serviceBusTopicSubscription
       sqlExpression: serviceBusTopicSubscriptionSqlFilter
     }
   }
-  dependsOn: [
-    serviceBusNamespaceName_serviceBusTopicName_serviceBusTopicSubscriptionName
-  ]
 }

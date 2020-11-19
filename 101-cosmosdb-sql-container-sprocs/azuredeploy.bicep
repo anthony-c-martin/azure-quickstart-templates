@@ -79,7 +79,7 @@ param throughput int {
   default: 400
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -112,8 +112,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-03-01' = {
+  name: accountName_var
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
@@ -125,19 +125,16 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-03-01'
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
     }
   }
-  dependsOn: [
-    accountName_resource
-  ]
 }
 
 resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}'
+  name: '${accountName_var}/${databaseName}/${containerName}'
   properties: {
     resource: {
       id: containerName
@@ -165,26 +162,20 @@ resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAc
       throughput: throughput
     }
   }
-  dependsOn: [
-    accountName_databaseName
-  ]
 }
 
 resource accountName_databaseName_containerName_myStoredProcedure 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/storedProcedures@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}/myStoredProcedure'
+  name: '${accountName_var}/${databaseName}/${containerName}/myStoredProcedure'
   properties: {
     resource: {
       id: 'myStoredProcedure'
       body: 'function () { var context = getContext(); var response = context.getResponse(); response.setBody(\'Hello, World\'); }'
     }
   }
-  dependsOn: [
-    accountName_databaseName_containerName
-  ]
 }
 
 resource accountName_databaseName_containerName_myPreTrigger 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/triggers@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}/myPreTrigger'
+  name: '${accountName_var}/${databaseName}/${containerName}/myPreTrigger'
   properties: {
     resource: {
       id: 'myPreTrigger'
@@ -193,20 +184,14 @@ resource accountName_databaseName_containerName_myPreTrigger 'Microsoft.Document
       body: 'function validateToDoItemTimestamp(){var context=getContext();var request=context.getRequest();var itemToCreate=request.getBody();if(!(\'timestamp\'in itemToCreate)){var ts=new Date();itemToCreate[\'timestamp\']=ts.getTime();}request.setBody(itemToCreate);}'
     }
   }
-  dependsOn: [
-    accountName_databaseName_containerName
-  ]
 }
 
 resource accountName_databaseName_containerName_myUserDefinedFunction 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/userDefinedFunctions@2020-03-01' = {
-  name: '${accountName_variable}/${databaseName}/${containerName}/myUserDefinedFunction'
+  name: '${accountName_var}/${databaseName}/${containerName}/myUserDefinedFunction'
   properties: {
     resource: {
       id: 'myUserDefinedFunction'
       body: 'function tax(income){if(income==undefined)throw\'no input\';if(income<1000)return income*0.1;else if(income<10000)return income*0.2;else return income*0.4;}'
     }
   }
-  dependsOn: [
-    accountName_databaseName_containerName
-  ]
 }

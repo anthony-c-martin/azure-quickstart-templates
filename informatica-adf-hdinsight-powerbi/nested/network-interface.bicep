@@ -46,7 +46,7 @@ param subnetRef string {
 param informaticaTags object
 param quickstartTags object
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+resource networkInterfaceName_res 'Microsoft.Network/networkInterfaces@2015-06-15' = {
   name: networkInterfaceName
   location: location
   tags: {

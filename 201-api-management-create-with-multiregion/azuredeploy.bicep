@@ -61,7 +61,7 @@ param minApiVersionToAllowOnControlPlane string {
   default: '2019-12-01'
 }
 
-resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2019-12-01' = {
+resource apiManagementServiceName_res 'Microsoft.ApiManagement/service@2019-12-01' = {
   name: apiManagementServiceName
   location: location
   sku: {

@@ -26,7 +26,7 @@ param activityLogAlertName string {
   default: 'autoscaleAlert'
 }
 
-resource actionGroupName_resource 'Microsoft.Insights/actionGroups@2017-04-01' = {
+resource actionGroupName_res 'Microsoft.Insights/actionGroups@2017-04-01' = {
   name: actionGroupName
   location: 'Global'
   properties: {
@@ -43,7 +43,7 @@ resource actionGroupName_resource 'Microsoft.Insights/actionGroups@2017-04-01' =
   }
 }
 
-resource activityLogAlertName_resource 'Microsoft.Insights/activityLogAlerts@2017-04-01' = {
+resource activityLogAlertName_res 'Microsoft.Insights/activityLogAlerts@2017-04-01' = {
   name: activityLogAlertName
   location: 'Global'
   properties: {
@@ -62,12 +62,9 @@ resource activityLogAlertName_resource 'Microsoft.Insights/activityLogAlerts@201
     actions: {
       actionGroups: [
         {
-          actionGroupId: actionGroupName_resource.id
+          actionGroupId: actionGroupName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    actionGroupName_resource
-  ]
 }

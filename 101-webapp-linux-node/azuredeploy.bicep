@@ -18,9 +18,9 @@ var workerSize = '0'
 var workerSizeId = '0'
 var numberOfWorkers = '1'
 var linuxFxVersion = 'NODE|lts'
-var hostingPlanName = 'hpn-${resourceGroup().name}'
+var hostingPlanName_var = 'hpn-${resourceGroup().name}'
 
-resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: webAppName
   location: location
   properties: {
@@ -29,24 +29,21 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
       linuxFxVersion: linuxFxVersion
       alwaysOn: alwaysOn
     }
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     clientAffinityEnabled: false
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: hostingPlanName_var
   location: location
   kind: 'linux'
   sku: {
-    Tier: sku
-    Name: skuCode
+    tier: sku
+    name: skuCode
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSize: workerSize
     workerSizeId: workerSizeId
     numberOfWorkers: numberOfWorkers

@@ -21,7 +21,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource powerbiWorkspaceName_resource 'Microsoft.PowerBI/workspaceCollections@2016-01-29' = {
+resource powerbiWorkspaceName_res 'Microsoft.PowerBI/workspaceCollections@2016-01-29' = {
   name: powerbiWorkspaceName
   location: location
   sku: {
@@ -32,4 +32,4 @@ resource powerbiWorkspaceName_resource 'Microsoft.PowerBI/workspaceCollections@2
   }
 }
 
-output powerbiWorkspaceName_output string = powerbiWorkspaceName
+output powerbiWorkspaceName_out string = powerbiWorkspaceName

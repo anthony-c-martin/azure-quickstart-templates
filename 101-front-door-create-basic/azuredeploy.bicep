@@ -9,7 +9,7 @@ param backendAddress string {
   }
 }
 
-resource frontDoorName_resource 'Microsoft.Network/frontDoors@2020-07-01' = {
+resource frontDoorName_res 'Microsoft.Network/frontDoors@2020-07-01' = {
   name: frontDoorName
   location: 'global'
   properties: {

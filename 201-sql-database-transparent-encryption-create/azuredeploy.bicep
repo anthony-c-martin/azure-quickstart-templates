@@ -26,14 +26,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var sqlServerName = 'sqlserver${uniqueString(subscription().id, resourceGroup().id)}'
-var databaseName_variable = 'sample-db-with-tde'
+var sqlServerName_var = 'sqlserver${uniqueString(subscription().id, resourceGroup().id)}'
+var databaseName_var = 'sample-db-with-tde'
 var databaseEdition = 'Basic'
 var databaseCollation = 'SQL_Latin1_General_CP1_CI_AS'
 var databaseServiceObjectiveName = 'Basic'
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
-  name: sqlServerName
+resource sqlServerName 'Microsoft.Sql/servers@2020-02-02-preview' = {
+  name: sqlServerName_var
   location: location
   tags: {
     displayName: 'SqlServer'
@@ -46,7 +46,7 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
 }
 
 resource sqlServerName_databaseName 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
-  name: '${sqlServerName}/${databaseName_variable}'
+  name: '${sqlServerName_var}/${databaseName_var}'
   location: location
   tags: {
     displayName: 'Database'
@@ -56,32 +56,23 @@ resource sqlServerName_databaseName 'Microsoft.Sql/servers/databases@2020-02-02-
     collation: databaseCollation
     requestedServiceObjectiveName: databaseServiceObjectiveName
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
 resource sqlServerName_databaseName_current 'Microsoft.Sql/servers/databases/transparentDataEncryption@2017-03-01-preview' = {
-  name: '${sqlServerName}/${databaseName_variable}/current'
+  name: '${sqlServerName_var}/${databaseName_var}/current'
   properties: {
     status: transparentDataEncryption
   }
-  dependsOn: [
-    sqlServerName_databaseName
-  ]
 }
 
 resource sqlServerName_AllowAllMicrosoftAzureIps 'Microsoft.Sql/servers/firewallrules@2020-02-02-preview' = {
-  name: '${sqlServerName}/AllowAllMicrosoftAzureIps'
+  name: '${sqlServerName_var}/AllowAllMicrosoftAzureIps'
   location: location
   properties: {
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
   }
-  dependsOn: [
-    sqlServerName_resource
-  ]
 }
 
-output sqlServerFqdn string = sqlServerName_resource.properties.fullyQualifiedDomainName
-output databaseName string = databaseName_variable
+output sqlServerFqdn string = sqlServerName.properties.fullyQualifiedDomainName
+output databaseName string = databaseName_var

@@ -6,45 +6,42 @@ param location string {
 }
 
 var endpointName = 'endpoint-${uniqueString(resourceGroup().id)}'
-var serverFarmName = 'ServerFarm1'
-var profileName = 'CdnProfile1'
-var webAppName = 'web-${uniqueString(resourceGroup().id)}'
+var serverFarmName_var = 'ServerFarm1'
+var profileName_var = 'CdnProfile1'
+var webAppName_var = 'web-${uniqueString(resourceGroup().id)}'
 
-resource serverFarmName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: serverFarmName
+resource serverFarmName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: serverFarmName_var
   location: location
   tags: {
-    displayName: serverFarmName
+    displayName: serverFarmName_var
   }
   sku: {
     name: 'F1'
     capacity: 1
   }
   properties: {
-    name: serverFarmName
+    name: serverFarmName_var
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webAppName
+resource webAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webAppName_var
   location: location
   tags: {
-    displayName: webAppName
+    displayName: webAppName_var
   }
   properties: {
-    name: webAppName
-    serverFarmId: serverFarmName_resource.id
+    name: webAppName_var
+    serverFarmId: serverFarmName.id
   }
-  dependsOn: [
-    serverFarmName_resource
-  ]
 }
 
-resource profileName_resource 'Microsoft.Cdn/profiles@2020-04-15' = {
-  name: profileName
+resource profileName 'Microsoft.Cdn/profiles@2020-04-15' = {
+  name: profileName_var
   location: location
   tags: {
-    displayName: profileName
+    displayName: profileName_var
   }
   sku: {
     name: 'Standard_Akamai'
@@ -53,13 +50,13 @@ resource profileName_resource 'Microsoft.Cdn/profiles@2020-04-15' = {
 }
 
 resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2020-04-15' = {
-  name: '${profileName}/${endpointName}'
+  name: '${profileName_var}/${endpointName}'
   location: location
   tags: {
     displayName: endpointName
   }
   properties: {
-    originHostHeader: reference(webAppName).hostNames[0]
+    originHostHeader: reference(webAppName_var).hostNames[0]
     isHttpAllowed: true
     isHttpsAllowed: true
     queryStringCachingBehavior: 'IgnoreQueryString'
@@ -75,15 +72,11 @@ resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2020-04-15' 
       {
         name: 'origin1'
         properties: {
-          hostName: reference(webAppName).hostNames[0]
+          hostName: reference(webAppName_var).hostNames[0]
         }
       }
     ]
   }
-  dependsOn: [
-    profileName_resource
-    webAppName_resource
-  ]
 }
 
 output hostName string = reference(endpointName).hostName

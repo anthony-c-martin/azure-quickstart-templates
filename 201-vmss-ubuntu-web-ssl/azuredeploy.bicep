@@ -101,22 +101,22 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
+var namingInfix_var = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${namingInfix}vnet'
-var subnetName = '${namingInfix}subnet'
-var lbName = '${namingInfix}lb'
-var bepoolName = '${lbName}bepool'
-var fepoolName = '${lbName}fepool'
-var lbID = lbName_resource.id
+var virtualNetworkName_var = '${namingInfix_var}vnet'
+var subnetName = '${namingInfix_var}subnet'
+var lbName_var = '${namingInfix_var}lb'
+var bepoolName = '${lbName_var}bepool'
+var fepoolName = '${lbName_var}fepool'
+var lbID = lbName.id
 var bepoolID = '${lbID}/backendAddressPools/${bepoolName}'
 var feIpConfigName = '${fepoolName}IpConfig'
 var feIpConfigId = '${lbID}/frontendIPConfigurations/${feIpConfigName}'
-var pipName = '${namingInfix}pip'
-var nicName = '${namingInfix}nic'
-var natPoolName = '${lbName}natpool'
-var ipConfigName = '${namingInfix}ipconfig'
+var pipName_var = '${namingInfix_var}pip'
+var nicName = '${namingInfix_var}nic'
+var natPoolName = '${lbName_var}natpool'
+var ipConfigName = '${namingInfix_var}ipconfig'
 var httpProbeName = 'httpProbe'
 var httpsProbeName = 'httpsProbe'
 var osType = {
@@ -138,8 +138,8 @@ var linuxConfiguration = {
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-30' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-03-30' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -158,19 +158,19 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-
   }
 }
 
-resource pipName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: pipName
+resource pipName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: pipName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: namingInfix
+      domainNameLabel: namingInfix_var
     }
   }
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2016-03-30' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2016-03-30' = {
+  name: lbName_var
   location: location
   tags: {
     displayName: 'Load Balancer'
@@ -181,7 +181,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2016-03-30' = {
         name: feIpConfigName
         properties: {
           publicIPAddress: {
-            id: pipName_resource.id
+            id: pipName.id
           }
         }
       }
@@ -242,7 +242,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2016-03-30' = {
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: '${lbName_resource.id}/probes/${httpsProbeName}'
+            id: '${lbName.id}/probes/${httpsProbeName}'
           }
         }
       }
@@ -268,13 +268,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2016-03-30' = {
       }
     ]
   }
-  dependsOn: [
-    pipName_resource
-  ]
 }
 
-resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
-  name: namingInfix
+resource namingInfix 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
+  name: namingInfix_var
   location: location
   sku: {
     name: vmSku
@@ -282,7 +279,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
     capacity: capacity
   }
   properties: {
-    overprovision: 'true'
+    overProvision: 'true'
     upgradePolicy: {
       mode: 'Manual'
     }
@@ -295,7 +292,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
         imageReference: imageReference
       }
       osProfile: {
-        computerNamePrefix: namingInfix
+        computerNamePrefix: namingInfix_var
         adminUsername: adminUsername
         adminPassword: adminPasswordOrKey
         secrets: [
@@ -326,16 +323,16 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, bepoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, bepoolName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName_var, natPoolName)
                       }
                     ]
                   }
@@ -368,10 +365,6 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04
       }
     }
   }
-  dependsOn: [
-    lbName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-output fqdn string = reference(pipName).dnsSettings.fqdn
+output fqdn string = reference(pipName_var).dnsSettings.fqdn

@@ -71,16 +71,16 @@ var subnetName = 'mySubnet'
 var subnetPrefix = '10.0.0.0/24'
 var publicIPAddressType = 'Static'
 var publicIPAddressType2 = 'Static'
-var nicName = 'myNic1'
-var vnetName = 'myVNet1'
-var publicIPAddressName = 'myPublicIP'
-var publicIPAddressName2 = 'myPublicIP2'
-var vmName = 'myVM1'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
-var networkSecurityGroupName = 'default-NSG'
+var nicName_var = 'myNic1'
+var vnetName_var = 'myVNet1'
+var publicIPAddressName_var = 'myPublicIP'
+var publicIPAddressName2_var = 'myPublicIP2'
+var vmName_var = 'myVM1'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -90,8 +90,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource publicIPAddressName2_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName2
+resource publicIPAddressName2 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName2_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType2
@@ -101,8 +101,8 @@ resource publicIPAddressName2_resource 'Microsoft.Network/publicIPAddresses@2020
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -123,8 +123,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -138,19 +138,16 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -160,7 +157,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           primary: true
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -173,7 +170,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
           privateIPAddress: '10.0.0.5'
           privateIPAllocationMethod: 'Static'
           publicIPAddress: {
-            id: publicIPAddressName2_resource.id
+            id: publicIPAddressName2.id
           }
           subnet: {
             id: subnetRef
@@ -191,22 +188,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    vnetName_resource
-    publicIPAddressName2_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -224,7 +216,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
           properties: {
             primary: true
           }
@@ -232,9 +224,6 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
-output hostname string = reference(publicIPAddressName).dnsSettings.fqdn
+output hostname string = reference(publicIPAddressName_var).dnsSettings.fqdn

@@ -66,12 +66,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var hostingPlanName = 'hostingplan${uniqueString(resourceGroup().id)}'
-var webSiteName = 'webSite${uniqueString(resourceGroup().id)}'
-var cacheName = 'cache${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = 'hostingplan${uniqueString(resourceGroup().id)}'
+var webSiteName_var = 'webSite${uniqueString(resourceGroup().id)}'
+var cacheName_var = 'cache${uniqueString(resourceGroup().id)}'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2015-08-01' = {
+  name: hostingPlanName_var
   location: location
   tags: {
     displayName: 'HostingPlan'
@@ -81,40 +81,32 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
     capacity: skuCapacity
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2015-08-01' = {
-  name: webSiteName
+resource webSiteName 'Microsoft.Web/sites@2015-08-01' = {
+  name: webSiteName_var
   location: location
   tags: {
-    'hidden-related:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName}': 'empty'
+    'hidden-related:${resourceGroup().id}/providers/Microsoft.Web/serverfarms/${hostingPlanName_var}': 'empty'
     displayName: 'Website'
   }
   properties: {
-    name: webSiteName
-    serverFarmId: hostingPlanName_resource.id
+    name: webSiteName_var
+    serverFarmId: hostingPlanName.id
   }
-  dependsOn: [
-    hostingPlanName_resource
-    cacheName_resource
-  ]
 }
 
 resource webSiteName_appsettings 'Microsoft.Web/sites/config@2015-08-01' = {
-  name: '${webSiteName}/appsettings'
+  name: '${webSiteName_var}/appsettings'
   properties: {
-    CacheConnection: '${cacheName}.redis.cache.windows.net,abortConnect=false,ssl=true,password=${listKeys(cacheName_resource.id, '2015-08-01').primaryKey}'
+    CacheConnection: '${cacheName_var}.redis.cache.windows.net,abortConnect=false,ssl=true,password=${listKeys(cacheName.id, '2015-08-01').primaryKey}'
   }
-  dependsOn: [
-    webSiteName_resource
-    cacheName_resource
-  ]
 }
 
-resource cacheName_resource 'Microsoft.Cache/Redis@2015-08-01' = {
-  name: cacheName
+resource cacheName 'Microsoft.Cache/Redis@2015-08-01' = {
+  name: cacheName_var
   location: location
   tags: {
     displayName: 'cache'

@@ -65,11 +65,11 @@ param memoryInGb string {
   default: '1.5'
 }
 
-var networkProfileName = 'aci-networkProfile'
+var networkProfileName_var = 'aci-networkProfile'
 var interfaceConfigName = 'eth0'
 var interfaceIpConfig = 'ipconfigprofile1'
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: vnetName
   location: location
   properties: {
@@ -97,8 +97,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   }
 }
 
-resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2020-05-01' = {
-  name: networkProfileName
+resource networkProfileName 'Microsoft.Network/networkProfiles@2020-05-01' = {
+  name: networkProfileName_var
   location: location
   properties: {
     containerNetworkInterfaceConfigurations: [
@@ -119,12 +119,9 @@ resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2020-05-
       }
     ]
   }
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
-resource containerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+resource containerGroupName_res 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
   name: containerGroupName
   location: location
   properties: {
@@ -150,13 +147,10 @@ resource containerGroupName_resource 'Microsoft.ContainerInstance/containerGroup
     ]
     osType: 'Linux'
     networkProfile: {
-      id: networkProfileName_resource.id
+      id: networkProfileName.id
     }
     restartPolicy: 'Always'
   }
-  dependsOn: [
-    networkProfileName_resource
-  ]
 }
 
-output containerIPv4Address string = containerGroupName_resource.properties.ipAddress.ip
+output containerIPv4Address string = containerGroupName_res.properties.ipAddress.ip

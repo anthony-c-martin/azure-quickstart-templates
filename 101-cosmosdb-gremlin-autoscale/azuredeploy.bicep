@@ -78,7 +78,7 @@ param autoscaleMaxThroughput int {
   default: 4000
 }
 
-var accountName_variable = toLower(accountName)
+var accountName_var = toLower(accountName)
 var consistencyPolicy = {
   Eventual: {
     defaultConsistencyLevel: 'Eventual'
@@ -111,8 +111,8 @@ var locations = [
   }
 ]
 
-resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: accountName_variable
+resource accountName_res 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: accountName_var
   location: location
   kind: 'GlobalDocumentDB'
   properties: {
@@ -129,19 +129,16 @@ resource accountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01'
 }
 
 resource accountName_databaseName 'Microsoft.DocumentDB/databaseAccounts/gremlinDatabases@2020-04-01' = {
-  name: '${accountName_variable}/${databaseName}'
+  name: '${accountName_var}/${databaseName}'
   properties: {
     resource: {
       id: databaseName
     }
   }
-  dependsOn: [
-    accountName_resource
-  ]
 }
 
 resource accountName_databaseName_graphName 'Microsoft.DocumentDb/databaseAccounts/gremlinDatabases/graphs@2020-04-01' = {
-  name: '${accountName_variable}/${databaseName}/${graphName}'
+  name: '${accountName_var}/${databaseName}/${graphName}'
   properties: {
     resource: {
       id: graphName
@@ -171,7 +168,4 @@ resource accountName_databaseName_graphName 'Microsoft.DocumentDb/databaseAccoun
       }
     }
   }
-  dependsOn: [
-    accountName_databaseName
-  ]
 }

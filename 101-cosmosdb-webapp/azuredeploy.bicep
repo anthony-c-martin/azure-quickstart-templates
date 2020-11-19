@@ -63,12 +63,12 @@ param containerName string {
   default: 'Items'
 }
 
-var cosmosAccountName = toLower(applicationName)
-var webSiteName = applicationName
-var hostingPlanName = applicationName
+var cosmosAccountName_var = toLower(applicationName)
+var webSiteName_var = applicationName
+var hostingPlanName_var = applicationName
 
-resource cosmosAccountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
-  name: cosmosAccountName
+resource cosmosAccountName 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+  name: cosmosAccountName_var
   kind: 'GlobalDocumentDB'
   location: location
   properties: {
@@ -86,35 +86,32 @@ resource cosmosAccountName_resource 'Microsoft.DocumentDB/databaseAccounts@2020-
   }
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: appServicePlanTier
     capacity: appServicePlanInstances
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
   }
-  dependsOn: [
-    cosmosAccountName_resource
-  ]
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: webSiteName
+resource webSiteName 'Microsoft.Web/sites@2019-08-01' = {
+  name: webSiteName_var
   location: location
   properties: {
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     siteConfig: {
       appSettings: [
         {
           name: 'CosmosDb:Account'
-          value: cosmosAccountName_resource.properties.documentEndpoint
+          value: cosmosAccountName.properties.documentEndpoint
         }
         {
           name: 'CosmosDb:Key'
-          value: listKeys(cosmosAccountName_resource.id, '2020-04-01').primaryMasterKey
+          value: listKeys(cosmosAccountName.id, '2020-04-01').primaryMasterKey
         }
         {
           name: 'CosmosDb:DatabaseName'
@@ -127,20 +124,14 @@ resource webSiteName_resource 'Microsoft.Web/sites@2019-08-01' = {
       ]
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
 resource webSiteName_web 'Microsoft.Web/sites/sourcecontrols@2019-08-01' = {
-  name: '${webSiteName}/web'
+  name: '${webSiteName_var}/web'
   location: location
   properties: {
     repoUrl: repositoryURL
     branch: branch
     isManualIntegration: true
   }
-  dependsOn: [
-    webSiteName_resource
-  ]
 }

@@ -35,7 +35,7 @@ param Location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: Location
   sku: {
@@ -48,11 +48,8 @@ resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-
 resource serviceBusNamespaceName_ipFilterRuleName 'Microsoft.ServiceBus/namespaces/IPFilterRules@2018-01-01-preview' = {
   name: '${serviceBusNamespaceName}/${ipFilterRuleName}'
   properties: {
-    FilterName: ipFilterRuleName
-    Action: ipFilterAction
-    IpMask: IpMask
+    filterName: ipFilterRuleName
+    action: ipFilterAction
+    ipMask: IpMask
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }

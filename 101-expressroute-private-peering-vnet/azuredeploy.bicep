@@ -133,65 +133,62 @@ param gatewaySku string {
   default: 'HighPerformance'
 }
 
-var location_variable = location
+var location_var = location
 var erlocation = location
-var erCircuitName_variable = erCircuitName
-var serviceProviderName_variable = serviceProviderName
-var erpeeringLocation_variable = erpeeringLocation
-var erSKU_Tier_variable = erSKU_Tier
-var erSKU_Family_variable = erSKU_Family
-var erSKU_Name = '${erSKU_Tier_variable}_${erSKU_Family_variable}'
-var bandwidthInMbps_variable = bandwidthInMbps
-var peerASN_variable = peerASN
-var primaryPeerAddressPrefix_variable = primaryPeerAddressPrefix
-var secondaryPeerAddressPrefix_variable = secondaryPeerAddressPrefix
-var vlanId_variable = vlanId
-var vnetName_variable = vnetName
-var subnet1Name_variable = subnet1Name
-var vnetAddressSpace_variable = vnetAddressSpace
-var subnet1Prefix_variable = subnet1Prefix
-var gatewaySubnetPrefix_variable = gatewaySubnetPrefix
-var gatewayName_variable = gatewayName
-var gatewayPublicIPName = '${gatewayName_variable}-pubIP'
-var gatewaySku_variable = gatewaySku
-var nsg = 'nsg'
+var erCircuitName_var = erCircuitName
+var serviceProviderName_var = serviceProviderName
+var erpeeringLocation_var = erpeeringLocation
+var erSKU_Tier_var = erSKU_Tier
+var erSKU_Family_var = erSKU_Family
+var erSKU_Name = '${erSKU_Tier_var}_${erSKU_Family_var}'
+var bandwidthInMbps_var = bandwidthInMbps
+var peerASN_var = peerASN
+var primaryPeerAddressPrefix_var = primaryPeerAddressPrefix
+var secondaryPeerAddressPrefix_var = secondaryPeerAddressPrefix
+var vlanId_var = vlanId
+var vnetName_var = vnetName
+var subnet1Name_var = subnet1Name
+var vnetAddressSpace_var = vnetAddressSpace
+var subnet1Prefix_var = subnet1Prefix
+var gatewaySubnetPrefix_var = gatewaySubnetPrefix
+var gatewayName_var = gatewayName
+var gatewayPublicIPName_var = '${gatewayName_var}-pubIP'
+var gatewaySku_var = gatewaySku
+var nsg_var = 'nsg'
 
-resource erCircuitName_resource 'Microsoft.Network/expressRouteCircuits@2020-06-01' = {
-  name: erCircuitName_variable
+resource erCircuitName_res 'Microsoft.Network/expressRouteCircuits@2020-06-01' = {
+  name: erCircuitName_var
   location: erlocation
   sku: {
     name: erSKU_Name
-    tier: erSKU_Tier_variable
-    family: erSKU_Family_variable
+    tier: erSKU_Tier_var
+    family: erSKU_Family_var
   }
   properties: {
     serviceProviderProperties: {
-      serviceProviderName: serviceProviderName_variable
-      peeringLocation: erpeeringLocation_variable
-      bandwidthInMbps: bandwidthInMbps_variable
+      serviceProviderName: serviceProviderName_var
+      peeringLocation: erpeeringLocation_var
+      bandwidthInMbps: bandwidthInMbps_var
     }
     allowClassicOperations: false
   }
 }
 
 resource erCircuitName_AzurePrivatePeering 'Microsoft.Network/expressRouteCircuits/peerings@2020-06-01' = {
-  name: '${erCircuitName_variable}/AzurePrivatePeering'
+  name: '${erCircuitName_var}/AzurePrivatePeering'
   location: erlocation
   properties: {
     peeringType: 'AzurePrivatePeering'
-    peerASN: peerASN_variable
-    primaryPeerAddressPrefix: primaryPeerAddressPrefix_variable
-    secondaryPeerAddressPrefix: secondaryPeerAddressPrefix_variable
-    vlanId: vlanId_variable
+    peerASN: peerASN_var
+    primaryPeerAddressPrefix: primaryPeerAddressPrefix_var
+    secondaryPeerAddressPrefix: secondaryPeerAddressPrefix_var
+    vlanId: vlanId_var
   }
-  dependsOn: [
-    erCircuitName_resource
-  ]
 }
 
-resource nsg_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: nsg
-  location: location_variable
+resource nsg 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: nsg_var
+  location: location_var
   properties: {
     securityRules: [
       {
@@ -226,59 +223,56 @@ resource nsg_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetName_variable
-  location: location_variable
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnetName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetAddressSpace_variable
+        vnetAddressSpace_var
       ]
     }
     subnets: [
       {
-        name: subnet1Name_variable
+        name: subnet1Name_var
         properties: {
-          addressPrefix: subnet1Prefix_variable
+          addressPrefix: subnet1Prefix_var
           networkSecurityGroup: {
-            id: nsg_resource.id
+            id: nsg.id
           }
         }
       }
       {
         name: 'GatewaySubnet'
         properties: {
-          addressPrefix: gatewaySubnetPrefix_variable
+          addressPrefix: gatewaySubnetPrefix_var
         }
       }
     ]
   }
-  dependsOn: [
-    nsg_resource
-  ]
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: gatewayPublicIPName
-  location: location_variable
+resource gatewayPublicIPName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: gatewayPublicIPName_var
+  location: location_var
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-06-01' = {
-  name: gatewayName_variable
-  location: location_variable
+resource gatewayName_res 'Microsoft.Network/virtualNetworkGateways@2020-06-01' = {
+  name: gatewayName_var
+  location: location_var
   properties: {
     ipConfigurations: [
       {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_variable, 'GatewaySubnet')
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, 'GatewaySubnet')
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName.id
           }
         }
         name: 'gwIPconf'
@@ -286,17 +280,13 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2020-06-
     ]
     gatewayType: 'ExpressRoute'
     sku: {
-      name: gatewaySku_variable
-      tier: gatewaySku_variable
+      name: gatewaySku_var
+      tier: gatewaySku_var
     }
     vpnType: 'RouteBased'
   }
-  dependsOn: [
-    gatewayPublicIPName_resource
-    vnetName_resource
-  ]
 }
 
-output erCircuitName_output string = erCircuitName_variable
-output gatewayName_output string = gatewayName_variable
-output gatewaySku_output string = gatewaySku_variable
+output erCircuitName_out string = erCircuitName_var
+output gatewayName_out string = gatewayName_var
+output gatewaySku_out string = gatewaySku_var

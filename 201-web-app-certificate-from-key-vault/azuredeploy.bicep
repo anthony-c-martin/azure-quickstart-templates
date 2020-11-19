@@ -35,7 +35,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource certificateName_resource 'Microsoft.Web/certificates@2019-08-01' = {
+resource certificateName_res 'Microsoft.Web/certificates@2019-08-01' = {
   name: certificateName
   location: location
   properties: {
@@ -45,7 +45,7 @@ resource certificateName_resource 'Microsoft.Web/certificates@2019-08-01' = {
   }
 }
 
-resource existingWebAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource existingWebAppName_res 'Microsoft.Web/sites@2019-08-01' = {
   name: existingWebAppName
   location: location
   properties: {
@@ -54,12 +54,12 @@ resource existingWebAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
       {
         name: hostname
         sslState: 'SniEnabled'
-        thumbprint: certificateName_resource.properties.Thumbprint
+        thumbprint: certificateName_res.properties.Thumbprint
         toUpdate: true
       }
     ]
   }
   dependsOn: [
-    certificateName_resource
+    certificateName_res
   ]
 }

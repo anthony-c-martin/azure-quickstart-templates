@@ -13,7 +13,7 @@ param location string {
 param tags object = {}
 param policySigningCertificates string = ''
 
-var PolicySigningCertificates_variable = {
+var PolicySigningCertificates_var = {
   PolicySigningCertificates: {
     keys: [
       {
@@ -27,9 +27,9 @@ var PolicySigningCertificates_variable = {
   }
 }
 
-resource attestationProviderName_resource 'Microsoft.Attestation/attestationProviders@2020-10-01' = {
+resource attestationProviderName_res 'Microsoft.Attestation/attestationProviders@2020-10-01' = {
   name: attestationProviderName
   location: location
   tags: tags
-  properties: (empty(policySigningCertificates) ? json('{}') : PolicySigningCertificates_variable)
+  properties: (empty(policySigningCertificates) ? json('{}') : PolicySigningCertificates_var)
 }

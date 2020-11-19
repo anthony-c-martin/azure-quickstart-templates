@@ -28,7 +28,7 @@ param systemTopicName string {
   default: 'mystoragesystemtopic'
 }
 
-resource storageName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageName
   location: location
   sku: {
@@ -40,16 +40,13 @@ resource storageName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   }
 }
 
-resource systemTopicName_resource 'Microsoft.EventGrid/systemTopics@2020-04-01-preview' = {
+resource systemTopicName_res 'Microsoft.EventGrid/systemTopics@2020-04-01-preview' = {
   name: systemTopicName
   location: location
   properties: {
-    source: storageName_resource.id
+    source: storageName_res.id
     topicType: 'Microsoft.Storage.StorageAccounts'
   }
-  dependsOn: [
-    storageName_resource
-  ]
 }
 
 resource systemTopicName_eventSubName 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2020-04-01-preview' = {
@@ -68,7 +65,4 @@ resource systemTopicName_eventSubName 'Microsoft.EventGrid/systemTopics/eventSub
       ]
     }
   }
-  dependsOn: [
-    systemTopicName_resource
-  ]
 }

@@ -62,7 +62,7 @@ param location string {
   default: resourceGroup().location
 }
 
-var dataFactoryName = 'CopyFromAzureBlobToAzureSQLDbSproc${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'CopyFromAzureBlobToAzureSQLDbSproc${uniqueString(resourceGroup().id)}'
 var storageLinkedServiceName = 'StorageLinkedService'
 var sqlLinkedServiceName = 'SqlLinkedService'
 var storageDataset = 'StorageDataset'
@@ -70,13 +70,13 @@ var intermediateDataset = 'IntermediateDataset'
 var sqlDataset = 'SqlDataset'
 var pipelineName = 'BlobtoSqlDbCopyPipelineSproc'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: location
 }
 
 resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${storageLinkedServiceName}'
+  name: '${dataFactoryName_var}/${storageLinkedServiceName}'
   properties: {
     type: 'AzureStorage'
     description: 'Azure Storage Linked Service'
@@ -84,13 +84,10 @@ resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafac
       connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${storageAccountKey}'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_sqlLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlLinkedServiceName}'
+  name: '${dataFactoryName_var}/${sqlLinkedServiceName}'
   properties: {
     type: 'AzureSqlDatabase'
     description: 'Azure SQL linked service'
@@ -98,13 +95,10 @@ resource dataFactoryName_sqlLinkedServiceName 'Microsoft.DataFactory/datafactori
       connectionString: 'Data Source=tcp:${sqlServerName}.database.windows.net,1433;Initial Catalog=${sqlDatabaseName};Integrated Security=False;User ID=${sqlUserID};Password=${sqlPassword};Connect Timeout=30;Encrypt=True'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_storageDataset 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${storageDataset}'
+  name: '${dataFactoryName_var}/${storageDataset}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: storageLinkedServiceName
@@ -121,14 +115,10 @@ resource dataFactoryName_storageDataset 'Microsoft.DataFactory/datafactories/dat
     }
     external: true
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_intermediateDataset 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${intermediateDataset}'
+  name: '${dataFactoryName_var}/${intermediateDataset}'
   properties: {
     type: 'AzureSqlTable'
     linkedServiceName: sqlLinkedServiceName
@@ -140,14 +130,10 @@ resource dataFactoryName_intermediateDataset 'Microsoft.DataFactory/datafactorie
       interval: 1
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_sqlLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_sqlDataset 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${sqlDataset}'
+  name: '${dataFactoryName_var}/${sqlDataset}'
   properties: {
     type: 'AzureSqlTable'
     linkedServiceName: sqlLinkedServiceName
@@ -159,14 +145,10 @@ resource dataFactoryName_sqlDataset 'Microsoft.DataFactory/datafactories/dataset
       interval: 1
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_sqlLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/dataPipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${pipelineName}'
+  name: '${dataFactoryName_var}/${pipelineName}'
   properties: {
     description: 'Copies data from Azure Blob to Sql DB while invoking stored procedure'
     activities: [
@@ -225,11 +207,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/dataP
     start: '10/1/2016 12:00:00 AM'
     end: '10/2/2016 12:00:00 AM'
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_storageLinkedServiceName
-    dataFactoryName_sqlLinkedServiceName
-    dataFactoryName_storageDataset
-    dataFactoryName_sqlDataset
-  ]
 }

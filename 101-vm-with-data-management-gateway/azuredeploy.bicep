@@ -68,13 +68,13 @@ var delimiters = [
   '_'
 ]
 var prefix = split(GatewayName, delimiters)[0]
-var virtualMachineName = take('vm-${prefix}', 15)
+var virtualMachineName_var = take('vm-${prefix}', 15)
 var nsglink = '${artifactsLocation}nested/${enableToSetDataStorePasswordsFromInternet}IncomingRemote.json${artifactsLocationSasToken}'
-var nsgTemplateName = '${virtualMachineName}NSGTemplate'
-var storageAccountName = take(concat(toLower(prefix), uniqueString(resourceGroup().id, virtualMachineName)), 24)
-var nicName = '${virtualMachineName}Nic'
-var publicIPAddressName = '${virtualMachineName}-ip'
-var networkSecurityGroupName = '${virtualMachineName}nsg'
+var nsgTemplateName_var = '${virtualMachineName_var}NSGTemplate'
+var storageAccountName_var = take(concat(toLower(prefix), uniqueString(resourceGroup().id, virtualMachineName_var)), 24)
+var nicName_var = '${virtualMachineName_var}Nic'
+var publicIPAddressName = '${virtualMachineName_var}-ip'
+var networkSecurityGroupName = '${virtualMachineName_var}nsg'
 var scriptURL = '${artifactsLocation}scripts/gatewayInstall.ps1${artifactsLocationSasToken}'
 
 resource existingDataFactoryName_GatewayName 'Microsoft.DataFactory/dataFactories/gateways@2015-10-01' = {
@@ -84,27 +84,24 @@ resource existingDataFactoryName_GatewayName 'Microsoft.DataFactory/dataFactorie
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: existingVnetLocation
   tags: {
-    vmname: virtualMachineName
+    vmname: virtualMachineName_var
   }
   sku: {
     name: 'Standard_LRS'
   }
   kind: 'Storage'
   properties: {}
-  dependsOn: [
-    existingDataFactoryName_GatewayName
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: nicName_var
   location: existingVnetLocation
   tags: {
-    vmname: virtualMachineName
+    vmname: virtualMachineName_var
   }
   properties: {
     ipConfigurations: [
@@ -125,23 +122,20 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
       id: resourceId('Microsoft.Network/networkSecurityGroups', networkSecurityGroupName)
     }
   }
-  dependsOn: [
-    nsgTemplateName_resource
-  ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: virtualMachineName
+resource virtualMachineName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: virtualMachineName_var
   location: existingVnetLocation
   tags: {
-    vmname: virtualMachineName
+    vmname: virtualMachineName_var
   }
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_A3'
     }
     osProfile: {
-      computerName: virtualMachineName
+      computerName: virtualMachineName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -153,7 +147,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
         version: 'latest'
       }
       osDisk: {
-        name: '${virtualMachineName}_OSDisk'
+        name: '${virtualMachineName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -162,7 +156,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
       }
       dataDisks: [
         {
-          name: '${virtualMachineName}_DataDisk1'
+          name: '${virtualMachineName_var}_DataDisk1'
           diskSizeGB: 128
           lun: 0
           managedDisk: {
@@ -175,28 +169,27 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAccountName_resource.properties.primaryEndpoints.blob
+        storageUri: storageAccountName.properties.primaryEndpoints.blob
       }
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nicName_resource
+    storageAccountName
   ]
 }
 
 resource virtualMachineName_virtualMachineName_installGW 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${virtualMachineName}/${virtualMachineName}installGW'
+  name: '${virtualMachineName_var}/${virtualMachineName_var}installGW'
   location: existingVnetLocation
   tags: {
-    vmname: virtualMachineName
+    vmname: virtualMachineName_var
   }
   properties: {
     publisher: 'Microsoft.Compute'
@@ -209,18 +202,15 @@ resource virtualMachineName_virtualMachineName_installGW 'Microsoft.Compute/virt
       ]
     }
     protectedSettings: {
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ${listAuthKeys(existingDataFactoryName_GatewayName.id, '2015-10-01').key1} ${reference(nsgTemplateName).outputs.hostname.Value} ${enableToSetDataStorePasswordsFromInternet}'
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File gatewayInstall.ps1 ${listAuthKeys(existingDataFactoryName_GatewayName.id, '2015-10-01').key1} ${reference(nsgTemplateName_var).outputs.hostname.Value} ${enableToSetDataStorePasswordsFromInternet}'
     }
   }
-  dependsOn: [
-    virtualMachineName_resource
-  ]
 }
 
-module nsgTemplateName_resource '<failed to parse [variables(\'nsglink\')]>' = {
-  name: nsgTemplateName
+module nsgTemplateName '?' /*TODO: replace with correct path to [variables('nsglink')]*/ = {
+  name: nsgTemplateName_var
   params: {
-    vmName: virtualMachineName
+    vmName: virtualMachineName_var
     networkSecurityGroupName: networkSecurityGroupName
     publicIPAddressName: publicIPAddressName
     existingVnetLocation: existingVnetLocation

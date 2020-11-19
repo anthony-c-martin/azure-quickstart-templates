@@ -48,7 +48,7 @@ var inputDatasetName = 'Tutorial3-InputBlobDataset'
 var outputDatasetName = 'Tutorial3-OutputSqlDataset'
 var pipelineName = 'Tutorial3-CopyFromOnPremSqlToBlobPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
   name: dataFactoryName
   location: dataFactoryLocation
   properties: {}
@@ -66,9 +66,6 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
       }
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_selfHostedIRName 'Microsoft.DataFactory/factories/integrationRuntimes@2017-09-01-preview' = {
@@ -76,9 +73,6 @@ resource dataFactoryName_selfHostedIRName 'Microsoft.DataFactory/factories/integ
   properties: {
     type: 'SelfHosted'
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_onPremSqlServerLinkedServiceName 'Microsoft.DataFactory/factories/linkedServices@2017-09-01-preview' = {
@@ -96,10 +90,6 @@ resource dataFactoryName_onPremSqlServerLinkedServiceName 'Microsoft.DataFactory
       type: 'IntegrationRuntimeReference'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_selfHostedIRName
-  ]
 }
 
 resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datasets@2017-09-01-preview' = {
@@ -114,10 +104,6 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
       tableName: sqlTableName
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_onPremSqlServerLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/datasets@2017-09-01-preview' = {
@@ -133,10 +119,6 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
       folderPath: '${blobContainer}\\${outputBlobFolder}'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines@2017-09-01-preview' = {
@@ -171,9 +153,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
       }
     ]
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_inputDatasetName
-    dataFactoryName_outputDatasetName
-  ]
 }

@@ -22,7 +22,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource slackConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource slackConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: slackConnectionName
   properties: {
@@ -33,7 +33,7 @@ resource slackConnectionName_resource 'Microsoft.Web/connections@2018-07-01-prev
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -129,15 +129,12 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
         value: {
           slack: {
             id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'slack')
-            connectionId: slackConnectionName_resource.id
+            connectionId: slackConnectionName_res.id
           }
         }
       }
     }
   }
-  dependsOn: [
-    slackConnectionName_resource
-  ]
 }
 
 output WebHookURI string = 'Use \'listCallbackURL(resourceId(\'Microsoft.Logic/workflows/triggers\', parameters(\'logicAppName\'), \'manual\'), \'2019-05-01\').value\' to retrieve the callback URL, the value contains a secret and is not recommended in an output.'

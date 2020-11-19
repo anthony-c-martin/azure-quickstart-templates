@@ -26,10 +26,10 @@ param roleDescription string {
   default: 'Subscription Level Deployment of a Role Definition'
 }
 
-var roleDefName = guid(subscription().id, string(actions), string(notActions))
+var roleDefName_var = guid(subscription().id, string(actions), string(notActions))
 
-resource roleDefName_resource 'Microsoft.Authorization/roleDefinitions@2018-07-01' = {
-  name: roleDefName
+resource roleDefName 'Microsoft.Authorization/roleDefinitions@2018-07-01' = {
+  name: roleDefName_var
   properties: {
     roleName: roleName
     description: roleDescription

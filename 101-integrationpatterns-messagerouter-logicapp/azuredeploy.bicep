@@ -11,7 +11,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2016-06-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2016-06-01' = {
   name: logicAppName
   location: location
   properties: {

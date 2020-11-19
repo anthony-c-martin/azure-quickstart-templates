@@ -98,20 +98,20 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}storage'
-var vnetID = virtualNetworkName_resource.id
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
+var vnetID = virtualNetworkName_res.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
   name: publicIPAddressName
   location: location
   properties: {
@@ -119,8 +119,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -141,7 +141,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -156,18 +156,15 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+resource nicName_res 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
   name: nicName
   location: location
   properties: {
@@ -177,7 +174,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName_res.id
           }
           subnet: {
             id: subnet1Ref
@@ -186,13 +183,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   properties: {
@@ -220,15 +213,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
@@ -241,7 +230,4 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
     settings: null
     protectedSettings: null
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }

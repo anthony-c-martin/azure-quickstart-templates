@@ -50,7 +50,7 @@ param locationSecondaryNamepsace string {
 var defaultSASKeyName = 'RootManageSharedAccessKey'
 var defaultAuthRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', eventHubNamespaceNamePrimary, defaultSASKeyName)
 
-resource eventHubNamespaceNameSecondary_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource eventHubNamespaceNameSecondary_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: eventHubNamespaceNameSecondary
   location: locationSecondaryNamepsace
   sku: {
@@ -64,7 +64,7 @@ resource eventHubNamespaceNameSecondary_resource 'Microsoft.EventHub/namespaces@
   }
 }
 
-resource eventHubNamespaceNamePrimary_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource eventHubNamespaceNamePrimary_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: eventHubNamespaceNamePrimary
   location: locationPrimaryNamepsace
   sku: {
@@ -76,19 +76,13 @@ resource eventHubNamespaceNamePrimary_resource 'Microsoft.EventHub/namespaces@20
     tag1: 'value1'
     tag2: 'value2'
   }
-  dependsOn: [
-    eventHubNamespaceNameSecondary_resource
-  ]
 }
 
 resource eventHubNamespaceNamePrimary_aliasName 'Microsoft.EventHub/namespaces/disasterRecoveryConfigs@2017-04-01' = {
   name: '${eventHubNamespaceNamePrimary}/${aliasName}'
   properties: {
-    partnerNamespace: eventHubNamespaceNameSecondary_resource.id
+    partnerNamespace: eventHubNamespaceNameSecondary_res.id
   }
-  dependsOn: [
-    eventHubNamespaceNamePrimary_resource
-  ]
 }
 
 output NamespaceDefaultConnectionString string = listkeys(defaultAuthRuleResourceId, '2017-04-01').primaryConnectionString

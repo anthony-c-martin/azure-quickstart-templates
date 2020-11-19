@@ -62,8 +62,8 @@ param location string {
   default: resourceGroup().location
 }
 
-var publicIPAddressName = 'pip'
-var loadBalancerName = 'loadBalancer'
+var publicIPAddressName_var = 'pip'
+var loadBalancerName_var = 'loadBalancer'
 var loadBalancerFrontEndName = 'loadBalancerFrontEnd'
 var loadBalancerBackEndName = 'loadBalancerBackEnd'
 var loadBalancerProbeName = 'loadBalancerHttpProbe'
@@ -80,7 +80,7 @@ var linuxConfiguration = {
   }
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-12-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2019-12-01' = {
   name: vmssName
   location: location
   sku: {
@@ -126,12 +126,12 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-12-01
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, loadBalancerBackEndName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, loadBalancerBackEndName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, loadBalancerNatPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, loadBalancerNatPoolName)
                       }
                     ]
                   }
@@ -143,13 +143,10 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-12-01
       }
     }
   }
-  dependsOn: [
-    loadBalancerName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -159,8 +156,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-05-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -168,7 +165,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
         name: loadBalancerFrontEndName
         properties: {
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
@@ -183,10 +180,10 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
         name: 'roundRobinLBRule'
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, loadBalancerFrontEndName)
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, loadBalancerFrontEndName)
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, loadBalancerBackEndName)
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, loadBalancerBackEndName)
           }
           protocol: 'Tcp'
           frontendPort: 80
@@ -194,7 +191,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName, loadBalancerProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName_var, loadBalancerProbeName)
           }
         }
       }
@@ -215,7 +212,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
         name: loadBalancerNatPoolName
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, loadBalancerFrontEndName)
+            id: resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, loadBalancerFrontEndName)
           }
           protocol: 'Tcp'
           frontendPortRangeStart: 50000
@@ -225,7 +222,4 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-05-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }

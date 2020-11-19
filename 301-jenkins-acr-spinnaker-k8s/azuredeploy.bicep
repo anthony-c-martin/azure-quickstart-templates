@@ -44,25 +44,25 @@ param location string {
 }
 
 var resourcePrefix = 'devops'
-var storageAccountName = concat(resourcePrefix, uniqueString(resourceGroup().id))
-var acrStorageAccountName = 'registry${uniqueString(resourceGroup().id)}'
-var acrName = uniqueString(resourceGroup().id)
-var nicName = '${resourcePrefix}VMNic'
+var storageAccountName_var = concat(resourcePrefix, uniqueString(resourceGroup().id))
+var acrStorageAccountName_var = 'registry${uniqueString(resourceGroup().id)}'
+var acrName_var = uniqueString(resourceGroup().id)
+var nicName_var = '${resourcePrefix}VMNic'
 var subnetName = '${resourcePrefix}Subnet'
-var publicIPAddressName = '${resourcePrefix}PublicIP'
-var vmName = '${resourcePrefix}VM'
-var virtualNetworkName = '${resourcePrefix}VNET'
+var publicIPAddressName_var = '${resourcePrefix}PublicIP'
+var vmName_var = '${resourcePrefix}VM'
+var virtualNetworkName_var = '${resourcePrefix}VNET'
 var vmExtensionName = '${resourcePrefix}Init'
-var frontEndNSGName = '${resourcePrefix}NSG'
-var kubernetesName = 'containerservice-${resourceGroup().name}'
+var frontEndNSGName_var = '${resourcePrefix}NSG'
+var kubernetesName_var = 'containerservice-${resourceGroup().name}'
 var kubernetesDnsPrefix = 'k8s${uniqueString(resourceGroup().id)}'
 var pipelinePort = '8000'
 var artifactsLocation = 'https://raw.githubusercontent.com/Azure/azure-devops-utils/v0.24.0/'
 var extensionScript = '301-jenkins-acr-spinnaker-k8s.sh'
 var artifactsLocationSasToken = ''
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -71,8 +71,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: acrStorageAccountName
+resource acrStorageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: acrStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -90,8 +90,8 @@ resource acrStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-
   }
 }
 
-resource acrName_resource 'Microsoft.ContainerRegistry/registries@2017-03-01' = {
-  name: acrName
+resource acrName 'Microsoft.ContainerRegistry/registries@2017-03-01' = {
+  name: acrName_var
   location: location
   sku: {
     name: 'Basic'
@@ -100,17 +100,14 @@ resource acrName_resource 'Microsoft.ContainerRegistry/registries@2017-03-01' = 
   properties: {
     adminUserEnabled: false
     storageAccount: {
-      name: acrStorageAccountName
-      accessKey: listKeys(acrStorageAccountName_resource.id, '2016-01-01').keys[0].value
+      name: acrStorageAccountName_var
+      accessKey: listKeys(acrStorageAccountName.id, '2016-01-01').keys[0].value
     }
   }
-  dependsOn: [
-    acrStorageAccountName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-09-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-09-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -120,8 +117,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'NSG - Front End'
@@ -160,8 +157,8 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-09-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -175,19 +172,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-09-
         properties: {
           addressPrefix: '10.0.0.0/24'
           networkSecurityGroup: {
-            id: frontEndNSGName_resource.id
+            id: frontEndNSGName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    frontEndNSGName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-09-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -196,30 +190,26 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: '${virtualNetworkName_resource.id}/subnets/${subnetName}'
+            id: '${virtualNetworkName.id}/subnets/${subnetName}'
           }
         }
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_D1_v2'
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -241,7 +231,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -252,18 +242,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -276,19 +263,18 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} -ai "${servicePrincipalAppId}" -ak "${servicePrincipalAppKey}" -si "${subscription().subscriptionId}" -ti "${subscription().tenantId}" -un "${adminUsername}" -gr "${gitRepository}" -rg "${resourceGroup().name}" -mf "${kubernetesName_resource.properties.masterProfile.fqdn}" -san "${storageAccountName}" -sak "${listKeys(storageAccountName_resource.id, '2016-01-01').keys[0].value}" -acr "${acrName_resource.properties.loginServer}" -dr "${dockerRepository}" -pp "${pipelinePort}" -jf "${reference(publicIPAddressName).dnsSettings.fqdn}" -al "${artifactsLocation}" -st "${artifactsLocationSasToken}"'
+      commandToExecute: './${extensionScript} -ai "${servicePrincipalAppId}" -ak "${servicePrincipalAppKey}" -si "${subscription().subscriptionId}" -ti "${subscription().tenantId}" -un "${adminUsername}" -gr "${gitRepository}" -rg "${resourceGroup().name}" -mf "${kubernetesName.properties.masterProfile.fqdn}" -san "${storageAccountName_var}" -sak "${listKeys(storageAccountName.id, '2016-01-01').keys[0].value}" -acr "${acrName.properties.loginServer}" -dr "${dockerRepository}" -pp "${pipelinePort}" -jf "${reference(publicIPAddressName_var).dnsSettings.fqdn}" -al "${artifactsLocation}" -st "${artifactsLocationSasToken}"'
     }
   }
   dependsOn: [
-    vmName_resource
-    acrName_resource
-    kubernetesName_resource
+    acrName
+    kubernetesName
   ]
 }
 
-resource kubernetesName_resource 'Microsoft.ContainerService/containerServices@2016-09-30' = {
+resource kubernetesName 'Microsoft.ContainerService/containerServices@2016-09-30' = {
   location: location
-  name: kubernetesName
+  name: kubernetesName_var
   properties: {
     orchestratorProfile: {
       orchestratorType: 'Kubernetes'
@@ -316,15 +302,15 @@ resource kubernetesName_resource 'Microsoft.ContainerService/containerServices@2
       }
     }
     servicePrincipalProfile: {
-      ClientId: servicePrincipalAppId
-      Secret: servicePrincipalAppKey
+      clientId: servicePrincipalAppId
+      secret: servicePrincipalAppKey
     }
   }
 }
 
-output devopsVmFQDN string = reference(publicIPAddressName).dnsSettings.fqdn
-output jenkinsURL string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}'
-output SSH string = 'ssh -L 8080:localhost:8080 -L 9000:localhost:9000 -L 8084:localhost:8084 -L 8001:localhost:8001 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
-output azureContainerRegistryUrl string = acrName_resource.properties.loginServer
-output kubernetesMasterFQDN string = kubernetesName_resource.properties.masterProfile.fqdn
-output kubernetesMasterSsh string = 'ssh ${adminUsername}@${kubernetesName_resource.properties.masterProfile.fqdn}'
+output devopsVmFQDN string = reference(publicIPAddressName_var).dnsSettings.fqdn
+output jenkinsURL string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output SSH string = 'ssh -L 8080:localhost:8080 -L 9000:localhost:9000 -L 8084:localhost:8084 -L 8001:localhost:8001 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output azureContainerRegistryUrl string = acrName.properties.loginServer
+output kubernetesMasterFQDN string = kubernetesName.properties.masterProfile.fqdn
+output kubernetesMasterSsh string = 'ssh ${adminUsername}@${kubernetesName.properties.masterProfile.fqdn}'

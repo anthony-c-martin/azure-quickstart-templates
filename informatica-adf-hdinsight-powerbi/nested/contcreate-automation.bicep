@@ -44,7 +44,7 @@ param adfStorageAccName string
 param informaticaTags object
 param quickstartTags object
 
-resource automationAccountName_resource 'Microsoft.Automation/automationAccounts@2015-01-01-preview' = {
+resource automationAccountName_res 'Microsoft.Automation/automationAccounts@2015-01-01-preview' = {
   name: automationAccountName
   location: location
   tags: {
@@ -77,9 +77,6 @@ resource automationAccountName_runbookName 'Microsoft.Automation/automationAccou
       version: '1.0.0.0'
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_credential1Name 'Microsoft.Automation/automationAccounts/credentials@2015-01-01-preview' = {
@@ -94,9 +91,6 @@ resource automationAccountName_credential1Name 'Microsoft.Automation/automationA
     userName: cred1Username
     password: cred1Password
   }
-  dependsOn: [
-    automationAccountName_resource
-  ]
 }
 
 resource automationAccountName_jobIdCont 'Microsoft.Automation/automationAccounts/jobs@2015-10-31' = {
@@ -116,9 +110,4 @@ resource automationAccountName_jobIdCont 'Microsoft.Automation/automationAccount
       adfStorageAccKey: adfStorageAccKey
     }
   }
-  dependsOn: [
-    automationAccountName_resource
-    automationAccountName_runbookName
-    automationAccountName_credential1Name
-  ]
 }

@@ -82,7 +82,7 @@ param enableBgp string {
   default: 'false'
 }
 
-resource wanname_resource 'Microsoft.Network/virtualWans@2020-05-01' = {
+resource wanname_res 'Microsoft.Network/virtualWans@2020-05-01' = {
   name: wanname
   location: location
   properties: {
@@ -90,21 +90,18 @@ resource wanname_resource 'Microsoft.Network/virtualWans@2020-05-01' = {
   }
 }
 
-resource hubname_resource 'Microsoft.Network/virtualHubs@2020-05-01' = {
+resource hubname_res 'Microsoft.Network/virtualHubs@2020-05-01' = {
   name: hubname
   location: location
   properties: {
     addressPrefix: addressPrefix
     virtualWan: {
-      id: wanname_resource.id
+      id: wanname_res.id
     }
   }
-  dependsOn: [
-    wanname_resource
-  ]
 }
 
-resource vpnsitename_resource 'Microsoft.Network/vpnSites@2020-05-01' = {
+resource vpnsitename_res 'Microsoft.Network/vpnSites@2020-05-01' = {
   name: vpnsitename
   location: location
   properties: {
@@ -121,15 +118,12 @@ resource vpnsitename_resource 'Microsoft.Network/vpnSites@2020-05-01' = {
     }
     ipAddress: vpnsitePublicIPAddress
     virtualWan: {
-      id: wanname_resource.id
+      id: wanname_res.id
     }
   }
-  dependsOn: [
-    wanname_resource
-  ]
 }
 
-resource vpngatewayname_resource 'Microsoft.Network/vpnGateways@2020-05-01' = {
+resource vpngatewayname_res 'Microsoft.Network/vpnGateways@2020-05-01' = {
   name: vpngatewayname
   location: location
   properties: {
@@ -140,20 +134,16 @@ resource vpngatewayname_resource 'Microsoft.Network/vpnGateways@2020-05-01' = {
           connectionBandwidth: 10
           enableBgp: enableBgp
           remoteVpnSite: {
-            id: vpnsitename_resource.id
+            id: vpnsitename_res.id
           }
         }
       }
     ]
     virtualHub: {
-      id: hubname_resource.id
+      id: hubname_res.id
     }
     bgpSettings: {
       asn: 65515
     }
   }
-  dependsOn: [
-    hubname_resource
-    vpnsitename_resource
-  ]
 }

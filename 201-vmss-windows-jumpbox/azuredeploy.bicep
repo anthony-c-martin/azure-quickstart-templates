@@ -40,24 +40,24 @@ param adminPassword string {
   secure: true
 }
 
-var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
+var namingInfix_var = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
 var longNamingInfix = toLower(vmssName)
-var jumpBoxName = '${namingInfix}jbox'
-var jumpBoxSAName = '${uniqueString('${resourceGroup().id}${newStorageAccountSuffix}jumpboxsa')}jb'
-var jumpBoxOSDiskName = '${jumpBoxName}_OSDisk'
-var jumpBoxVHDContainerName = '${jumpBoxName}vhd'
-var jumpBoxIPConfigName = '${jumpBoxName}ipconfig'
-var jumpBoxNicName = '${jumpBoxName}nic'
+var jumpBoxName_var = '${namingInfix_var}jbox'
+var jumpBoxSAName_var = '${uniqueString('${resourceGroup().id}${newStorageAccountSuffix}jumpboxsa')}jb'
+var jumpBoxOSDiskName = '${jumpBoxName_var}_OSDisk'
+var jumpBoxVHDContainerName = '${jumpBoxName_var}vhd'
+var jumpBoxIPConfigName = '${jumpBoxName_var}ipconfig'
+var jumpBoxNicName_var = '${jumpBoxName_var}nic'
 var storageAccountType = 'Standard_LRS'
-var newStorageAccountSuffix = '${namingInfix}sa'
+var newStorageAccountSuffix = '${namingInfix_var}sa'
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${namingInfix}vnet'
-var subnetName = '${namingInfix}subnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var publicIPAddressName = '${namingInfix}pip'
-var nicName = '${namingInfix}nic'
-var ipConfigName = '${namingInfix}ipconfig'
+var virtualNetworkName_var = '${namingInfix_var}vnet'
+var subnetName = '${namingInfix_var}subnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var publicIPAddressName_var = '${namingInfix_var}pip'
+var nicName = '${namingInfix_var}nic'
+var ipConfigName = '${namingInfix_var}ipconfig'
 var osType = {
   publisher: 'MicrosoftWindowsServer'
   offer: 'WindowsServer'
@@ -65,10 +65,10 @@ var osType = {
   version: 'latest'
 }
 var imageReference = osType
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: resourceGroup().location
   properties: {
     securityRules: [
@@ -89,8 +89,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-04-01' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -104,27 +104,24 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-04-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource jumpBoxSAName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: jumpBoxSAName
+resource jumpBoxSAName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: jumpBoxSAName_var
   location: resourceGroup().location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-04-01' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -134,8 +131,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-04-01' = {
-  name: jumpBoxNicName
+resource jumpBoxNicName 'Microsoft.Network/networkInterfaces@2017-04-01' = {
+  name: jumpBoxNicName_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -144,7 +141,7 @@ resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-04-01
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -153,21 +150,17 @@ resource jumpBoxNicName_resource 'Microsoft.Network/networkInterfaces@2017-04-01
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource jumpBoxName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: jumpBoxName
+resource jumpBoxName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: jumpBoxName_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: vmSku
     }
     osProfile: {
-      computerName: jumpBoxName
+      computerName: jumpBoxName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -182,25 +175,21 @@ resource jumpBoxName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: jumpBoxNicName_resource.id
+          id: jumpBoxNicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: 'http://${jumpBoxSAName}.blob.core.windows.net'
+        storageUri: 'http://${jumpBoxSAName_var}.blob.core.windows.net'
       }
     }
   }
-  dependsOn: [
-    jumpBoxSAName_resource
-    jumpBoxNicName_resource
-  ]
 }
 
-resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
-  name: namingInfix
+resource namingInfix 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+  name: namingInfix_var
   location: resourceGroup().location
   sku: {
     name: vmSku
@@ -221,7 +210,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03
         imageReference: imageReference
       }
       osProfile: {
-        computerNamePrefix: namingInfix
+        computerNamePrefix: namingInfix_var
         adminUsername: adminUsername
         adminPassword: adminPassword
       }
@@ -236,7 +225,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName}/subnets/${subnetName}'
+                      id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/virtualNetworks/${virtualNetworkName_var}/subnets/${subnetName}'
                     }
                   }
                 }
@@ -247,7 +236,4 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03
       }
     }
   }
-  dependsOn: [
-    virtualNetworkName_resource
-  ]
 }

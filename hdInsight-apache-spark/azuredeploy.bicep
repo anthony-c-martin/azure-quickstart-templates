@@ -55,11 +55,11 @@ var clusterType = 'hadoop'
 var clusterVnetSubnetName = '${clusterName}-subnet'
 var clusterVnetAddressSpace = '172.16.228.0/23'
 var clusterVNetSubnetAddressRange = '172.16.229.0/24'
-var clusterStorageAccountName = take('store${clusterName}', 24)
-var clusterVNetName = '${clusterName}-vnet'
+var clusterStorageAccountName_var = take('store${clusterName}', 24)
+var clusterVNetName_var = '${clusterName}-vnet'
 
-resource clusterVNetName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: clusterVNetName
+resource clusterVNetName 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+  name: clusterVNetName_var
   location: location
   properties: {
     addressSpace: {
@@ -78,8 +78,8 @@ resource clusterVNetName_resource 'Microsoft.Network/virtualNetworks@2019-06-01'
   }
 }
 
-resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-04-01' = {
-  name: clusterStorageAccountName
+resource clusterStorageAccountName 'Microsoft.Storage/storageAccounts@2019-04-01' = {
+  name: clusterStorageAccountName_var
   location: location
   kind: 'Storage'
   sku: {
@@ -87,7 +87,7 @@ resource clusterStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2
   }
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -114,10 +114,10 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
     storageProfile: {
       storageaccounts: [
         {
-          name: replace(replace(clusterStorageAccountName_resource.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
+          name: replace(replace(clusterStorageAccountName.properties.primaryEndpoints.blob, 'https://', ''), '/', '')
           isDefault: true
           container: clusterName
-          key: listKeys(clusterStorageAccountName_resource.id, '2019-04-01').keys[0].value
+          key: listKeys(clusterStorageAccountName.id, '2019-04-01').keys[0].value
         }
       ]
     }
@@ -136,8 +136,8 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
             }
           }
           virtualNetworkProfile: {
-            id: clusterVNetName_resource.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName, clusterVnetSubnetName)
+            id: clusterVNetName.id
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName_var, clusterVnetSubnetName)
           }
           scriptActions: [
             {
@@ -159,8 +159,8 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
             }
           }
           virtualNetworkProfile: {
-            id: clusterVNetName_resource.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName, clusterVnetSubnetName)
+            id: clusterVNetName.id
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName_var, clusterVnetSubnetName)
           }
         }
         {
@@ -176,18 +176,17 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
             }
           }
           virtualNetworkProfile: {
-            id: clusterVNetName_resource.id
-            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName, clusterVnetSubnetName)
+            id: clusterVNetName.id
+            subnet: resourceId('Microsoft.Network/virtualNetworks/subnets', clusterVNetName_var, clusterVnetSubnetName)
           }
         }
       ]
     }
   }
   dependsOn: [
-    clusterStorageAccountName_resource
-    clusterVNetName_resource
+    clusterStorageAccountName
   ]
 }
 
-output vnet object = clusterVNetName_resource.properties
-output cluster object = clusterName_resource.properties
+output vnet object = clusterVNetName.properties
+output cluster object = clusterName_res.properties

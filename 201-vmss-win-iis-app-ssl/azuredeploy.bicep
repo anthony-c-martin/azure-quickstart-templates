@@ -198,20 +198,20 @@ var appVnetSubnet2Name = 'ServiceSubNet'
 var appVnetSubnet2Prefix = '10.0.1.0/24'
 var appVMImagePublisher = 'MicrosoftWindowsServer'
 var appVMImageOffer = 'WindowsServer'
-var frontEndVMSize_variable = frontEndVMSize
-var serviceVMSize_variable = serviceVMSize
+var frontEndVMSize_var = frontEndVMSize
+var serviceVMSize_var = serviceVMSize
 var appVMSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', appVnetSubnet1Name)
 var serviceVMSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', appVnetSubnet1Name)
-var appPublicIPName = 'appPublicIP'
-var servicePublicIPName = 'servicePublicIP'
-var frontEndVMSSName_variable = frontEndVMSSName
-var serviceVMSSName_variable = serviceVMSSName
-var publicIPAddressID = appPublicIPName_resource.id
-var publicIPAddressID2 = servicePublicIPName_resource.id
-var lbName = 'loadBalancer1'
-var lbServiceName = 'loadBalancer2'
-var lbID = lbName_resource.id
-var lbServiceID = lbServiceName_resource.id
+var appPublicIPName_var = 'appPublicIP'
+var servicePublicIPName_var = 'servicePublicIP'
+var frontEndVMSSName_var = frontEndVMSSName
+var serviceVMSSName_var = serviceVMSSName
+var publicIPAddressID = appPublicIPName.id
+var publicIPAddressID2 = servicePublicIPName.id
+var lbName_var = 'loadBalancer1'
+var lbServiceName_var = 'loadBalancer2'
+var lbID = lbName.id
+var lbServiceID = lbServiceName.id
 var lbFEName = 'loadBalancerFrontEndWeb'
 var lbFEServiceName = 'loadBalancerFrontEndService'
 var lbWebProbeName = 'loadBalancerWebProbe'
@@ -244,8 +244,8 @@ var wadProcessorMetricName3 = 'Percentage CPU'
 var lbWebHttpsProbeName = 'loadBalancerWebHttpsProbe'
 var lbWebHttpsProbeID = '${lbID}/probes/${lbWebHttpsProbeName}'
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2015-06-15' = {
+  name: lbName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -339,13 +339,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    appPublicIPName_resource
-  ]
 }
 
-resource lbServiceName_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
-  name: lbServiceName
+resource lbServiceName 'Microsoft.Network/loadBalancers@2015-06-15' = {
+  name: lbServiceName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -411,19 +408,16 @@ resource lbServiceName_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    servicePublicIPName_resource
-  ]
 }
 
-resource frontEndVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
-  name: frontEndVMSSName_variable
+resource frontEndVMSSName_res 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
+  name: frontEndVMSSName_var
   location: location
   tags: {
     vmsstag1: 'Rev VMSS FE'
   }
   sku: {
-    name: frontEndVMSize_variable
+    name: frontEndVMSize_var
     tier: 'Standard'
     capacity: instanceCount
   }
@@ -448,7 +442,7 @@ resource frontEndVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@20
         }
       }
       osProfile: {
-        computerNamePrefix: frontEndVMSSName_variable
+        computerNamePrefix: frontEndVMSSName_var
         adminUsername: appVMAdminUserName
         adminPassword: appVMAdminPassword
         secrets: [
@@ -527,20 +521,16 @@ resource frontEndVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@20
       }
     }
   }
-  dependsOn: [
-    lbName_resource
-    appVnet
-  ]
 }
 
-resource serviceVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
-  name: serviceVMSSName_variable
+resource serviceVMSSName_res 'Microsoft.Compute/virtualMachineScaleSets@2016-04-30-preview' = {
+  name: serviceVMSSName_var
   location: location
   tags: {
     vmsstag1: 'rev Service'
   }
   sku: {
-    name: serviceVMSize_variable
+    name: serviceVMSize_var
     tier: 'Standard'
     capacity: instanceCount
   }
@@ -565,7 +555,7 @@ resource serviceVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@201
         }
       }
       osProfile: {
-        computerNamePrefix: serviceVMSSName_variable
+        computerNamePrefix: serviceVMSSName_var
         adminUsername: appVMAdminUserName
         adminPassword: appVMAdminPassword
       }
@@ -629,10 +619,6 @@ resource serviceVMSSName_resource 'Microsoft.Compute/virtualMachineScaleSets@201
       }
     }
   }
-  dependsOn: [
-    lbServiceName_resource
-    appVnet
-  ]
 }
 
 resource appNetworkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
@@ -719,13 +705,10 @@ resource appVnet 'Microsoft.Network/virtualNetworks@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    appNetworkSecurityGroup
-  ]
 }
 
-resource appPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: appPublicIPName
+resource appPublicIPName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: appPublicIPName_var
   location: location
   tags: {
     displayName: 'appPublicIP'
@@ -739,8 +722,8 @@ resource appPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-1
   dependsOn: []
 }
 
-resource servicePublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: servicePublicIPName
+resource servicePublicIPName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: servicePublicIPName_var
   location: location
   tags: {
     displayName: 'servicePublicIP'
@@ -756,10 +739,10 @@ resource servicePublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-
 
 resource frontEndVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
   location: location
-  name: '${frontEndVMSSName_variable}autoscale'
+  name: '${frontEndVMSSName_var}autoscale'
   properties: {
-    name: '${frontEndVMSSName_variable}autoscale'
-    targetResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_variable}'
+    name: '${frontEndVMSSName_var}autoscale'
+    targetResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_var}'
     enabled: true
     profiles: [
       {
@@ -774,7 +757,7 @@ resource frontEndVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-0
             metricTrigger: {
               metricName: wadProcessorMetricName2
               metricNamespace: ''
-              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_variable}'
+              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -793,7 +776,7 @@ resource frontEndVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-0
             metricTrigger: {
               metricName: wadProcessorMetricName2
               metricNamespace: ''
-              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_variable}'
+              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${frontEndVMSSName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -813,22 +796,19 @@ resource frontEndVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-0
     ]
   }
   tags: {
-    displayName: '${frontEndVMSSName_variable}autoscale'
+    displayName: '${frontEndVMSSName_var}autoscale'
   }
-  dependsOn: [
-    frontEndVMSSName_resource
-  ]
 }
 
 resource serviceVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
-  name: '${serviceVMSSName_variable}autoscale'
+  name: '${serviceVMSSName_var}autoscale'
   location: location
   tags: {
-    displayName: '${serviceVMSSName_variable}autoscale'
+    displayName: '${serviceVMSSName_var}autoscale'
   }
   properties: {
-    name: '${serviceVMSSName_variable}autoscale'
-    targetResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_variable}'
+    name: '${serviceVMSSName_var}autoscale'
+    targetResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_var}'
     enabled: true
     profiles: [
       {
@@ -843,7 +823,7 @@ resource serviceVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-04
             metricTrigger: {
               metricName: wadProcessorMetricName3
               metricNamespace: ''
-              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_variable}'
+              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -862,7 +842,7 @@ resource serviceVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-04
             metricTrigger: {
               metricName: wadProcessorMetricName3
               metricNamespace: ''
-              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_variable}'
+              metricResourceUri: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/${serviceVMSSName_var}'
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -881,7 +861,4 @@ resource serviceVMSSName_autoscale 'Microsoft.Insights/autoscaleSettings@2015-04
       }
     ]
   }
-  dependsOn: [
-    serviceVMSSName_resource
-  ]
 }

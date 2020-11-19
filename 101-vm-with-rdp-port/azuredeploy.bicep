@@ -40,16 +40,16 @@ param vmSize string {
   default: 'Standard_DS1_v2'
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}sardpvm'
-var virtualNetworkName = 'rdpVNET'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}sardpvm'
+var virtualNetworkName_var = 'rdpVNET'
 var vnetAddressRange = '10.0.0.0/16'
 var subnetAddressRange = '10.0.0.0/24'
 var subnetName = 'Subnet'
-var subnet_id = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnet_id = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
 var imageSku = '2019-Datacenter'
-var networkSecurityGroupName = 'Subnet-nsg'
+var networkSecurityGroupName_var = 'Subnet-nsg'
 
 resource publicIp 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: 'publicIp'
@@ -62,8 +62,8 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -71,8 +71,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'StorageV2'
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -93,8 +93,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -108,15 +108,12 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: subnetAddressRange
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
 resource loadBalancer 'Microsoft.Network/loadBalancers@2020-05-01' = {
@@ -153,9 +150,6 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    publicIp
-  ]
 }
 
 resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
@@ -184,13 +178,9 @@ resource vmName_nic 'Microsoft.Network/networkInterfaces@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    loadBalancer
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -223,12 +213,8 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: reference(storageAccountName, '2019-06-01').primaryEndpoints.blob
+        storageUri: reference(storageAccountName_var, '2019-06-01').primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    vmName_nic
-  ]
 }

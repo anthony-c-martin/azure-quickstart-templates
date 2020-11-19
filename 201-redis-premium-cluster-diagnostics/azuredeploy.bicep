@@ -37,7 +37,7 @@ param enableNonSslPort bool {
   default: false
 }
 
-resource redisCacheName_resource 'Microsoft.Cache/Redis@2015-08-01' = {
+resource redisCacheName_res 'Microsoft.Cache/Redis@2015-08-01' = {
   name: redisCacheName
   location: redisCacheLocation
   properties: {
@@ -58,7 +58,4 @@ resource redisCacheName_Microsoft_Insights_service 'Microsoft.Cache/redis/provid
     status: 'ON'
     storageAccountName: existingDiagnosticsStorageAccountName
   }
-  dependsOn: [
-    redisCacheName_resource
-  ]
 }

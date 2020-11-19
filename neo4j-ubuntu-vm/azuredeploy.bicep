@@ -74,20 +74,20 @@ param location string {
 
 var sshKeyPath = '/home/${vmAdminUsername}/.ssh/authorized_keys'
 var scriptsFolder = 'scripts/'
-var virtualNetworkName = '${vmName}-vnet'
-var networkSecurityGroupName = '${vmName}-nsg'
-var networkInterfaceName = '${vmName}-nic'
-var publicIPAddressName = '${vmName}-ip'
+var virtualNetworkName_var = '${vmName}-vnet'
+var networkSecurityGroupName_var = '${vmName}-nsg'
+var networkInterfaceName_var = '${vmName}-nic'
+var publicIPAddressName_var = '${vmName}-ip'
 var virtualNetworkPrefix = '10.0.0.0/16'
 var virtualNetworkSubnetName = 'default'
 var virtualNetworkSubnetPrefix = '10.0.0.0/24'
-var networkInterfaceSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, virtualNetworkSubnetName)
+var networkInterfaceSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, virtualNetworkSubnetName)
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
-    displayName: virtualNetworkName
+    displayName: virtualNetworkName_var
   }
   properties: {
     addressSpace: {
@@ -101,19 +101,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-09-
         properties: {
           addressPrefix: virtualNetworkSubnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2017-09-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2017-09-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -177,11 +174,11 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2017-09-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2017-09-01' = {
+  name: networkInterfaceName_var
   location: location
   tags: {
-    displayName: networkInterfaceName
+    displayName: networkInterfaceName_var
   }
   properties: {
     ipConfigurations: [
@@ -193,23 +190,19 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2017
             id: networkInterfaceSubnetRef
           }
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
-  ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-09-01' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
-    displayName: publicIPAddressName
+    displayName: publicIPAddressName_var
   }
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -220,7 +213,7 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   dependsOn: []
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   tags: {
@@ -257,21 +250,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
-          StorageAccountType: 'Premium_LRS'
+          storageAccountType: 'Premium_LRS'
         }
       }
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource vmName_installneo4j 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
@@ -294,9 +284,6 @@ resource vmName_installneo4j 'Microsoft.Compute/virtualMachines/extensions@2017-
       commandToExecute: 'sh install-neo4j.sh ${neo4jEdition}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-output hostname string = reference(publicIPAddressName).dnsSettings.fqdn
+output hostname string = reference(publicIPAddressName_var).dnsSettings.fqdn

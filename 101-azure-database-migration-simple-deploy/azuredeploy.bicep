@@ -20,7 +20,7 @@ param subnetName string {
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnetName
   location: location
   properties: {
@@ -37,12 +37,9 @@ resource vnetName_subnetName 'Microsoft.Network/virtualNetworks/subnets@2020-06-
   properties: {
     addressPrefix: '10.0.0.0/24'
   }
-  dependsOn: [
-    vnetName_resource
-  ]
 }
 
-resource serviceName_resource 'Microsoft.DataMigration/services@2018-07-15-preview' = {
+resource serviceName_res 'Microsoft.DataMigration/services@2018-07-15-preview' = {
   name: serviceName
   location: location
   sku: {
@@ -53,7 +50,4 @@ resource serviceName_resource 'Microsoft.DataMigration/services@2018-07-15-previ
   properties: {
     virtualSubnetId: vnetName_subnetName.id
   }
-  dependsOn: [
-    vnetName_subnetName
-  ]
 }

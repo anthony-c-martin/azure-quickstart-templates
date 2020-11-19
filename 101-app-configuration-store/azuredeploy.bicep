@@ -16,7 +16,7 @@ param skuName string {
   default: 'standard'
 }
 
-resource configStoreName_resource 'Microsoft.AppConfiguration/configurationStores@2019-10-01' = {
+resource configStoreName_res 'Microsoft.AppConfiguration/configurationStores@2019-10-01' = {
   name: configStoreName
   location: location
   sku: {

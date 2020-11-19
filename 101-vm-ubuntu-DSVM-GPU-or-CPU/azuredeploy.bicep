@@ -64,13 +64,13 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var networkInterfaceName = '${vmName}NetInt'
+var networkInterfaceName_var = '${vmName}NetInt'
 var virtualMachineName = vmName
-var publicIpAddressName = '${vmName}PublicIP'
+var publicIpAddressName_var = '${vmName}PublicIP'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var nsgId = networkSecurityGroupName_resource.id
+var nsgId = networkSecurityGroupName_res.id
 var osDiskType = 'Standard_LRS'
-var storageAccountName = 'storage${uniqueString(resourceGroup().id)}'
+var storageAccountName_var = 'storage${uniqueString(resourceGroup().id)}'
 var storageAccountType = 'Standard_LRS'
 var storageAccountKind = 'Storage'
 var vmSize = {
@@ -93,8 +93,8 @@ var linuxConfiguration = {
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -105,8 +105,8 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
@@ -115,14 +115,9 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
       id: nsgId
     }
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-  ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -170,7 +165,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -192,20 +187,20 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2020-05-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIpAddresses@2020-05-01' = {
+  name: publicIpAddressName_var
   location: location
   sku: {
     name: 'Basic'
     tier: 'Regional'
   }
   properties: {
-    publicIpAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -237,7 +232,7 @@ resource virtualMachineName_Cpu_Gpu 'Microsoft.Compute/virtualMachines@2019-07-0
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
@@ -248,10 +243,6 @@ resource virtualMachineName_Cpu_Gpu 'Microsoft.Compute/virtualMachines@2019-07-0
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-    storageAccountName_resource
-  ]
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

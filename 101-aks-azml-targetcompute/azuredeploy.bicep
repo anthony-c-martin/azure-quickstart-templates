@@ -74,7 +74,7 @@ param sshRSAPublicKey string {
 
 var dnsPrefix = clusterName
 
-resource clusterName_resource 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
+resource clusterName_res 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
   name: clusterName
   location: location
   sku: {
@@ -139,7 +139,4 @@ resource clusterName_agentpool 'Microsoft.ContainerService/managedClusters/agent
     mode: 'System'
     osType: 'Linux'
   }
-  dependsOn: [
-    clusterName_resource
-  ]
 }

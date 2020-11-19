@@ -64,35 +64,35 @@ param location string {
 var service = 'tomcat'
 var baseImageName = '${resourceNamePrefix}-base-${uniqueString(resourceGroup().id)}'
 var imageId = resourceId('Microsoft.Compute/images', baseImageName)
-var jenkinsVmName = '${resourceNamePrefix}-jenkins'
-var vmExtensionName = '${jenkinsVmName}-init'
-var jenkinsNic = '${jenkinsVmName}-nic'
-var jenkinsIp = '${jenkinsVmName}-ip'
-var blueVmss = '${resourceNamePrefix}-blue'
-var greenVmss = '${resourceNamePrefix}-green'
-var blueComputerNamePrefix = blueVmss
-var greenComputerNamePrefix = greenVmss
-var ipName = '${resourceNamePrefix}-ip'
-var lbName = '${resourceNamePrefix}-lb'
-var vnetName = '${resourceNamePrefix}-vnet'
-var nsgName = '${resourceNamePrefix}-nsg'
+var jenkinsVmName_var = '${resourceNamePrefix}-jenkins'
+var vmExtensionName = '${jenkinsVmName_var}-init'
+var jenkinsNic_var = '${jenkinsVmName_var}-nic'
+var jenkinsIp_var = '${jenkinsVmName_var}-ip'
+var blueVmss_var = '${resourceNamePrefix}-blue'
+var greenVmss_var = '${resourceNamePrefix}-green'
+var blueComputerNamePrefix = blueVmss_var
+var greenComputerNamePrefix = greenVmss_var
+var ipName_var = '${resourceNamePrefix}-ip'
+var lbName_var = '${resourceNamePrefix}-lb'
+var vnetName_var = '${resourceNamePrefix}-vnet'
+var nsgName_var = '${resourceNamePrefix}-nsg'
 var subnetName = '${resourceNamePrefix}-subnet'
 var lbFrontendName = 'loadBalancerFrontEnd'
-var lbFrontendId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName, lbFrontendName)
+var lbFrontendId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName_var, lbFrontendName)
 var lbBlueBeName = 'blue-bepool'
 var lbBlueNatPoolName = 'blue-natpool'
 var lbGreenBeName = 'green-bepool'
 var lbGreenNatPoolName = 'green-natpool'
-var artifactsLocation_variable = artifactsLocation
+var artifactsLocation_var = artifactsLocation
 var extensionScript = '301-jenkins-vmss-zero-downtime-deployment.sh'
-var artifactsLocationSasToken_variable = artifactsLocationSasToken
+var artifactsLocationSasToken_var = artifactsLocationSasToken
 
-resource jenkinsVmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: jenkinsVmName
+resource jenkinsVmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: jenkinsVmName_var
   location: location
   properties: {
     osProfile: {
-      computerName: jenkinsVmName
+      computerName: jenkinsVmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -117,7 +117,7 @@ resource jenkinsVmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' =
         version: 'latest'
       }
       osDisk: {
-        name: '${jenkinsVmName}-os-disk'
+        name: '${jenkinsVmName_var}-os-disk'
         createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Standard_LRS'
@@ -128,18 +128,15 @@ resource jenkinsVmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' =
     networkProfile: {
       networkInterfaces: [
         {
-          id: jenkinsNic_resource.id
+          id: jenkinsNic.id
         }
       ]
     }
   }
-  dependsOn: [
-    jenkinsNic_resource
-  ]
 }
 
 resource jenkinsVmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
-  name: '${jenkinsVmName}/${vmExtensionName}'
+  name: '${jenkinsVmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -148,20 +145,17 @@ resource jenkinsVmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extens
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [
-        '${artifactsLocation_variable}/quickstart_templates/zero_downtime_deployment/${extensionScript}${artifactsLocationSasToken_variable}'
+        '${artifactsLocation_var}/quickstart_templates/zero_downtime_deployment/${extensionScript}${artifactsLocationSasToken_var}'
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} --app_id "${servicePrincipalAppId}" --app_key "${servicePrincipalAppKey}" --subscription_id "${subscription().subscriptionId}" --tenant_id "${subscription().tenantId}" --resource_group "${resourceGroup().name}" --location "${location}" --name_prefix "${resourceNamePrefix}" --image_name "${baseImageName}" --jenkins_fqdn "${reference(jenkinsIp).dnsSettings.fqdn}" --artifacts_location "${artifactsLocation_variable}" --sas_token "${artifactsLocationSasToken_variable}"'
+      commandToExecute: './${extensionScript} --app_id "${servicePrincipalAppId}" --app_key "${servicePrincipalAppKey}" --subscription_id "${subscription().subscriptionId}" --tenant_id "${subscription().tenantId}" --resource_group "${resourceGroup().name}" --location "${location}" --name_prefix "${resourceNamePrefix}" --image_name "${baseImageName}" --jenkins_fqdn "${reference(jenkinsIp_var).dnsSettings.fqdn}" --artifacts_location "${artifactsLocation_var}" --sas_token "${artifactsLocationSasToken_var}"'
     }
   }
-  dependsOn: [
-    jenkinsVmName_resource
-  ]
 }
 
-resource jenkinsNic_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = {
-  name: jenkinsNic
+resource jenkinsNic 'Microsoft.Network/networkInterfaces@2016-09-01' = {
+  name: jenkinsNic_var
   location: location
   properties: {
     ipConfigurations: [
@@ -169,28 +163,23 @@ resource jenkinsNic_resource 'Microsoft.Network/networkInterfaces@2016-09-01' = 
         name: 'ipconfig1'
         properties: {
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: jenkinsIp_resource.id
+          publicIPAddress: {
+            id: jenkinsIp.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: nsgName_resource.id
+      id: nsgName.id
     }
   }
-  dependsOn: [
-    vnetName_resource
-    jenkinsIp_resource
-    nsgName_resource
-  ]
 }
 
-resource jenkinsIp_resource 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
-  name: jenkinsIp
+resource jenkinsIp 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
+  name: jenkinsIp_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -200,12 +189,12 @@ resource jenkinsIp_resource 'Microsoft.Network/publicIPAddresses@2017-06-01' = {
   }
 }
 
-resource blueVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource blueVmss 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   sku: {
     name: virtualMachineSize
     capacity: 2
   }
-  name: blueVmss
+  name: blueVmss_var
   location: location
   properties: {
     singlePlacementGroup: true
@@ -248,7 +237,7 @@ resource blueVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
               primary: true
               enableAcceleratedNetworking: false
               networkSecurityGroup: {
-                id: nsgName_resource.id
+                id: nsgName.id
               }
               dnsSettings: {
                 dnsServers: []
@@ -258,17 +247,17 @@ resource blueVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
                   name: '${blueComputerNamePrefix}IPConfig'
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
                     }
                     privateIPAddressVersion: 'IPv4'
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, lbBlueBeName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, lbBlueBeName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName, lbBlueNatPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName_var, lbBlueNatPoolName)
                       }
                     ]
                   }
@@ -281,20 +270,14 @@ resource blueVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30
     }
     overprovision: true
   }
-  dependsOn: [
-    nsgName_resource
-    vnetName_resource
-    lbName_resource
-    jenkinsVmName_vmExtensionName
-  ]
 }
 
-resource greenVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource greenVmss 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   sku: {
     name: virtualMachineSize
     capacity: 2
   }
-  name: greenVmss
+  name: greenVmss_var
   location: location
   properties: {
     singlePlacementGroup: true
@@ -337,7 +320,7 @@ resource greenVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-3
               primary: true
               enableAcceleratedNetworking: false
               networkSecurityGroup: {
-                id: nsgName_resource.id
+                id: nsgName.id
               }
               dnsSettings: {
                 dnsServers: []
@@ -347,17 +330,17 @@ resource greenVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-3
                   name: '${greenComputerNamePrefix}IPConfig'
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, subnetName)
                     }
                     privateIPAddressVersion: 'IPv4'
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, lbGreenBeName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, lbGreenBeName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName, lbGreenNatPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName_var, lbGreenNatPoolName)
                       }
                     ]
                   }
@@ -370,16 +353,10 @@ resource greenVmss_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-3
     }
     overprovision: true
   }
-  dependsOn: [
-    nsgName_resource
-    vnetName_resource
-    lbName_resource
-    jenkinsVmName_vmExtensionName
-  ]
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2017-08-01' = {
+  name: lbName_var
   location: location
   sku: {
     name: 'Standard'
@@ -391,7 +368,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: ipName_resource.id
+            id: ipName.id
           }
         }
       }
@@ -444,10 +421,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
           protocol: 'Tcp'
           loadDistribution: 'Default'
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, lbBlueBeName)
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, lbBlueBeName)
           }
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, service)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, service)
           }
         }
       }
@@ -464,10 +441,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
           protocol: 'Tcp'
           loadDistribution: 'Default'
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, lbGreenBeName)
+            id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, lbGreenBeName)
           }
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, service)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, service)
           }
         }
       }
@@ -485,13 +462,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2017-08-01' = {
       }
     ]
   }
-  dependsOn: [
-    ipName_resource
-  ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2017-06-01' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2017-06-01' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -529,8 +503,8 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2017-06-01' =
   }
 }
 
-resource ipName_resource 'Microsoft.Network/publicIPAddresses@2017-08-01' = {
-  name: ipName
+resource ipName 'Microsoft.Network/publicIPAddresses@2017-08-01' = {
+  name: ipName_var
   location: location
   sku: {
     name: 'Standard'
@@ -545,8 +519,8 @@ resource ipName_resource 'Microsoft.Network/publicIPAddresses@2017-08-01' = {
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2017-06-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2017-06-01' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -566,7 +540,7 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2017-06-01' = {
 }
 
 output admin_username string = adminUsername
-output jenkins_url string = 'http://${reference(jenkinsIp).dnsSettings.fqdn}'
-output ssh string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(jenkinsIp).dnsSettings.fqdn}'
-output tomcat_url string = 'http://${reference(ipName).dnsSettings.fqdn}'
+output jenkins_url string = 'http://${reference(jenkinsIp_var).dnsSettings.fqdn}'
+output ssh string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(jenkinsIp_var).dnsSettings.fqdn}'
+output tomcat_url string = 'http://${reference(ipName_var).dnsSettings.fqdn}'
 output base_image_id string = imageId

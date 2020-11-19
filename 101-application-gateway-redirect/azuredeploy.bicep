@@ -77,17 +77,17 @@ param location string {
   default: resourceGroup().location
 }
 
-var publicIPAddressName = 'publicIp${applicationGatewayName}'
+var publicIPAddressName_var = 'publicIp${applicationGatewayName}'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -107,7 +107,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2020-05-01' = {
+resource applicationGatewayName_res 'Microsoft.Network/applicationGateways@2020-05-01' = {
   name: applicationGatewayName
   location: location
   properties: {
@@ -139,8 +139,8 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
-            id: publicIPAddressName_resource.id
+          publicIPAddress: {
+            id: publicIPAddressName.id
           }
         }
       }
@@ -149,19 +149,19 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendHttpPort1'
         properties: {
-          Port: 80
+          port: 80
         }
       }
       {
         name: 'appGatewayFrontendHttpsPort1'
         properties: {
-          Port: 443
+          port: 443
         }
       }
       {
         name: 'appGatewayFrontendHttpPort2'
         properties: {
-          Port: 8080
+          port: 8080
         }
       }
     ]
@@ -169,9 +169,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool1'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: backendIpAddress1
+              ipAddress: backendIpAddress1
             }
           ]
         }
@@ -179,9 +179,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool2'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: backendIpAddress2
+              ipAddress: backendIpAddress2
             }
           ]
         }
@@ -191,8 +191,8 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
+          port: 80
+          protocol: 'Http'
         }
       }
     ]
@@ -200,26 +200,26 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener1'
         properties: {
-          FrontendIPConfiguration: {
+          frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
+          frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendHttpPort1')
           }
-          Protocol: 'Http'
+          protocol: 'Http'
         }
       }
       {
         name: 'appGatewayHttpsListener1'
         properties: {
-          FrontendIPConfiguration: {
+          frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
+          frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendHttpsPort1')
           }
-          Protocol: 'Https'
-          SslCertificate: {
+          protocol: 'Https'
+          sslCertificate: {
             id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, 'appGatewaySslCert')
           }
         }
@@ -227,19 +227,19 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener2'
         properties: {
-          FrontendIPConfiguration: {
+          frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
+          frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendHttpPort2')
           }
-          Protocol: 'Http'
+          protocol: 'Http'
         }
       }
     ]
     redirectConfigurations: [
       {
-        Name: 'redirectConfig1'
+        name: 'redirectConfig1'
         properties: {
           redirectType: 'Temporary'
           targetListener: {
@@ -248,7 +248,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
         }
       }
       {
-        Name: 'redirectConfig2'
+        name: 'redirectConfig2'
         properties: {
           redirectType: 'Temporary'
           targetUrl: 'http://www.bing.com'
@@ -280,9 +280,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'appGatewayHttpListener1')
           }
@@ -292,9 +292,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
         }
       }
       {
-        Name: 'rule2'
+        name: 'rule2'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners/', applicationGatewayName, 'appGatewayHttpsListener1')
           }
@@ -307,9 +307,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
         }
       }
       {
-        Name: 'rule3'
+        name: 'rule3'
         properties: {
-          RuleType: 'PathBasedRouting'
+          ruleType: 'PathBasedRouting'
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners/', applicationGatewayName, 'appGatewayHttpListener2')
           }
@@ -320,8 +320,4 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       }
     ]
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIPAddressName_resource
-  ]
 }

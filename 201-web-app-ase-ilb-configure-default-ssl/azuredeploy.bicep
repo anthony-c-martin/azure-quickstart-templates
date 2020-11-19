@@ -29,19 +29,19 @@ param certificateName string {
   }
 }
 
-resource certificateName_resource 'Microsoft.Web/certificates@2015-08-01' = {
+resource certificateName_res 'Microsoft.Web/certificates@2015-08-01' = {
   name: certificateName
   location: existingAseLocation
   properties: {
     pfxBlob: pfxBlobString
     password: password
     hostingEnvironmentProfile: {
-      id: appServiceEnvironmentName_resource.id
+      id: appServiceEnvironmentName_res.id
     }
   }
 }
 
-resource appServiceEnvironmentName_resource 'Microsoft.Web/hostingEnvironments@2015-08-01' = {
+resource appServiceEnvironmentName_res 'Microsoft.Web/hostingEnvironments@2015-08-01' = {
   name: appServiceEnvironmentName
   location: existingAseLocation
   properties: {
@@ -52,7 +52,4 @@ resource appServiceEnvironmentName_resource 'Microsoft.Web/hostingEnvironments@2
       }
     ]
   }
-  dependsOn: [
-    certificateName_resource
-  ]
 }

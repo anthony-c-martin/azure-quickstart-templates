@@ -53,7 +53,7 @@ var inputDatasetName = 'Tutorial2-InputBlobDataset'
 var outputDatasetName = 'Tutorial2-OutputSqlDataset'
 var pipelineName = 'Tutorial2-CopyFromBlobToSqlPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2017-09-01-preview' = {
   name: dataFactoryName
   location: dataFactoryLocation
   properties: {}
@@ -71,9 +71,6 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
       }
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_azureSqlDatabaseLinkedServiceName 'Microsoft.DataFactory/factories/linkedservices@2017-09-01-preview' = {
@@ -88,9 +85,6 @@ resource dataFactoryName_azureSqlDatabaseLinkedServiceName 'Microsoft.DataFactor
       }
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-  ]
 }
 
 resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datasets@2017-09-01-preview' = {
@@ -123,10 +117,6 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
       type: 'LinkedServiceReference'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureStorageLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/datasets@2017-09-01-preview' = {
@@ -151,10 +141,6 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
       type: 'LinkedServiceReference'
     }
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_azureSqlDatabaseLinkedServiceName
-  ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines@2017-09-01-preview' = {
@@ -189,9 +175,4 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
       }
     ]
   }
-  dependsOn: [
-    dataFactoryName_resource
-    dataFactoryName_inputDatasetName
-    dataFactoryName_outputDatasetName
-  ]
 }

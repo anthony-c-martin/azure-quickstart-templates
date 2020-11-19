@@ -72,10 +72,10 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var vnetID = virtualNetworkName_resource.id
+var vnetID = virtualNetworkName_res.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var scriptUrl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/shared_scripts/ubuntu/vm-disk-utils-0.1.sh'
-var securityGroupName = 'diskraidnsg'
+var securityGroupName_var = 'diskraidnsg'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -88,8 +88,8 @@ var linuxConfiguration = {
   }
 }
 
-resource securityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: securityGroupName
+resource securityGroupName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: securityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -111,7 +111,7 @@ resource securityGroupName_resource 'Microsoft.Network/networkSecurityGroups@201
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: storageAccountName
   location: location
   properties: {
@@ -119,7 +119,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -169,14 +169,9 @@ resource nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
     networkSecurityGroup: {
-      id: securityGroupName_resource.id
+      id: securityGroupName.id
     }
   }
-  dependsOn: [
-    virtualNetworkName_resource
-    publicIp
-    securityGroupName_resource
-  ]
 }
 
 resource myvm 'Microsoft.Compute/virtualMachines@2017-03-30' = {
@@ -229,10 +224,6 @@ resource myvm 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
   }
-  dependsOn: [
-    nic
-    storageAccountName_resource
-  ]
 }
 
 resource myvm_azureVmUtils 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -250,7 +241,4 @@ resource myvm_azureVmUtils 'Microsoft.Compute/virtualMachines/extensions@2015-06
       commandToExecute: 'bash vm-disk-utils-0.1.sh -s'
     }
   }
-  dependsOn: [
-    myvm
-  ]
 }

@@ -5,15 +5,15 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = 'storage${uniqueString(resourceGroup().id)}'
+var storageAccountName_var = 'storage${uniqueString(resourceGroup().id)}'
 var endpointName = 'endpoint-${uniqueString(resourceGroup().id)}'
-var profileName = 'CdnProfile1'
+var profileName_var = 'CdnProfile1'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   tags: {
-    displayName: storageAccountName
+    displayName: storageAccountName_var
   }
   kind: 'Storage'
   sku: {
@@ -22,11 +22,11 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource profileName_resource 'Microsoft.Cdn/profiles@2016-04-02' = {
-  name: profileName
+resource profileName 'Microsoft.Cdn/profiles@2016-04-02' = {
+  name: profileName_var
   location: location
   tags: {
-    displayName: profileName
+    displayName: profileName_var
   }
   sku: {
     name: 'Standard_Akamai'
@@ -35,13 +35,13 @@ resource profileName_resource 'Microsoft.Cdn/profiles@2016-04-02' = {
 }
 
 resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2016-04-02' = {
-  name: '${profileName}/${endpointName}'
+  name: '${profileName_var}/${endpointName}'
   location: location
   tags: {
     displayName: endpointName
   }
   properties: {
-    originHostHeader: replace(replace(reference(storageAccountName).primaryEndpoints.blob, 'https://', ''), '/', '')
+    originHostHeader: replace(replace(reference(storageAccountName_var).primaryEndpoints.blob, 'https://', ''), '/', '')
     isHttpAllowed: true
     isHttpsAllowed: true
     queryStringCachingBehavior: 'IgnoreQueryString'
@@ -57,15 +57,11 @@ resource profileName_endpointName 'Microsoft.Cdn/profiles/endpoints@2016-04-02' 
       {
         name: 'origin1'
         properties: {
-          hostName: replace(replace(reference(storageAccountName).primaryEndpoints.blob, 'https://', ''), '/', '')
+          hostName: replace(replace(reference(storageAccountName_var).primaryEndpoints.blob, 'https://', ''), '/', '')
         }
       }
     ]
   }
-  dependsOn: [
-    profileName_resource
-    storageAccountName_resource
-  ]
 }
 
 output hostName string = reference(endpointName).hostName

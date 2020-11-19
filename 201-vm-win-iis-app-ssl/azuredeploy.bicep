@@ -114,11 +114,11 @@ var appVnetSubnet2Name = 'DatabaseSubNet'
 var appVnetSubnet2Prefix = '10.0.1.0/24'
 var appVMImagePublisher = 'MicrosoftWindowsServer'
 var appVMImageOffer = 'WindowsServer'
-var appVMVmSize_variable = appVMVmSize
+var appVMVmSize_var = appVMVmSize
 var appVMVnetID = appVnet.id
 var appVMSubnetRef = 'appVMresourceId(\'Microsoft.Network/virtualNetworks/subnets\', parameters(\'virtualNetworkName\'), variables(\'appVMVnetID\'), \'/subnets/\', variables(\'appVnetSubnet1Name\'))]'
-var appVMNicName = '${appVMName}NetworkInterface'
-var appPublicIPName = 'appPublicIP'
+var appVMNicName_var = '${appVMName}NetworkInterface'
+var appPublicIPName_var = 'appPublicIP'
 var appDSCArchiveFolder = 'dsc'
 var appDSCArchiveFileName = 'appDSC.zip'
 var appDSCSqlArchiveFolder = 'dsc'
@@ -205,13 +205,10 @@ resource appVnet 'Microsoft.Network/virtualNetworks@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    appNetworkSecurityGroup
-  ]
 }
 
-resource appVMNicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: appVMNicName
+resource appVMNicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: appVMNicName_var
   location: location
   tags: {
     displayName: 'appVMNic'
@@ -226,19 +223,15 @@ resource appVMNicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' 
             id: appVMSubnetRef
           }
           publicIPAddress: {
-            id: appPublicIPName_resource.id
+            id: appPublicIPName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    appVnet
-    appPublicIPName_resource
-  ]
 }
 
-resource appVMName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource appVMName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: appVMName
   location: location
   tags: {
@@ -246,7 +239,7 @@ resource appVMName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   }
   properties: {
     hardwareProfile: {
-      vmSize: appVMVmSize_variable
+      vmSize: appVMVmSize_var
     }
     osProfile: {
       computerName: appVMName
@@ -282,14 +275,11 @@ resource appVMName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: appVMNicName_resource.id
+          id: appVMNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    appVMNicName_resource
-  ]
 }
 
 resource appVMName_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
@@ -321,13 +311,10 @@ resource appVMName_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/e
       configurationUrlSasToken: artifactsLocationSasToken
     }
   }
-  dependsOn: [
-    appVMName_resource
-  ]
 }
 
-resource appPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: appPublicIPName
+resource appPublicIPName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: appPublicIPName_var
   location: location
   tags: {
     displayName: 'appPublicIP'

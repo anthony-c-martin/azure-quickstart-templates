@@ -28,7 +28,7 @@ param location string {
 
 var singleQuote = '\''
 
-resource serviceBusConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource serviceBusConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: serviceBusConnectionName
   properties: {
@@ -42,7 +42,7 @@ resource serviceBusConnectionName_resource 'Microsoft.Web/connections@2018-07-01
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -85,15 +85,12 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
         value: {
           servicebus: {
             id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'servicebus')
-            connectionId: serviceBusConnectionName_resource.id
+            connectionId: serviceBusConnectionName_res.id
           }
         }
       }
     }
   }
-  dependsOn: [
-    serviceBusConnectionName_resource
-  ]
 }
 
 output WebHookURI string = 'Use listCallbackURL(resourceId(\'Microsoft.Logic/workflows/triggers\', parameters(\'logicAppName\'), \'manual\'), \'2019-05-01\').value to retrieve the URL.  The value contains a secret.'

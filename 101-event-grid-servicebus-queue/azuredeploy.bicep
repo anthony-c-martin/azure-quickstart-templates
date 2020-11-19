@@ -25,7 +25,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -49,17 +49,11 @@ resource serviceBusNamespaceName_serviceBusQueueName 'Microsoft.ServiceBus/names
     enablePartitioning: 'false'
     enableExpress: 'false'
   }
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }
 
-resource eventGridTopicName_resource 'Microsoft.EventGrid/topics@2020-06-01' = {
+resource eventGridTopicName_res 'Microsoft.EventGrid/topics@2020-06-01' = {
   name: eventGridTopicName
   location: location
-  dependsOn: [
-    serviceBusNamespaceName_resource
-  ]
 }
 
 resource eventGridTopicName_Microsoft_EventGrid_eventGridSubscriptionName 'Microsoft.EventGrid/topics/providers/eventSubscriptions@2020-01-01-preview' = {
@@ -77,7 +71,4 @@ resource eventGridTopicName_Microsoft_EventGrid_eventGridSubscriptionName 'Micro
       isSubjectCaseSensitive: false
     }
   }
-  dependsOn: [
-    eventGridTopicName_resource
-  ]
 }

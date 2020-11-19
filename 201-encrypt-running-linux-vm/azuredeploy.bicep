@@ -130,7 +130,7 @@ resource vmName_extensionName 'Microsoft.Compute/virtualMachines/extensions@2015
   }
 }
 
-module vmName_updateVm '<failed to parse [variables(\'updateVmUrl\')]>' = {
+module vmName_updateVm '?' /*TODO: replace with correct path to [variables('updateVmUrl')]*/ = {
   name: '${vmName}updateVm'
   params: {
     keyEncryptionKeyURL: keyEncryptionKeyURL

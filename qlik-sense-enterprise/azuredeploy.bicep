@@ -131,27 +131,27 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}sawinvm'
-var nicName = 'myVMNic'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}sawinvm'
+var nicName_var = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = 'myPublicIP'
+var publicIPAddressName_var = 'myPublicIP'
 var OSDiskName = 'osdiskforwindows'
 var vhdStorageContainerName = 'vhds'
-var vmName = virtualMachineName
-var virtualNetworkName = 'MyVNET'
-var networkSecurityGroupName = 'qlikSenseSecurityGroup'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = virtualMachineName
+var virtualNetworkName_var = 'MyVNET'
+var networkSecurityGroupName_var = 'qlikSenseSecurityGroup'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var scriptFolder = '.'
 var scriptInstallFileName = 'qs-install.ps1'
 var scriptBootStrapFileName = 'qs-bootstrap.ps1'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: networkSecurityGroupName_var
   location: location
   tags: {
-    displayName: networkSecurityGroupName
+    displayName: networkSecurityGroupName_var
   }
   properties: {
     securityRules: [
@@ -229,8 +229,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -239,8 +239,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -250,8 +250,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -265,19 +265,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-06-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -286,7 +283,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -295,21 +292,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: virtualMachineSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -321,7 +314,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -329,25 +322,24 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAccountName_resource.properties.primaryEndpoints.blob
+        storageUri: storageAccountName.properties.primaryEndpoints.blob
       }
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nicName_resource
+    storageAccountName
   ]
 }
 
 resource vmName_qlikSenseBootstrap 'Microsoft.Compute/virtualMachines/extensions@2016-03-30' = {
-  name: '${vmName}/qlikSenseBootstrap'
+  name: '${vmName_var}/qlikSenseBootstrap'
   location: location
   tags: {
     displayName: 'QlikSenseBootstrap'
@@ -367,9 +359,6 @@ resource vmName_qlikSenseBootstrap 'Microsoft.Compute/virtualMachines/extensions
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File ${scriptFolder}/${scriptBootStrapFileName} "${adminUsername}" "${adminPassword}" "${qlikSenseServiceAccount}" "${qlikSenseServiceAccountPassword}" "${qlikSenseRepositoryPassword}" "${qlikSenseVersion}" "${qlikSenseSerial}" "${qlikSenseControl}" "${qlikSenseOrganization}" "${qlikSenseName}" "${artifactsLocation}"'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-output hostname string = reference(publicIPAddressName).dnsSettings.fqdn
+output hostname string = reference(publicIPAddressName_var).dnsSettings.fqdn

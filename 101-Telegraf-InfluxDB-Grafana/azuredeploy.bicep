@@ -35,21 +35,21 @@ param location string {
 }
 
 var resourcePrefix = 'tig'
-var storageAccountName = concat(resourcePrefix, uniqueString(resourceGroup().id))
+var storageAccountName_var = concat(resourcePrefix, uniqueString(resourceGroup().id))
 var OSDiskName = '${resourcePrefix}OSDisk'
-var nicName = '${resourcePrefix}VMNic'
+var nicName_var = '${resourcePrefix}VMNic'
 var subnetName = '${resourcePrefix}Subnet'
-var publicIPAddressName = '${resourcePrefix}PublicIP'
+var publicIPAddressName_var = '${resourcePrefix}PublicIP'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = '${resourcePrefix}VM'
+var vmName_var = '${resourcePrefix}VM'
 var vmExtensionName = '${resourcePrefix}Init'
-var virtualNetworkName = '${resourcePrefix}VNET'
+var virtualNetworkName_var = '${resourcePrefix}VNET'
 var extensionScript = 'tigscript.sh'
 var configfilelocation = '${artifactsLocation}scripts/Configfiles.zip${artifactsLocationSasToken}'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-10-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2017-10-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -58,8 +58,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-10-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-10-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2017-10-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -69,8 +69,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2017-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -143,8 +143,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-10-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2017-10-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -158,19 +158,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2017-10-
         properties: {
           addressPrefix: '10.0.0.0/24'
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-10-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2017-10-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -179,30 +176,26 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2017-10-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
         }
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_D1_v2'
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -224,7 +217,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -232,25 +225,21 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: concat(reference(storageAccountName_resource.id, '2016-01-01').primaryEndpoints.blob)
+        storageUri: concat(reference(storageAccountName.id, '2016-01-01').primaryEndpoints.blob)
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2017-03-30' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -266,10 +255,7 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       commandToExecute: 'sh tigscript.sh ${configfilelocation}'
     }
   }
-  dependsOn: [
-    vmName_resource
-  ]
 }
 
-output TIGVmFQDN string = reference(publicIPAddressName).dnsSettings.fqdn
-output SSH string = 'ssh -L 3000:localhost:3000 -L 8083:localhost:8083 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
+output TIGVmFQDN string = reference(publicIPAddressName_var).dnsSettings.fqdn
+output SSH string = 'ssh -L 3000:localhost:3000 -L 8083:localhost:8083 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'
