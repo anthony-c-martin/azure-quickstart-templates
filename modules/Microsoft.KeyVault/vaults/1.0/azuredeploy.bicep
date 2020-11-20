@@ -115,7 +115,7 @@ param tags object {
   default: {}
 }
 
-resource vaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource vaultName_res 'Microsoft.KeyVault/vaults@2019-09-01' = {
   name: vaultName
   location: location
   tags: tags
@@ -166,6 +166,6 @@ resource vaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
   }
 }
 
-output vaultName_output string = vaultName
+output vaultName_out string = vaultName
 output vaultResourceGroup string = resourceGroup().name
-output location_output string = location
+output location_out string = location

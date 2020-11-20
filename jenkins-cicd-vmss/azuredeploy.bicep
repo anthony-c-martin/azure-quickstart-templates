@@ -97,7 +97,7 @@ param adminPasswordOrKey string {
 
 var VMResourceGroup = '${take(resourceGroup().name, 70)}VMSS${uniqueString(resourceGroup().id)}'
 
-resource OMSWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@2017-04-26-preview' = {
+resource OMSWorkspaceName_res 'Microsoft.OperationalInsights/workspaces@2017-04-26-preview' = {
   name: OMSWorkspaceName
   location: 'eastus'
   properties: {
@@ -107,7 +107,7 @@ resource OMSWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@201
   }
 }
 
-module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/jenkins.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module jenkinsDeployment '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/jenkins.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'jenkinsDeployment'
   params: {
     adminUsername: jenkinsVMAdminUsername
@@ -120,15 +120,15 @@ module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     VMDnsPrefix: VMDnsPrefix
     VMAdminUsername: VMAdminUsername
     VMAdminPassword: VMAdminPassword
-    OMSWorkspaceId: reference(OMSWorkspaceName_resource.id, '2017-04-26-preview').customerId
-    OMSWorkspaceKey: listKeys(OMSWorkspaceName_resource.id, '2017-04-26-preview').primarySharedKey
+    OMSWorkspaceId: reference(OMSWorkspaceName_res.id, '2017-04-26-preview').customerId
+    OMSWorkspaceKey: listKeys(OMSWorkspaceName_res.id, '2017-04-26-preview').primarySharedKey
     '_artifactsLocation': artifactsLocation
     '_artifactsLocationSasToken': artifactsLocationSasToken
     authenticationType: authenticationType
     adminPasswordOrKey: adminPasswordOrKey
   }
   dependsOn: [
-    OMSWorkspaceName_resource
+    OMSWorkspaceName_res
   ]
 }
 

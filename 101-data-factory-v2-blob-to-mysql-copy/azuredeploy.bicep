@@ -63,7 +63,7 @@ var inputDatasetName = 'Tutorial2_InputBlobDataset'
 var outputDatasetName = 'Tutorial2_OutputMySqlDataset'
 var pipelineName = 'Tutorial2-CopyFromBlobToMySqlPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: dataFactoryName
   location: location
   properties: {}
@@ -82,7 +82,7 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -99,7 +99,7 @@ resource dataFactoryName_azureMySqlDatabaseLinkedServiceName 'Microsoft.DataFact
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -134,7 +134,7 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
@@ -152,7 +152,7 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureMySqlDatabaseLinkedServiceName
   ]
 }
@@ -190,7 +190,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
     ]
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_inputDatasetName
     dataFactoryName_outputDatasetName
   ]

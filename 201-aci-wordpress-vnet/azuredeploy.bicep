@@ -47,17 +47,17 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = uniqueString(resourceGroup().id)
+var storageAccountName_var = uniqueString(resourceGroup().id)
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = 'publicIp1'
-var publicIPRef = publicIPAddressName_resource.id
-var networkProfileName = 'aci-networkProfile'
+var publicIPAddressName_var = 'publicIp1'
+var publicIPRef = publicIPAddressName.id
+var networkProfileName_var = 'aci-networkProfile'
 var interfaceConfigName = 'eth0'
 var interfaceIpConfig = 'ipconfigprofile1'
 var image = 'microsoft/azure-cli'
-var shareContainerGroupName = 'createshare-containerinstance'
-var wordpressContainerGroupName = 'wordpress-containerinstance'
-var mysqlContainerGroupName = 'mysql-containerinstance'
+var shareContainerGroupName_var = 'createshare-containerinstance'
+var wordpressContainerGroupName_var = 'wordpress-containerinstance'
+var mysqlContainerGroupName_var = 'mysql-containerinstance'
 var wordpressShareName = 'wordpress-share'
 var mysqlShareName = 'mysql-share'
 var port = 80
@@ -65,13 +65,13 @@ var cpuCores = '1.0'
 var memoryInGb = '1.5'
 var skuName = 'Standard_Medium'
 var capacity = '2'
-var applicationGatewayName = 'applicationGateway1'
+var applicationGatewayName_var = 'applicationGateway1'
 var subnet2Ref = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnet2Name)
-var wordpressContainerGroupRef = wordpressContainerGroupName_resource.id
-var mysqlContainerGroupRef = mysqlContainerGroupName_resource.id
+var wordpressContainerGroupRef = wordpressContainerGroupName.id
+var mysqlContainerGroupRef = mysqlContainerGroupName.id
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-10-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2017-10-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -80,8 +80,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2017-10-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2018-07-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -91,7 +91,7 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2018-
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2018-07-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2018-07-01' = {
   name: vnetName
   location: location
   properties: {
@@ -133,8 +133,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2018-07-01' = {
   }
 }
 
-resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2018-07-01' = {
-  name: networkProfileName
+resource networkProfileName 'Microsoft.Network/networkProfiles@2018-07-01' = {
+  name: networkProfileName_var
   location: location
   properties: {
     containerNetworkInterfaceConfigurations: [
@@ -156,12 +156,12 @@ resource networkProfileName_resource 'Microsoft.Network/networkProfiles@2018-07-
     ]
   }
   dependsOn: [
-    vnetName_resource
+    vnetName_res
   ]
 }
 
-resource shareContainerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
-  name: shareContainerGroupName
+resource shareContainerGroupName 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
+  name: shareContainerGroupName_var
   location: location
   properties: {
     containers: [
@@ -180,11 +180,11 @@ resource shareContainerGroupName_resource 'Microsoft.ContainerInstance/container
           environmentVariables: [
             {
               name: 'AZURE_STORAGE_KEY'
-              value: listKeys(storageAccountName, '2017-10-01').keys[0].value
+              value: listKeys(storageAccountName_var, '2017-10-01').keys[0].value
             }
             {
               name: 'AZURE_STORAGE_ACCOUNT'
-              value: storageAccountName
+              value: storageAccountName_var
             }
           ]
           resources: {
@@ -210,11 +210,11 @@ resource shareContainerGroupName_resource 'Microsoft.ContainerInstance/container
           environmentVariables: [
             {
               name: 'AZURE_STORAGE_KEY'
-              value: listKeys(storageAccountName, '2017-10-01').keys[0].value
+              value: listKeys(storageAccountName_var, '2017-10-01').keys[0].value
             }
             {
               name: 'AZURE_STORAGE_ACCOUNT'
-              value: storageAccountName
+              value: storageAccountName_var
             }
           ]
           resources: {
@@ -230,12 +230,12 @@ resource shareContainerGroupName_resource 'Microsoft.ContainerInstance/container
     osType: 'Linux'
   }
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName
   ]
 }
 
-resource mysqlContainerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
-  name: mysqlContainerGroupName
+resource mysqlContainerGroupName 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
+  name: mysqlContainerGroupName_var
   location: location
   properties: {
     containers: [
@@ -274,25 +274,24 @@ resource mysqlContainerGroupName_resource 'Microsoft.ContainerInstance/container
       {
         azureFile: {
           shareName: mysqlShareName
-          storageAccountKey: listKeys(storageAccountName, '2017-10-01').keys[0].value
-          storageAccountName: storageAccountName
+          storageAccountKey: listKeys(storageAccountName_var, '2017-10-01').keys[0].value
+          storageAccountName: storageAccountName_var
         }
         name: 'mysqlfile'
       }
     ]
     networkProfile: {
-      Id: networkProfileName_resource.id
+      Id: networkProfileName.id
     }
     osType: 'Linux'
   }
   dependsOn: [
-    shareContainerGroupName_resource
-    networkProfileName_resource
+    shareContainerGroupName
   ]
 }
 
-resource wordpressContainerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
-  name: wordpressContainerGroupName
+resource wordpressContainerGroupName 'Microsoft.ContainerInstance/containerGroups@2018-07-01' = {
+  name: wordpressContainerGroupName_var
   location: location
   properties: {
     containers: [
@@ -335,25 +334,24 @@ resource wordpressContainerGroupName_resource 'Microsoft.ContainerInstance/conta
       {
         azureFile: {
           shareName: wordpressShareName
-          storageAccountKey: listKeys(storageAccountName, '2017-10-01').keys[0].value
-          storageAccountName: storageAccountName
+          storageAccountKey: listKeys(storageAccountName_var, '2017-10-01').keys[0].value
+          storageAccountName: storageAccountName_var
         }
         name: 'wordpressfile'
       }
     ]
     networkProfile: {
-      Id: networkProfileName_resource.id
+      Id: networkProfileName.id
     }
     osType: 'Linux'
   }
   dependsOn: [
-    shareContainerGroupName_resource
-    mysqlContainerGroupName_resource
+    shareContainerGroupName
   ]
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2017-06-01' = {
-  name: applicationGatewayName
+resource applicationGatewayName 'Microsoft.Network/applicationGateways@2017-06-01' = {
+  name: applicationGatewayName_var
   location: location
   properties: {
     sku: {
@@ -375,7 +373,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: publicIPRef
           }
         }
@@ -385,7 +383,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendPort'
         properties: {
-          Port: 80
+          port: 80
         }
       }
     ]
@@ -393,9 +391,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: reference(wordpressContainerGroupRef).ipAddress.ip
+              ipAddress: reference(wordpressContainerGroupRef).ipAddress.ip
             }
           ]
         }
@@ -405,9 +403,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
         }
       }
     ]
@@ -415,39 +413,37 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            Id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGatewayFrontendIP')
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName_var, 'appGatewayFrontendIP')
           }
-          FrontendPort: {
-            Id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'appGatewayFrontendPort')
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName_var, 'appGatewayFrontendPort')
           }
-          Protocol: 'Http'
-          SslCertificate: null
+          protocol: 'Http'
+          sslCertificate: null
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'rule1'
+        name: 'rule1'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, 'appGatewayHttpListener')
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName_var, 'appGatewayHttpListener')
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, 'appGatewayBackendPool')
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName_var, 'appGatewayBackendPool')
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, 'appGatewayBackendHttpSettings')
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName_var, 'appGatewayBackendHttpSettings')
           }
         }
       }
     ]
   }
   dependsOn: [
-    vnetName_resource
-    publicIPAddressName_resource
-    wordpressContainerGroupName_resource
+    vnetName_res
   ]
 }
 

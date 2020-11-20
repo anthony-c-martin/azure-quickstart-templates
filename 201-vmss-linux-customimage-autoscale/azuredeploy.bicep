@@ -56,27 +56,27 @@ param location string {
   default: resourceGroup().location
 }
 
-var vmssuniqueName = toLower(take(concat(take(vmssName, 6), uniqueString(resourceGroup().id)), 9))
+var vmssuniqueName_var = toLower(take(concat(take(vmssName, 6), uniqueString(resourceGroup().id)), 9))
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${vmssuniqueName}vnet'
-var subnetName = '${vmssuniqueName}subnet'
-var lbName = '${vmssuniqueName}lb'
-var bepoolName = '${lbName}bepool'
-var fepoolName = '${lbName}fepool'
-var bepoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, bepoolName)
+var virtualNetworkName_var = '${vmssuniqueName_var}vnet'
+var subnetName = '${vmssuniqueName_var}subnet'
+var lbName_var = '${vmssuniqueName_var}lb'
+var bepoolName = '${lbName_var}bepool'
+var fepoolName = '${lbName_var}fepool'
+var bepoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, bepoolName)
 var feIpConfigName = '${fepoolName}IpConfig'
-var feIpConfigId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName, feIpConfigName)
-var pipName = '${vmssuniqueName}pip'
-var nicName = '${vmssuniqueName}nic'
-var natPoolName = '${lbName}natpool'
-var ipConfigName = '${vmssuniqueName}ipconfig'
+var feIpConfigId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', lbName_var, feIpConfigName)
+var pipName_var = '${vmssuniqueName_var}pip'
+var nicName = '${vmssuniqueName_var}nic'
+var natPoolName = '${lbName_var}natpool'
+var ipConfigName = '${vmssuniqueName_var}ipconfig'
 var httpProbeName = 'httpProbe'
 var httpsProbeName = 'httpsProbe'
-var imageName = 'myCustomImage'
+var imageName_var = 'myCustomImage'
 
-resource imageName_resource 'Microsoft.Compute/images@2020-06-01' = {
-  name: imageName
+resource imageName 'Microsoft.Compute/images@2020-06-01' = {
+  name: imageName_var
   location: location
   properties: {
     hyperVGeneration: 'V1'
@@ -91,8 +91,8 @@ resource imageName_resource 'Microsoft.Compute/images@2020-06-01' = {
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -111,19 +111,19 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
   }
 }
 
-resource pipName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: pipName
+resource pipName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: pipName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
-      domainNameLabel: vmssuniqueName
+      domainNameLabel: vmssuniqueName_var
     }
   }
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2020-06-01' = {
+  name: lbName_var
   location: location
   tags: {
     displayName: 'Load Balancer'
@@ -134,7 +134,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
         name: feIpConfigName
         properties: {
           publicIPAddress: {
-            id: pipName_resource.id
+            id: pipName.id
           }
         }
       }
@@ -175,7 +175,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, httpsProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, httpsProbeName)
           }
         }
       }
@@ -195,7 +195,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName, httpsProbeName)
+            id: resourceId('Microsoft.Network/loadBalancers/probes', lbName_var, httpsProbeName)
           }
         }
       }
@@ -221,13 +221,10 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
       }
     ]
   }
-  dependsOn: [
-    pipName_resource
-  ]
 }
 
-resource vmssuniqueName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
-  name: vmssuniqueName
+resource vmssuniqueName 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
+  name: vmssuniqueName_var
   location: location
   sku: {
     name: vmSku
@@ -241,11 +238,11 @@ resource vmssuniqueName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020
     virtualMachineProfile: {
       storageProfile: {
         imageReference: {
-          id: imageName_resource.id
+          id: imageName.id
         }
       }
       osProfile: {
-        computerNamePrefix: vmssuniqueName
+        computerNamePrefix: vmssuniqueName_var
         adminUsername: adminUsername
         adminPassword: adminPassword
       }
@@ -260,16 +257,16 @@ resource vmssuniqueName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName, bepoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/backendAddressPools', lbName_var, bepoolName)
                       }
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', lbName_var, natPoolName)
                       }
                     ]
                   }
@@ -302,8 +299,7 @@ resource vmssuniqueName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    imageName_resource
+    virtualNetworkName
   ]
 }
 
@@ -312,7 +308,7 @@ resource autoscalesettings 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
   location: location
   properties: {
     name: 'autoscalesettings'
-    targetResourceUri: vmssuniqueName_resource.id
+    targetResourceUri: vmssuniqueName.id
     enabled: true
     profiles: [
       {
@@ -326,7 +322,7 @@ resource autoscalesettings 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: vmssuniqueName_resource.id
+              metricResourceUri: vmssuniqueName.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -344,7 +340,7 @@ resource autoscalesettings 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: vmssuniqueName_resource.id
+              metricResourceUri: vmssuniqueName.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -363,9 +359,6 @@ resource autoscalesettings 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    vmssuniqueName_resource
-  ]
 }
 
-output fqdn string = reference(pipName_resource.id, '2020-06-01').dnsSettings.fqdn
+output fqdn string = reference(pipName.id, '2020-06-01').dnsSettings.fqdn

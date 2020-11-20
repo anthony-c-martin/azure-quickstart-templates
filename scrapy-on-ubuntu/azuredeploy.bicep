@@ -106,7 +106,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccountName
   location: resourceGroup().location
   properties: {
@@ -114,7 +114,7 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
   name: publicIPAddressName
   location: resourceGroup().location
   properties: {
@@ -125,7 +125,7 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   name: virtualNetworkName
   location: resourceGroup().location
   properties: {
@@ -145,7 +145,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+resource nicName_res 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
   name: nicName
   location: resourceGroup().location
   properties: {
@@ -155,7 +155,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName_res.id
           }
           subnet: {
             id: subnetRef
@@ -165,12 +165,11 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: resourceGroup().location
   properties: {
@@ -199,14 +198,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName_res.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
@@ -227,6 +225,6 @@ resource vmName_installscrapy 'Microsoft.Compute/virtualMachines/extensions@2015
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

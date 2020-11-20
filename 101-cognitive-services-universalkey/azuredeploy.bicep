@@ -17,7 +17,7 @@ param sku string {
   default: 'S0'
 }
 
-resource cognitiveServiceName_resource 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
+resource cognitiveServiceName_res 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   name: cognitiveServiceName
   location: location
   sku: {

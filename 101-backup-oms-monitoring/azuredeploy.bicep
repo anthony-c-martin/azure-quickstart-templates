@@ -22,7 +22,7 @@ var omsSolutions = {
   }
 }
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
   name: workspaceName
   location: workspaceLocation
 }
@@ -668,7 +668,7 @@ resource workspaceName_Azure_Backup_Monitoring_Solution 'Microsoft.OperationalIn
     }
   }
   dependsOn: [
-    workspaceName_resource
+    workspaceName_res
   ]
 }
 
@@ -682,14 +682,13 @@ resource workspaceName_omsSolutions_customSolution_solutionName 'Microsoft.Opera
     promotionCode: ''
   }
   properties: {
-    workspaceResourceId: workspaceName_resource.id
+    workspaceResourceId: workspaceName_res.id
     referencedResources: []
     containedResources: [
       resourceId('Microsoft.OperationalInsights/workspaces/views/', workspaceName, omsSolutions.customSolution.name)
     ]
   }
   dependsOn: [
-    workspaceName_resource
     'Microsoft.OperationalInsights/workspaces/${workspaceName}/views/${omsSolutions.customSolution.name}'
   ]
 }

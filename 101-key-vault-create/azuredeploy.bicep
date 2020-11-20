@@ -88,7 +88,7 @@ param secretValue string {
   secure: true
 }
 
-resource keyVaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource keyVaultName_res 'Microsoft.KeyVault/vaults@2019-09-01' = {
   name: keyVaultName
   location: location
   properties: {
@@ -124,6 +124,6 @@ resource keyVaultName_secretName 'Microsoft.KeyVault/vaults/secrets@2019-09-01' 
     value: secretValue
   }
   dependsOn: [
-    keyVaultName_resource
+    keyVaultName_res
   ]
 }

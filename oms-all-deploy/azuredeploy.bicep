@@ -103,7 +103,7 @@ var nestedTemplates = {
   omsWorkspace: '${artifactsLocation}/nestedtemplates/omsWorkspace.json${artifactsLocationSasToken}'
 }
 
-module omsWorkspace '<failed to parse [variables(\'nestedTemplates\').omsWorkspace]>' = {
+module omsWorkspace '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsWorkspace]*/ = {
   name: 'omsWorkspace'
   params: {
     omsWorkspaceName: omsWorkspaceName
@@ -114,7 +114,7 @@ module omsWorkspace '<failed to parse [variables(\'nestedTemplates\').omsWorkspa
   ]
 }
 
-module omsRecoveryServices '<failed to parse [variables(\'nestedTemplates\').omsRecoveryServices]>' = {
+module omsRecoveryServices '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsRecoveryServices]*/ = {
   name: 'omsRecoveryServices'
   params: {
     omsRecoveryVaultName: omsRecoveryVaultName
@@ -122,7 +122,7 @@ module omsRecoveryServices '<failed to parse [variables(\'nestedTemplates\').oms
   }
 }
 
-module omsAutomation '<failed to parse [variables(\'nestedTemplates\').omsAutomation]>' = {
+module omsAutomation '?' /*TODO: replace with correct path to [variables('nestedTemplates').omsAutomation]*/ = {
   name: 'omsAutomation'
   params: {
     omsAutomationAccountName: omsAutomationAccountName

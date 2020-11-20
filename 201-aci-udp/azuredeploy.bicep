@@ -50,23 +50,23 @@ param location string {
   default: resourceGroup().location
 }
 
-var containerName_variable = containerName
-var containerURI_variable = containerURI
-var osType_variable = osType
-var numberCores_variable = int(numberCores)
-var memory_variable = float(memory)
+var containerName_var = containerName
+var containerURI_var = containerURI
+var osType_var = osType
+var numberCores_var = int(numberCores)
+var memory_var = float(memory)
 var port = ports
 var randomName = '-${substring(containerName, 0, 3)}'
 
 resource containerName_randomName_1 'Microsoft.ContainerInstance/containerGroups@2017-10-01-preview' = {
-  name: '${containerName_variable}${randomName}1'
+  name: '${containerName_var}${randomName}1'
   location: location
   properties: {
     containers: [
       {
-        name: containerName_variable
+        name: containerName_var
         properties: {
-          image: containerURI_variable
+          image: containerURI_var
           ports: [
             {
               protocol: portProtocol
@@ -75,14 +75,14 @@ resource containerName_randomName_1 'Microsoft.ContainerInstance/containerGroups
           ]
           resources: {
             requests: {
-              cpu: numberCores_variable
-              memoryInGb: memory_variable
+              cpu: numberCores_var
+              memoryInGB: memory_var
             }
           }
         }
       }
     ]
-    osType: osType_variable
+    osType: osType_var
     ipAddress: {
       type: 'Public'
       ports: [

@@ -21,10 +21,10 @@ param certpassword string {
   }
 }
 
-var certname = '${batchservice}/SHA1-${certthumbprint}'
+var certname_var = '${batchservice}/SHA1-${certthumbprint}'
 
-resource certname_resource 'Microsoft.Batch/batchAccounts/certificates@2019-04-01' = {
-  name: certname
+resource certname 'Microsoft.Batch/batchAccounts/certificates@2019-04-01' = {
+  name: certname_var
   properties: {
     format: 'Pfx'
     thumbprint: certthumbprint

@@ -20,7 +20,7 @@ param trafficManagerName string {
   }
 }
 
-resource webServerName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
+resource webServerName_res 'Microsoft.Web/serverfarms@2019-08-01' = {
   name: webServerName
   location: location
   sku: {
@@ -29,18 +29,18 @@ resource webServerName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource uniqueDnsNameForWebApp_resource 'Microsoft.Web/sites@2019-08-01' = {
+resource uniqueDnsNameForWebApp_res 'Microsoft.Web/sites@2019-08-01' = {
   name: uniqueDnsNameForWebApp
   location: location
   properties: {
     serverFarmId: webServerName
   }
   dependsOn: [
-    webServerName_resource
+    webServerName_res
   ]
 }
 
-resource trafficManagerName_resource 'Microsoft.Network/trafficManagerProfiles@2018-08-01' = {
+resource trafficManagerName_res 'Microsoft.Network/trafficManagerProfiles@2018-08-01' = {
   name: trafficManagerName
   location: 'global'
   properties: {
@@ -62,11 +62,10 @@ resource trafficManagerName_uniqueDnsNameForWebApp 'Microsoft.Network/trafficMan
   location: 'global'
   name: '${trafficManagerName}/${uniqueDnsNameForWebApp}'
   properties: {
-    targetResourceId: uniqueDnsNameForWebApp_resource.id
+    targetResourceId: uniqueDnsNameForWebApp_res.id
     endpointStatus: 'Enabled'
   }
   dependsOn: [
-    trafficManagerName_resource
-    uniqueDnsNameForWebApp_resource
+    trafficManagerName_res
   ]
 }

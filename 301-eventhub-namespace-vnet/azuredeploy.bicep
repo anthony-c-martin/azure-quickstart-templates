@@ -24,10 +24,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var namespaceVirtualNetworkRuleName = concat(eventhubNamespaceName, '/${vnetRuleName}')
+var namespaceVirtualNetworkRuleName_var = concat(eventhubNamespaceName, '/${vnetRuleName}')
 var subNetId = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetRuleName, subnetName)
 
-resource eventhubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+resource eventhubNamespaceName_res 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
   name: eventhubNamespaceName
   location: location
   sku: {
@@ -37,7 +37,7 @@ resource eventhubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-0
   properties: {}
 }
 
-resource vnetRuleName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = {
+resource vnetRuleName_res 'Microsoft.Network/virtualNetworks@2017-09-01' = {
   name: vnetRuleName
   location: location
   properties: {
@@ -62,12 +62,12 @@ resource vnetRuleName_resource 'Microsoft.Network/virtualNetworks@2017-09-01' = 
   }
 }
 
-resource namespaceVirtualNetworkRuleName_resource 'Microsoft.EventHub/namespaces/VirtualNetworkRules@2018-01-01-preview' = {
-  name: namespaceVirtualNetworkRuleName
+resource namespaceVirtualNetworkRuleName 'Microsoft.EventHub/namespaces/VirtualNetworkRules@2018-01-01-preview' = {
+  name: namespaceVirtualNetworkRuleName_var
   properties: {
     virtualNetworkSubnetId: subNetId
   }
   dependsOn: [
-    eventhubNamespaceName_resource
+    eventhubNamespaceName_res
   ]
 }

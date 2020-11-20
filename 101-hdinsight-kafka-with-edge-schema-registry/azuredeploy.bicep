@@ -109,12 +109,12 @@ param ZookeeperNodeVirtualMachineSize string {
   default: 'Standard_D3_v2'
 }
 
-var clStgAcnt = '${clusterName}store'
+var clStgAcnt_var = '${clusterName}store'
 var storageAccountType = 'Standard_LRS'
 var applicationName = 'schema-registry'
 
-resource clStgAcnt_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: clStgAcnt
+resource clStgAcnt 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: clStgAcnt_var
   location: location
   sku: {
     name: storageAccountType
@@ -123,7 +123,7 @@ resource clStgAcnt_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -142,10 +142,10 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
     storageProfile: {
       storageaccounts: [
         {
-          name: replace(replace(reference(clStgAcnt_resource.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
+          name: replace(replace(reference(clStgAcnt.id, '2019-06-01').primaryEndpoints.blob, 'https://', ''), '/', '')
           isDefault: true
           container: clusterName
-          key: listKeys(clStgAcnt_resource.id, '2019-06-01').keys[0].value
+          key: listKeys(clStgAcnt.id, '2019-06-01').keys[0].value
         }
       ]
     }
@@ -198,9 +198,6 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    clStgAcnt_resource
-  ]
 }
 
 resource clusterName_applicationName 'Microsoft.HDInsight/clusters/applications@2018-06-01-preview' = {
@@ -236,6 +233,6 @@ resource clusterName_applicationName 'Microsoft.HDInsight/clusters/applications@
     applicationType: 'CustomApplication'
   }
   dependsOn: [
-    clusterName_resource
+    clusterName_res
   ]
 }

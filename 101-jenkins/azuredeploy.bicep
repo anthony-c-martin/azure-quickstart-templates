@@ -49,13 +49,13 @@ param vmSize string {
 }
 
 var resourcePrefix = 'jenkins'
-var nicName = '${resourcePrefix}VMNic'
+var nicName_var = '${resourcePrefix}VMNic'
 var subnetName = '${resourcePrefix}Subnet'
-var publicIPAddressName = '${resourcePrefix}PublicIP'
-var vmName = '${resourcePrefix}VM'
+var publicIPAddressName_var = '${resourcePrefix}PublicIP'
+var vmName_var = '${resourcePrefix}VM'
 var vmExtensionName = '${resourcePrefix}Init'
-var virtualNetworkName = '${resourcePrefix}VNET'
-var frontEndNSGName = '${resourcePrefix}NSG'
+var virtualNetworkName_var = '${resourcePrefix}VNET'
+var frontEndNSGName_var = '${resourcePrefix}NSG'
 var vNetAddressPrefixes = '10.0.0.0/16'
 var sNetAddressPrefixes = '10.0.0.0/24'
 var vmPrivateIP = '10.0.0.5'
@@ -73,8 +73,8 @@ var linuxConfiguration = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -84,8 +84,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: frontEndNSGName
+resource frontEndNSGName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: frontEndNSGName_var
   location: location
   tags: {
     displayName: 'NSG - Front End'
@@ -124,8 +124,8 @@ resource frontEndNSGName_resource 'Microsoft.Network/networkSecurityGroups@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -139,19 +139,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: sNetAddressPrefixes
           networkSecurityGroup: {
-            id: frontEndNSGName_resource.id
+            id: frontEndNSGName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    frontEndNSGName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -159,32 +156,31 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         name: 'ipconfig1'
         properties: {
           privateIPAllocationMethod: 'Static'
-          privateIpAddress: vmPrivateIP
+          privateIPAddress: vmPrivateIP
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
         }
       }
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -208,18 +204,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -232,13 +225,13 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ]
     }
     protectedSettings: {
-      commandToExecute: './${extensionScript} -jf "${reference(publicIPAddressName).dnsSettings.fqdn}" -pi "${vmPrivateIP}" -al "${azureDevOpsUtilsLocation}" -st "" -jrt "${jenkinsReleaseType}"'
+      commandToExecute: './${extensionScript} -jf "${reference(publicIPAddressName_var).dnsSettings.fqdn}" -pi "${vmPrivateIP}" -al "${azureDevOpsUtilsLocation}" -st "" -jrt "${jenkinsReleaseType}"'
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output jenkinsURL string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}'
-output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName).dnsSettings.fqdn}'
+output jenkinsURL string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}'
+output SSH string = 'ssh -L 8080:localhost:8080 ${adminUsername}@${reference(publicIPAddressName_var).dnsSettings.fqdn}'

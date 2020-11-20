@@ -150,7 +150,7 @@ var cloudbeesLocation = location
 var jenkinsPublicIPName = 'jenkinsPublicIP'
 var jenkinsPublicIPNewOrExisting = 'new'
 var jenkinsTemplateBaseUrl = 'https://gallery.azure.com/artifact/20151001/cloudbees.jenkins-platformjenkins-platform.1.0.14/Artifacts'
-var jenkinsDnsNameForPublicIP_variable = concat(jenkinsDnsNameForPublicIP, uniqueString)
+var jenkinsDnsNameForPublicIP_var = concat(jenkinsDnsNameForPublicIP, uniqueString)
 var jenkinsAuthenticationType = 'password'
 var jenkinssshPublicKey = ''
 var dockerTags = {
@@ -166,7 +166,7 @@ var quickstartTags = {
   name: 'cloudbeesjenkins-dockerdatacenter'
 }
 
-module virtualNetworkDeployment '<failed to parse [variables(\'vnetDeploymentURI\')]>' = {
+module virtualNetworkDeployment '?' /*TODO: replace with correct path to [variables('vnetDeploymentURI')]*/ = {
   name: 'virtualNetworkDeployment'
   params: {
     location: location
@@ -185,7 +185,7 @@ module virtualNetworkDeployment '<failed to parse [variables(\'vnetDeploymentURI
   }
 }
 
-module cloudbeesDeployment '<failed to parse [variables(\'cloubeesDeploymnetURI\')]>' = {
+module cloudbeesDeployment '?' /*TODO: replace with correct path to [variables('cloubeesDeploymnetURI')]*/ = {
   name: 'cloudbeesDeployment'
   params: {
     templateBaseUrl: jenkinsTemplateBaseUrl
@@ -194,7 +194,7 @@ module cloudbeesDeployment '<failed to parse [variables(\'cloubeesDeploymnetURI\
     storageAccountType: storageAccountType
     publicIPNewOrExisting: jenkinsPublicIPNewOrExisting
     publicIPName: jenkinsPublicIPName
-    dnsNameForPublicIP: jenkinsDnsNameForPublicIP_variable
+    dnsNameForPublicIP: jenkinsDnsNameForPublicIP_var
     authenticationType: jenkinsAuthenticationType
     sshPublicKey: jenkinssshPublicKey
     adminUsername: jenkinsUsername
@@ -212,7 +212,7 @@ module cloudbeesDeployment '<failed to parse [variables(\'cloubeesDeploymnetURI\
   ]
 }
 
-module dockerDatacenterDeployment '<failed to parse [variables(\'dockerDataCenterDeploymentURI\')]>' = {
+module dockerDatacenterDeployment '?' /*TODO: replace with correct path to [variables('dockerDataCenterDeploymentURI')]*/ = {
   name: 'dockerDatacenterDeployment'
   params: {
     '_artifactsLocation': artifactsLocation

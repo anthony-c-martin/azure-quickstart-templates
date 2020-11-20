@@ -74,8 +74,8 @@ param networkSecurityGroupName string {
   default: 'SecGroupNet'
 }
 
-var publicIpAddressName = '${vmName}PublicIP'
-var networkInterfaceName = '${vmName}NetInt'
+var publicIpAddressName_var = '${vmName}PublicIP'
+var networkInterfaceName_var = '${vmName}NetInt'
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 var osDiskType = 'Standard_LRS'
 var subnetAddressPrefix = '10.1.0.0/24'
@@ -92,8 +92,8 @@ var linuxConfiguration = {
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -104,24 +104,22 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: networkSecurityGroupName_resource.id
+      id: networkSecurityGroupName_res.id
     }
   }
   dependsOn: [
-    networkSecurityGroupName_resource
-    virtualNetworkName_resource
-    publicIpAddressName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -130,7 +128,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
         name: 'SSH'
         properties: {
           priority: 1000
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -143,7 +141,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -165,15 +163,15 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
   }
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2020-06-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIpAddresses@2020-06-01' = {
+  name: publicIpAddressName_var
   location: location
   sku: {
     name: 'Basic'
     tier: 'Regional'
   }
   properties: {
-    publicIpAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Dynamic'
     publicIPAddressVersion: 'IPv4'
     dnsSettings: {
       domainNameLabel: dnsLabelPrefix
@@ -182,7 +180,7 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2020-
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -191,7 +189,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     }
     storageProfile: {
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: osDiskType
         }
@@ -206,7 +204,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
@@ -217,11 +215,8 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
-output adminUsername_output string = adminUsername
-output hostname string = reference(publicIpAddressName).dnsSettings.fqdn
-output sshCommand string = 'ssh ${adminUsername}@${reference(publicIpAddressName).dnsSettings.fqdn}'
+output adminUsername_out string = adminUsername
+output hostname string = reference(publicIpAddressName_var).dnsSettings.fqdn
+output sshCommand string = 'ssh ${adminUsername}@${reference(publicIpAddressName_var).dnsSettings.fqdn}'

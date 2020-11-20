@@ -37,14 +37,14 @@ param internalLoadBalancingMode int {
   default: 3
 }
 
-resource aseName_resource 'Microsoft.Web/hostingEnvironments@2020-06-01' = {
+resource aseName_res 'Microsoft.Web/hostingEnvironments@2020-06-01' = {
   name: aseName
   kind: 'ASEV2'
   location: location
   properties: {
     name: aseName
     location: location
-    ipSslAddressCount: 0
+    ipsslAddressCount: 0
     internalLoadBalancingMode: internalLoadBalancingMode
     virtualNetwork: {
       id: resourceId(existingVirtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, subnetName)

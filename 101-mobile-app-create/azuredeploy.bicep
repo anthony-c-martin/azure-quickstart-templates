@@ -53,15 +53,15 @@ param location string {
   default: resourceGroup().location
 }
 
-var uniqueAppName = '${appName}-${uniqueString(resourceGroup().id)}'
-var hostingPlanName = '${uniqueAppName}-plan'
-var databaseServerName = '${uniqueAppName}-sqlserver'
-var databaseName = '${uniqueAppName}-sqldb'
-var notificationHubNamespace = '${uniqueAppName}-namespace'
-var notificationHubName = '${uniqueAppName}-hub'
+var uniqueAppName_var = '${appName}-${uniqueString(resourceGroup().id)}'
+var hostingPlanName_var = '${uniqueAppName_var}-plan'
+var databaseServerName_var = '${uniqueAppName_var}-sqlserver'
+var databaseName = '${uniqueAppName_var}-sqldb'
+var notificationHubNamespace_var = '${uniqueAppName_var}-namespace'
+var notificationHubName = '${uniqueAppName_var}-hub'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: hostingPlanSettings.skuName
@@ -73,62 +73,59 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource uniqueAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: uniqueAppName
+resource uniqueAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: uniqueAppName_var
   location: location
   kind: 'mobileapp'
   properties: {
-    name: uniqueAppName
-    serverFarmId: hostingPlanName_resource.id
+    name: uniqueAppName_var
+    serverFarmId: hostingPlanName.id
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }
 
 resource uniqueAppName_appsettings 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${uniqueAppName}/appsettings'
+  name: '${uniqueAppName_var}/appsettings'
   properties: {
-    MS_MobileServiceName: uniqueAppName
+    MS_MobileServiceName: uniqueAppName_var
     MS_NotificationHubName: notificationHubName
   }
   dependsOn: [
-    uniqueAppName_resource
+    uniqueAppName
   ]
 }
 
 resource uniqueAppName_connectionstrings 'Microsoft.Web/sites/config@2019-08-01' = {
-  name: '${uniqueAppName}/connectionstrings'
+  name: '${uniqueAppName_var}/connectionstrings'
   properties: {
     MS_TableConnectionString: {
-      value: 'Data Source=tcp:${databaseServerName_resource.properties.fullyQualifiedDomainName},1433;Initial Catalog=${databaseName};User Id=${sqlServerAdminLogin}@${databaseServerName};Password=${sqlServerAdminPassword};'
+      value: 'Data Source=tcp:${databaseServerName.properties.fullyQualifiedDomainName},1433;Initial Catalog=${databaseName};User Id=${sqlServerAdminLogin}@${databaseServerName_var};Password=${sqlServerAdminPassword};'
       type: 'SQLServer'
     }
     MS_NotificationHubConnectionString: {
-      value: listkeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', notificationHubNamespace, notificationHubName, 'DefaultFullSharedAccessSignature'), '2017-04-01').primaryConnectionString
+      value: listkeys(resourceId('Microsoft.NotificationHubs/namespaces/notificationHubs/authorizationRules', notificationHubNamespace_var, notificationHubName, 'DefaultFullSharedAccessSignature'), '2017-04-01').primaryConnectionString
       type: 'Custom'
     }
   }
   dependsOn: [
-    uniqueAppName_resource
+    uniqueAppName
     notificationHubName
     databaseServerName_databaseName
   ]
 }
 
 resource uniqueAppName_Microsoft_Resources_SiteToHub 'Microsoft.Web/sites/providers/links@2019-08-01' = {
-  name: '${uniqueAppName}/Microsoft.Resources/SiteToHub'
+  name: '${uniqueAppName_var}/Microsoft.Resources/SiteToHub'
   properties: {
-    targetId: resourceId('Microsoft.NotificationHubs/namespaces/NotificationHubs', notificationHubNamespace, notificationHubName)
+    targetId: resourceId('Microsoft.NotificationHubs/namespaces/NotificationHubs', notificationHubNamespace_var, notificationHubName)
   }
   dependsOn: [
-    uniqueAppName_resource
+    uniqueAppName
     notificationHubName
   ]
 }
 
-resource databaseServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
-  name: databaseServerName
+resource databaseServerName 'Microsoft.Sql/servers@2020-02-02-preview' = {
+  name: databaseServerName_var
   location: location
   properties: {
     administratorLogin: sqlServerAdminLogin
@@ -138,7 +135,7 @@ resource databaseServerName_resource 'Microsoft.Sql/servers@2020-02-02-preview' 
 }
 
 resource databaseServerName_databaseName 'Microsoft.Sql/servers/databases@2020-02-02-preview' = {
-  name: '${databaseServerName}/${databaseName}'
+  name: '${databaseServerName_var}/${databaseName}'
   location: location
   properties: {
     edition: sqlDatabaseEdition
@@ -146,24 +143,24 @@ resource databaseServerName_databaseName 'Microsoft.Sql/servers/databases@2020-0
     maxSizeBytes: sqlDatabaseMaxSizeBytes
   }
   dependsOn: [
-    databaseServerName_resource
+    databaseServerName
   ]
 }
 
 resource databaseServerName_open 'Microsoft.Sql/servers/firewallrules@2020-02-02-preview' = {
   location: location
-  name: '${databaseServerName}/open'
+  name: '${databaseServerName_var}/open'
   properties: {
     endIpAddress: '255.255.255.255'
     startIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    databaseServerName_resource
+    databaseServerName
   ]
 }
 
-resource notificationHubNamespace_resource 'Microsoft.NotificationHubs/namespaces@2017-04-01' = {
-  name: notificationHubNamespace
+resource notificationHubNamespace 'Microsoft.NotificationHubs/namespaces@2017-04-01' = {
+  name: notificationHubNamespace_var
   location: location
   properties: {
     region: location
@@ -172,10 +169,10 @@ resource notificationHubNamespace_resource 'Microsoft.NotificationHubs/namespace
 }
 
 resource notificationHubNamespace_uniqueAppName_hub 'Microsoft.NotificationHubs/namespaces/notificationHubs@2017-04-01' = {
-  name: '${notificationHubNamespace}/${uniqueAppName}-hub'
+  name: '${notificationHubNamespace_var}/${uniqueAppName_var}-hub'
   location: location
   properties: {}
   dependsOn: [
-    notificationHubNamespace_resource
+    notificationHubNamespace
   ]
 }

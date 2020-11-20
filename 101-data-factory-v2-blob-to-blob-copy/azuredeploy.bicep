@@ -23,12 +23,12 @@ param blobContainer string {
   default: 'blob${uniqueString(resourceGroup().id)}'
 }
 
-var storageAccountId = storageAccountName_resource.id
+var storageAccountId = storageAccountName_res.id
 var storageLinkedService = dataFactoryName_ArmtemplateStorageLinkedService.id
 var datasetIn = dataFactoryName_ArmtemplateTestDatasetIn.id
 var datasetOut = dataFactoryName_ArmtemplateTestDatasetOut.id
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -41,11 +41,11 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
 resource storageAccountName_default_blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
   name: '${storageAccountName}/default/${blobContainer}'
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName_res
   ]
 }
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: dataFactoryName
   location: location
   properties: {}
@@ -64,8 +64,7 @@ resource dataFactoryName_ArmtemplateStorageLinkedService 'Microsoft.DataFactory/
     }
   }
   dependsOn: [
-    dataFactoryName_resource
-    storageAccountName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -88,7 +87,7 @@ resource dataFactoryName_ArmtemplateTestDatasetIn 'Microsoft.DataFactory/factori
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     storageLinkedService
   ]
 }
@@ -111,7 +110,7 @@ resource dataFactoryName_ArmtemplateTestDatasetOut 'Microsoft.DataFactory/factor
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     storageLinkedService
   ]
 }
@@ -165,7 +164,7 @@ resource dataFactoryName_ArmtemplateSampleCopyPipeline 'Microsoft.DataFactory/fa
     ]
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     datasetIn
     datasetOut
   ]

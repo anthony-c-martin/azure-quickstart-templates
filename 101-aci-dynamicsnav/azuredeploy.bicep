@@ -97,7 +97,7 @@ param artifactsLocationSasToken string {
 var image = navRelease
 var publicdnsname = '${dnsPrefix}.${location}${azurecontainerSuffix}'
 
-resource contGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+resource contGroupName_res 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
   name: contGroupName
   location: location
   properties: {
@@ -142,23 +142,23 @@ resource contGroupName_resource 'Microsoft.ContainerInstance/containerGroups@201
           image: image
           ports: [
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 443
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 8080
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 7049
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 7048
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 80
             }
           ]
@@ -176,23 +176,23 @@ resource contGroupName_resource 'Microsoft.ContainerInstance/containerGroups@201
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 443
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 8080
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 7049
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 7048
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 80
         }
       ]
@@ -201,4 +201,4 @@ resource contGroupName_resource 'Microsoft.ContainerInstance/containerGroups@201
   }
 }
 
-output containerIPAddressFqdn string = contGroupName_resource.properties.ipAddress.fqdn
+output containerIPAddressFqdn string = contGroupName_res.properties.ipAddress.fqdn

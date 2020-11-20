@@ -72,11 +72,11 @@ param location string {
   default: resourceGroup().location
 }
 
-var networkInterfaceName = '${vmName}nic'
+var networkInterfaceName_var = '${vmName}nic'
 var subnetRef = resourceId(existingVnetResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', existingVnetName, existingSubnetName)
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-09-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2019-09-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -93,7 +93,7 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: vmName
   location: location
   properties: {
@@ -121,14 +121,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource vmName_JoinDomain 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
@@ -151,7 +148,7 @@ resource vmName_JoinDomain 'Microsoft.Compute/virtualMachines/extensions@2019-03
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 

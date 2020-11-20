@@ -42,7 +42,7 @@ param eventhubAuthorizationRuleName string {
 
 var diagnosticSettingsName = 'SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1'
 
-resource eventHubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+resource eventHubNamespaceName_res 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
   name: eventHubNamespaceName
   location: location
   sku: {
@@ -55,11 +55,11 @@ resource eventHubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-0
 resource eventHubNamespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
   name: '${eventHubNamespaceName}/${eventHubName}'
   dependsOn: [
-    eventHubNamespaceName_resource
+    eventHubNamespaceName_res
   ]
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2015-05-01-preview' = {
+resource sqlServerName_res 'Microsoft.Sql/servers@2015-05-01-preview' = {
   location: location
   name: sqlServerName
   properties: {
@@ -77,7 +77,7 @@ resource sqlServerName_master 'Microsoft.Sql/servers/databases@2017-03-01-previe
   name: '${sqlServerName}/master'
   properties: {}
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName_res
   ]
 }
 
@@ -99,8 +99,8 @@ resource sqlServerName_master_microsoft_insights_diagnosticSettingsName 'Microso
     ]
   }
   dependsOn: [
-    sqlServerName_resource
-    eventHubNamespaceName_resource
+    sqlServerName_res
+    eventHubNamespaceName_res
     sqlServerName_master
   ]
 }
@@ -108,11 +108,11 @@ resource sqlServerName_master_microsoft_insights_diagnosticSettingsName 'Microso
 resource sqlServerName_DefaultAuditingSettings 'Microsoft.Sql/servers/auditingSettings@2017-03-01-preview' = {
   name: '${sqlServerName}/DefaultAuditingSettings'
   properties: {
-    State: 'Enabled'
+    state: 'Enabled'
     auditActionsAndGroups: null
     isAzureMonitorTargetEnabled: true
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName_res
   ]
 }

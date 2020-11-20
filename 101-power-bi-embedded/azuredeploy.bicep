@@ -28,7 +28,7 @@ param admin string {
   }
 }
 
-resource name_resource 'Microsoft.PowerBIDedicated/capacities@2017-10-01' = {
+resource name_res 'Microsoft.PowerBIDedicated/capacities@2017-10-01' = {
   name: name
   location: location
   sku: {

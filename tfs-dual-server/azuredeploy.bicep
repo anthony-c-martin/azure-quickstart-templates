@@ -53,7 +53,7 @@ var nestedTemplates = {
   tfsServerTemplate: uri(artifactsLocation, 'nestedtemplates/tfs.json${artifactsLocationSasToken}')
 }
 
-module Network '<failed to parse [variables(\'nestedTemplates\').networkTemplate]>' = {
+module Network '?' /*TODO: replace with correct path to [variables('nestedTemplates').networkTemplate]*/ = {
   name: 'Network'
   params: {
     vnetName: vnetName
@@ -65,7 +65,7 @@ module Network '<failed to parse [variables(\'nestedTemplates\').networkTemplate
   }
 }
 
-module DomainController '<failed to parse [variables(\'nestedTemplates\').domainControllerTemplate]>' = {
+module DomainController '?' /*TODO: replace with correct path to [variables('nestedTemplates').domainControllerTemplate]*/ = {
   name: 'DomainController'
   params: {
     vmName: 'tfsDC'
@@ -87,7 +87,7 @@ module DomainController '<failed to parse [variables(\'nestedTemplates\').domain
   ]
 }
 
-module UpdateDNS '<failed to parse [variables(\'nestedTemplates\').networkTemplate]>' = {
+module UpdateDNS '?' /*TODO: replace with correct path to [variables('nestedTemplates').networkTemplate]*/ = {
   name: 'UpdateDNS'
   params: {
     vnetName: vnetName
@@ -104,7 +104,7 @@ module UpdateDNS '<failed to parse [variables(\'nestedTemplates\').networkTempla
   ]
 }
 
-module SQLServer '<failed to parse [variables(\'nestedTemplates\').sqlServerTemplate]>' = {
+module SQLServer '?' /*TODO: replace with correct path to [variables('nestedTemplates').sqlServerTemplate]*/ = {
   name: 'SQLServer'
   params: {
     vmName: 'tfsSQL'
@@ -125,7 +125,7 @@ module SQLServer '<failed to parse [variables(\'nestedTemplates\').sqlServerTemp
   ]
 }
 
-module TfsServer '<failed to parse [variables(\'nestedTemplates\').tfsServerTemplate]>' = {
+module TfsServer '?' /*TODO: replace with correct path to [variables('nestedTemplates').tfsServerTemplate]*/ = {
   name: 'TfsServer'
   params: {
     vmName: 'tfsVM'

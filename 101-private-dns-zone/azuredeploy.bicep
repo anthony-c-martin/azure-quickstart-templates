@@ -53,7 +53,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: vnetName
   location: location
   properties: {
@@ -72,7 +72,7 @@ resource vnetName_subnet1Name 'Microsoft.Network/virtualNetworks/subnets@2020-05
     addressPrefix: subnet1Prefix
   }
   dependsOn: [
-    vnetName_resource
+    vnetName_res
   ]
 }
 
@@ -83,12 +83,12 @@ resource vnetName_subnet2Name 'Microsoft.Network/virtualNetworks/subnets@2020-05
     addressPrefix: subnet2Prefix
   }
   dependsOn: [
-    vnetName_resource
+    vnetName_res
     vnetName_subnet1Name
   ]
 }
 
-resource privateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020-01-01' = {
+resource privateDnsZoneName_res 'Microsoft.Network/privateDnsZones@2020-01-01' = {
   name: privateDnsZoneName
   location: 'global'
 }
@@ -99,11 +99,10 @@ resource privateDnsZoneName_privateDnsZoneName_link 'Microsoft.Network/privateDn
   properties: {
     registrationEnabled: vmRegistration
     virtualNetwork: {
-      id: vnetName_resource.id
+      id: vnetName_res.id
     }
   }
   dependsOn: [
-    privateDnsZoneName_resource
-    vnetName_resource
+    privateDnsZoneName_res
   ]
 }

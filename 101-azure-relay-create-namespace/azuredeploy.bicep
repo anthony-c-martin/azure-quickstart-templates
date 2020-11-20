@@ -10,7 +10,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource nameSpace_resource 'Microsoft.Relay/Namespaces@2017-04-01' = {
+resource nameSpace_res 'Microsoft.Relay/Namespaces@2017-04-01' = {
   name: nameSpace
   location: location
   kind: 'Relay'

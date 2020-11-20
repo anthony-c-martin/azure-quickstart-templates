@@ -25,12 +25,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var namespaceAuthRuleName = concat(serviceBusNamespaceName, '/${namespaceAuthorizationRuleName}')
+var namespaceAuthRuleName_var = concat(serviceBusNamespaceName, '/${namespaceAuthorizationRuleName}')
 var nsAuthorizationRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceName, namespaceAuthorizationRuleName)
 var ehAuthorizationRuleResourceId = resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', serviceBusNamespaceName, serviceBusQueueName, queueAuthorizationRuleName)
 var sbVersion = '2017-04-01'
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   name: serviceBusNamespaceName
   location: location
   sku: {
@@ -56,7 +56,7 @@ resource serviceBusNamespaceName_serviceBusQueueName 'Microsoft.ServiceBus/names
     enableExpress: 'false'
   }
   dependsOn: [
-    serviceBusNamespaceName_resource
+    serviceBusNamespaceName_res
   ]
 }
 
@@ -72,8 +72,8 @@ resource serviceBusNamespaceName_serviceBusQueueName_queueAuthorizationRuleName 
   ]
 }
 
-resource namespaceAuthRuleName_resource 'Microsoft.ServiceBus/namespaces/authorizationRules@2017-04-01' = {
-  name: namespaceAuthRuleName
+resource namespaceAuthRuleName 'Microsoft.ServiceBus/namespaces/authorizationRules@2017-04-01' = {
+  name: namespaceAuthRuleName_var
   location: location
   properties: {
     rights: [
@@ -81,7 +81,7 @@ resource namespaceAuthRuleName_resource 'Microsoft.ServiceBus/namespaces/authori
     ]
   }
   dependsOn: [
-    serviceBusNamespaceName_resource
+    serviceBusNamespaceName_res
   ]
 }
 

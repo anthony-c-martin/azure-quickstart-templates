@@ -101,7 +101,7 @@ resource workspaceName_datasetName 'Microsoft.MachineLearningServices/workspaces
   location: location
   properties: {
     SkipValidation: skipValidation
-    DatasetType: 'tabular'
+    datasetType: 'tabular'
     Parameters: {
       Header: header
       IncludePath: includePath

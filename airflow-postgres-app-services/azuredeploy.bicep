@@ -100,29 +100,29 @@ param location string {
 }
 
 var databaseName = '${airflowWebAppName}database'
-var serverName = '${airflowWebAppName}pgserver'
-var hostingPlanName = '${airflowWebAppName}serviceplan'
+var serverName_var = '${airflowWebAppName}pgserver'
+var hostingPlanName_var = '${airflowWebAppName}serviceplan'
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2018-11-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2018-11-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     Tier: 'Standard'
     Name: 'S1'
   }
   properties: {
-    name: hostingPlanName
+    name: hostingPlanName_var
     workerSize: '1'
     reserved: true
     numberOfWorkers: 1
   }
 }
 
-resource airflowWebAppName_resource 'Microsoft.Web/sites@2018-11-01' = {
+resource airflowWebAppName_res 'Microsoft.Web/sites@2018-11-01' = {
   name: airflowWebAppName
   location: location
   properties: {
-    serverFarmId: hostingPlanName
+    serverFarmId: hostingPlanName_var
     name: airflowWebAppName
     siteConfig: {
       linuxFxVersion: 'DOCKER|puckel/docker-airflow:latest'
@@ -134,7 +134,7 @@ resource airflowWebAppName_resource 'Microsoft.Web/sites@2018-11-01' = {
     httpsOnly: true
   }
   dependsOn: [
-    hostingPlanName_resource
+    hostingPlanName
   ]
 }
 
@@ -144,19 +144,19 @@ resource airflowWebAppName_appsettings 'Microsoft.Web/sites/config@2019-08-01' =
     displayName: 'Airflow App Settings'
   }
   properties: {
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: 'postgresql://${administratorLogin}:${administratorLoginPassword}@${serverName_resource.properties.fullyQualifiedDomainName}:5432/${databaseName}'
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: 'postgresql://${administratorLogin}:${administratorLoginPassword}@${serverName.properties.fullyQualifiedDomainName}:5432/${databaseName}'
     AIRFLOW__CORE__SQL_ALCHEMY_POOL_SIZE: 20
     AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
     AIRFLOW__CORE__EXECUTOR: 'LocalExecutor'
     WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'true'
   }
   dependsOn: [
-    airflowWebAppName_resource
+    airflowWebAppName_res
   ]
 }
 
-resource serverName_resource 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
-  name: serverName
+resource serverName 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
+  name: serverName_var
   location: location
   sku: {
     name: databaseSkuName
@@ -174,24 +174,24 @@ resource serverName_resource 'Microsoft.DBforPostgreSQL/servers@2017-12-01' = {
 }
 
 resource serverName_serverName_firewall 'Microsoft.DBforPostgreSQL/servers/firewallrules@2017-12-01' = {
-  name: '${serverName}/${serverName}firewall'
+  name: '${serverName_var}/${serverName_var}firewall'
   location: location
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '255.255.255.255'
   }
   dependsOn: [
-    serverName_resource
+    serverName
   ]
 }
 
 resource serverName_databaseName 'Microsoft.DBforPostgreSQL/servers/databases@2017-12-01' = {
-  name: '${serverName}/${databaseName}'
+  name: '${serverName_var}/${databaseName}'
   properties: {
     charset: 'utf8'
     collation: 'English_United States.1252'
   }
   dependsOn: [
-    serverName_resource
+    serverName
   ]
 }

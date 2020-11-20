@@ -146,19 +146,19 @@ var linuxConfiguration = {
   }
 }
 var lowerCaseDNSName = toLower(dnsNameForPublicIP)
-var networkSecurityGroupName = '${lowerCaseDNSName}nsg'
-var nicName = 'minecraftvmnic'
-var publicIPAddressName = 'minecraftpublicip'
+var networkSecurityGroupName_var = '${lowerCaseDNSName}nsg'
+var nicName_var = 'minecraftvmnic'
+var publicIPAddressName_var = 'minecraftpublicip'
 var publicIPAddressType = 'Dynamic'
 var subnetName = 'subnet'
 var subnetPrefix = '10.0.0.0/24'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var ubuntuOSVersion = '18.04-LTS'
-var virtualNetworkName = 'minecraftvnet'
-var vmName = 'minecraftvm'
+var virtualNetworkName_var = 'minecraftvnet'
+var vmName_var = 'minecraftvm'
 
 resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${vmName}/newuserscript'
+  name: '${vmName_var}/newuserscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -173,12 +173,12 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2019
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -214,8 +214,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -224,7 +224,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -234,13 +234,12 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -250,8 +249,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -265,26 +264,23 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: virtualMachineSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -305,12 +301,9 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }

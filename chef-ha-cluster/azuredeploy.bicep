@@ -151,20 +151,20 @@ param ubuntuVersion string {
 var addressPrefix = '10.0.0.0/16'
 var bePoolName = 'chefpool'
 var BEStorageAccountContainerName = 'vhds'
-var ChefBEAvailName = 'BEAvail'
-var chefbeName = 'chefbe${uniqueString(resourceGroup().id)}'
-var ChefFEAvailName = 'FEAvail'
-var cheffeName = 'cheffe${uniqueString(resourceGroup().id)}'
+var ChefBEAvailName_var = 'BEAvail'
+var chefbeName_var = 'chefbe${uniqueString(resourceGroup().id)}'
+var ChefFEAvailName_var = 'FEAvail'
+var cheffeName_var = 'cheffe${uniqueString(resourceGroup().id)}'
 var FE0setupscriptScriptFileName = 'FE0Setup.sh'
 var FEsetupscriptScriptFileName = 'FESetup.sh'
 var FEStorageAccountContainerName = 'vhds'
 var FollowerSetupScriptFileName = 'BEFollowerSetup.sh'
 var frontEndIPConfigID = '${lbID}/frontendIPConfigurations/loadBalancerFrontEnd'
 var imageReference = osType
-var lbID = loadBalancerName_resource.id
+var lbID = loadBalancerName.id
 var lbProbeID = '${lbID}/probes/https'
 var LeaderSetupScriptFileName = 'BELeaderSetup.sh'
-var loadBalancerName = 'cheffelb'
+var loadBalancerName_var = 'cheffelb'
 var location = resourceGroup().location
 var osType = {
   publisher: 'Canonical'
@@ -172,19 +172,19 @@ var osType = {
   sku: ubuntuVersion
   version: 'latest'
 }
-var publicIPAddressID = publicIPAddressName_resource.id
-var publicIPAddressName = 'chefpublicip'
+var publicIPAddressID = publicIPAddressName.id
+var publicIPAddressName_var = 'chefpublicip'
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 var subnetName = 'chefsubnet'
 var subnetPrefix = '10.0.0.0/24'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var virtualNetworkName = 'chefvnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var virtualNetworkName_var = 'chefvnet'
 var tagvalues = {
   provider: toUpper('33194f91-eb5f-4110-827a-e95f640a9e46')
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   tags: {
     displayName: 'ChefVirtualNetwork'
@@ -207,8 +207,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource chefbeName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: chefbeName
+resource chefbeName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: chefbeName_var
   location: resourceGroup().location
   tags: {
     displayName: 'BEStorage'
@@ -220,8 +220,8 @@ resource chefbeName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   dependsOn: []
 }
 
-resource cheffeName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: cheffeName
+resource cheffeName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: cheffeName_var
   location: resourceGroup().location
   tags: {
     displayName: 'FEStorage'
@@ -233,8 +233,8 @@ resource cheffeName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   dependsOn: []
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
     displayName: 'FEPublicIP'
@@ -248,8 +248,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2015-06-15' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2015-06-15' = {
+  name: loadBalancerName_var
   location: location
   tags: {
     displayName: 'FELoadBalancer'
@@ -324,7 +324,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2015-06-15' 
         properties: {
           protocol: 'Tcp'
           backendAddressPool: {
-            id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+            id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
           }
           backendPort: 443
           frontendIPConfiguration: {
@@ -342,7 +342,7 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2015-06-15' 
         properties: {
           protocol: 'Tcp'
           backendAddressPool: {
-            id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+            id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
           }
           backendPort: 80
           frontendIPConfiguration: {
@@ -357,13 +357,10 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2015-06-15' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource ChefBEAvailName_resource 'Microsoft.Compute/availabilitySets@2017-12-01' = {
-  name: ChefBEAvailName
+resource ChefBEAvailName 'Microsoft.Compute/availabilitySets@2017-12-01' = {
+  name: ChefBEAvailName_var
   location: resourceGroup().location
   tags: {
     displayName: 'BEAvailSet'
@@ -379,8 +376,8 @@ resource ChefBEAvailName_resource 'Microsoft.Compute/availabilitySets@2017-12-01
   dependsOn: []
 }
 
-resource ChefFEAvailName_resource 'Microsoft.Compute/availabilitySets@2017-12-01' = {
-  name: ChefFEAvailName
+resource ChefFEAvailName 'Microsoft.Compute/availabilitySets@2017-12-01' = {
+  name: ChefFEAvailName_var
   location: resourceGroup().location
   tags: {
     displayName: 'FEAvailSet'
@@ -418,7 +415,7 @@ resource BE0Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
@@ -464,13 +461,11 @@ resource BE0 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefBEAvailName_resource.id
+      id: ChefBEAvailName.id
     }
   }
   dependsOn: [
-    chefbeName_resource
-    BE0Nic
-    ChefBEAvailName_resource
+    chefbeName
   ]
 }
 
@@ -521,7 +516,7 @@ resource BE1Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
@@ -567,13 +562,11 @@ resource BE1 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefBEAvailName_resource.id
+      id: ChefBEAvailName.id
     }
   }
   dependsOn: [
-    chefbeName_resource
-    BE1Nic
-    ChefBEAvailName_resource
+    chefbeName
   ]
 }
 
@@ -625,7 +618,7 @@ resource BE2Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
@@ -671,13 +664,11 @@ resource BE2 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefBEAvailName_resource.id
+      id: ChefBEAvailName.id
     }
   }
   dependsOn: [
-    chefbeName_resource
-    BE2Nic
-    ChefBEAvailName_resource
+    chefbeName
   ]
 }
 
@@ -727,12 +718,12 @@ resource FE0Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
           privateIPAddress: '10.0.0.50'
           loadBalancerBackendAddressPools: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatRules/ssh-fe0'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatRules/ssh-fe0'
             }
           ]
         }
@@ -740,8 +731,8 @@ resource FE0Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
-    loadBalancerName_resource
+    virtualNetworkName
+    loadBalancerName
   ]
 }
 
@@ -787,13 +778,11 @@ resource FE0 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefFEAvailName_resource.id
+      id: ChefFEAvailName.id
     }
   }
   dependsOn: [
-    cheffeName_resource
-    FE0Nic
-    ChefFEAvailName_resource
+    cheffeName
   ]
 }
 
@@ -844,12 +833,12 @@ resource FE1Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
           privateIPAddress: '10.0.0.51'
           loadBalancerBackendAddressPools: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatRules/ssh-fe1'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatRules/ssh-fe1'
             }
           ]
         }
@@ -857,8 +846,8 @@ resource FE1Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
-    loadBalancerName_resource
+    virtualNetworkName
+    loadBalancerName
   ]
 }
 
@@ -904,13 +893,11 @@ resource FE1 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefFEAvailName_resource.id
+      id: ChefFEAvailName.id
     }
   }
   dependsOn: [
-    cheffeName_resource
-    FE1Nic
-    ChefFEAvailName_resource
+    cheffeName
   ]
 }
 
@@ -959,12 +946,12 @@ resource FE2Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
           privateIPAddress: '10.0.0.52'
           loadBalancerBackendAddressPools: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/backendAddressPools/${bePoolName}'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/backendAddressPools/${bePoolName}'
             }
           ]
           loadBalancerInboundNatRules: [
             {
-              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName}/inboundNatRules/ssh-fe2'
+              id: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Network/loadBalancers/${loadBalancerName_var}/inboundNatRules/ssh-fe2'
             }
           ]
         }
@@ -972,8 +959,8 @@ resource FE2Nic 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
-    loadBalancerName_resource
+    virtualNetworkName
+    loadBalancerName
   ]
 }
 
@@ -1019,13 +1006,11 @@ resource FE2 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       ]
     }
     availabilitySet: {
-      id: ChefFEAvailName_resource.id
+      id: ChefFEAvailName.id
     }
   }
   dependsOn: [
-    cheffeName_resource
-    FE2Nic
-    ChefFEAvailName_resource
+    cheffeName
   ]
 }
 

@@ -213,9 +213,6 @@ resource vnet 'Microsoft.Network/virtualNetworks@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    networksecuritygroups
-  ]
 }
 
 resource server 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
@@ -277,7 +274,7 @@ resource server 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
                     subnet: {
                       id: '${vnet.id}/subnets/subnet'
                     }
-                    publicipaddressconfiguration: {
+                    publicIPAddressConfiguration: {
                       name: 'public'
                       properties: {
                         idleTimeoutInMinutes: 30
@@ -315,9 +312,6 @@ resource server 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
       }
     }
   }
-  dependsOn: [
-    vnet
-  ]
 }
 
 resource syncgateway 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
@@ -368,7 +362,7 @@ resource syncgateway 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
                     subnet: {
                       id: '${vnet.id}/subnets/subnet'
                     }
-                    publicipaddressconfiguration: {
+                    publicIPAddressConfiguration: {
                       name: 'public'
                       properties: {
                         idleTimeoutInMinutes: 30
@@ -406,9 +400,6 @@ resource syncgateway 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
       }
     }
   }
-  dependsOn: [
-    vnet
-  ]
 }
 
 output serverAdminURL string = '${reference('/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.Compute/virtualMachineScaleSets/server/virtualMachines/0/networkInterfaces/nic/ipConfigurations/ipconfig/publicIPAddresses/public', '2017-03-30').dnsSettings.fqdn}:8091'

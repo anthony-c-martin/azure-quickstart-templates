@@ -30,7 +30,7 @@ param tenantId string {
   default: subscription().tenantId
 }
 
-resource managedHSMName_resource 'Microsoft.KeyVault/managedHSMs@2020-04-01-preview' = {
+resource managedHSMName_res 'Microsoft.KeyVault/managedHSMs@2020-04-01-preview' = {
   name: managedHSMName
   location: location
   tags: {
@@ -42,10 +42,10 @@ resource managedHSMName_resource 'Microsoft.KeyVault/managedHSMs@2020-04-01-prev
     family: 'B'
   }
   properties: {
-    EnableSoftDelete: true
-    SoftDeleteRetentionInDays: 90
-    EnablePurgeProtection: false
-    TenantId: tenantId
-    InitialAdminObjectIds: initialAdminObjectIds
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 90
+    enablePurgeProtection: false
+    tenantId: tenantId
+    initialAdminObjectIds: initialAdminObjectIds
   }
 }

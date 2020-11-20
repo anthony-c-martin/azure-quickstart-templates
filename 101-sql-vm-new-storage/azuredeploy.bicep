@@ -111,8 +111,8 @@ param location string {
   default: resourceGroup().location
 }
 
-var networkInterfaceName = '${virtualMachineName}-nic'
-var networkSecurityGroupName = '${virtualMachineName}-nsg'
+var networkInterfaceName_var = '${virtualMachineName}-nic'
+var networkSecurityGroupName_var = '${virtualMachineName}-nsg'
 var networkSecurityGroupRules = [
   {
     name: 'RDP'
@@ -128,11 +128,11 @@ var networkSecurityGroupRules = [
     }
   }
 ]
-var publicIpAddressName = '${virtualMachineName}-publicip-${uniqueString(virtualMachineName)}'
+var publicIpAddressName_var = '${virtualMachineName}-publicip-${uniqueString(virtualMachineName)}'
 var publicIpAddressType = 'Dynamic'
 var publicIpAddressSku = 'Basic'
 var diskConfigurationType = 'NEW'
-var nsgId = networkSecurityGroupName_resource.id
+var nsgId = networkSecurityGroupName.id
 var subnetRef = resourceId(existingVnetResourceGroup, 'Microsoft.Network/virtualNetWorks/subnets', existingVirtualNetworkName, existingSubnetName)
 var dataDisksLuns = array(range(0, sqlDataDisksCount))
 var logDisksLuns = array(range(sqlDataDisksCount, sqlLogDisksCount))
@@ -145,27 +145,27 @@ var dataDisks = {
 }
 var tempDbPath = 'D:\\SQLTemp'
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIpAddresses@2020-06-01' = {
-  name: publicIpAddressName
+resource publicIpAddressName 'Microsoft.Network/publicIpAddresses@2020-06-01' = {
+  name: publicIpAddressName_var
   location: location
   sku: {
     name: publicIpAddressSku
   }
   properties: {
-    publicIpAllocationMethod: publicIpAddressType
+    publicIPAllocationMethod: publicIpAddressType
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: networkSecurityGroupRules
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -176,8 +176,8 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName.id
           }
         }
       }
@@ -187,13 +187,9 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
       id: nsgId
     }
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-    publicIpAddressName_resource
-  ]
 }
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -202,7 +198,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
     }
     storageProfile: {
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Premium_LRS'
         }
@@ -233,7 +229,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
@@ -243,41 +239,35 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2020-06-
       adminPassword: adminPassword
       windowsConfiguration: {
         enableAutomaticUpdates: true
-        provisionVmAgent: true
+        provisionVMAgent: true
       }
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource Microsoft_SqlVirtualMachine_SqlVirtualMachines_virtualMachineName 'Microsoft.SqlVirtualMachine/SqlVirtualMachines@2017-03-01-preview' = {
   name: virtualMachineName
   location: location
   properties: {
-    virtualMachineResourceId: virtualMachineName_resource.id
+    virtualMachineResourceId: virtualMachineName_res.id
     sqlManagement: 'Full'
-    SqlServerLicenseType: 'PAYG'
-    StorageConfigurationSettings: {
-      DiskConfigurationType: diskConfigurationType
-      StorageWorkloadType: storageWorkloadType
-      SQLDataSettings: {
-        LUNs: dataDisksLuns
-        DefaultFilePath: dataPath
+    sqlServerLicenseType: 'PAYG'
+    storageConfigurationSettings: {
+      diskConfigurationType: diskConfigurationType
+      storageWorkloadType: storageWorkloadType
+      sqlDataSettings: {
+        luns: dataDisksLuns
+        defaultFilePath: dataPath
       }
-      SQLLogSettings: {
-        Luns: logDisksLuns
-        DefaultFilePath: logPath
+      sqlLogSettings: {
+        luns: logDisksLuns
+        defaultFilePath: logPath
       }
-      SQLTempDbSettings: {
-        DefaultFilePath: tempDbPath
+      sqlTempDbSettings: {
+        defaultFilePath: tempDbPath
       }
     }
   }
-  dependsOn: [
-    virtualMachineName_resource
-  ]
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

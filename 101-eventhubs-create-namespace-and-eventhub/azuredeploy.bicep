@@ -20,11 +20,11 @@ param eventHubSku string {
   default: 'Standard'
 }
 
-var eventHubNamespaceName = '${projectName}ns'
+var eventHubNamespaceName_var = '${projectName}ns'
 var eventHubName = projectName
 
-resource eventHubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
-  name: eventHubNamespaceName
+resource eventHubNamespaceName 'Microsoft.EventHub/namespaces@2018-01-01-preview' = {
+  name: eventHubNamespaceName_var
   location: location
   sku: {
     name: eventHubSku
@@ -38,13 +38,13 @@ resource eventHubNamespaceName_resource 'Microsoft.EventHub/namespaces@2018-01-0
 }
 
 resource eventHubNamespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
-  name: '${eventHubNamespaceName}/${eventHubName}'
+  name: '${eventHubNamespaceName_var}/${eventHubName}'
   location: location
   properties: {
     messageRetentionInDays: 7
     partitionCount: 1
   }
   dependsOn: [
-    eventHubNamespaceName_resource
+    eventHubNamespaceName
   ]
 }

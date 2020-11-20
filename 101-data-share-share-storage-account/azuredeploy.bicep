@@ -62,16 +62,16 @@ param storageAccountResourceGroupName string {
   default: resourceGroup().name
 }
 
-var storageAccountName = '${projectName}store'
+var storageAccountName_var = '${projectName}store'
 var containerName = '${projectName}container'
-var dataShareAccountName = '${projectName}shareaccount'
+var dataShareAccountName_var = '${projectName}shareaccount'
 var dataShareName = '${projectName}share'
-var roleAssignmentName = guid(uniqueString(storageAccountName, storageBlobDataReaderRoleDefinitionId, dataShareAccountName))
+var roleAssignmentName = guid(uniqueString(storageAccountName_var, storageBlobDataReaderRoleDefinitionId, dataShareAccountName_var))
 var inviteName = '${dataShareName}invite'
 var storageBlobDataReaderRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -84,14 +84,14 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
 }
 
 resource storageAccountName_default_containerName 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
-  name: '${storageAccountName}/default/${containerName}'
+  name: '${storageAccountName_var}/default/${containerName}'
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName
   ]
 }
 
-resource dataShareAccountName_resource 'Microsoft.DataShare/accounts@2019-11-01' = {
-  name: dataShareAccountName
+resource dataShareAccountName 'Microsoft.DataShare/accounts@2019-11-01' = {
+  name: dataShareAccountName_var
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -100,53 +100,53 @@ resource dataShareAccountName_resource 'Microsoft.DataShare/accounts@2019-11-01'
 }
 
 resource dataShareAccountName_dataShareName 'Microsoft.DataShare/accounts/shares@2019-11-01' = {
-  name: '${dataShareAccountName}/${dataShareName}'
+  name: '${dataShareAccountName_var}/${dataShareName}'
   properties: {
     shareKind: 'CopyBased'
   }
   dependsOn: [
-    dataShareAccountName_resource
+    dataShareAccountName
   ]
 }
 
 resource storageAccountName_Microsoft_Authorization_roleAssignmentName 'Microsoft.Storage/storageAccounts/providers/roleAssignments@2020-04-01-preview' = {
-  name: '${storageAccountName}/Microsoft.Authorization/${roleAssignmentName}'
+  name: '${storageAccountName_var}/Microsoft.Authorization/${roleAssignmentName}'
   properties: {
     roleDefinitionId: storageBlobDataReaderRoleDefinitionId
-    principalId: reference(dataShareAccountName_resource.id, '2019-11-01', 'Full').identity.principalId
+    principalId: reference(dataShareAccountName.id, '2019-11-01', 'Full').identity.principalId
   }
 }
 
 resource dataShareAccountName_dataShareName_containerName 'Microsoft.DataShare/accounts/shares/dataSets@2019-11-01' = {
-  name: '${dataShareAccountName}/${dataShareName}/${containerName}'
+  name: '${dataShareAccountName_var}/${dataShareName}/${containerName}'
   kind: 'Container'
   properties: {
     subscriptionId: storageAccountSubscriptionID
     resourceGroup: storageAccountResourceGroupName
-    storageAccountName: storageAccountName
+    storageAccountName: storageAccountName_var
     containerName: containerName
   }
   dependsOn: [
     dataShareAccountName_dataShareName
-    dataShareAccountName_resource
-    extensionResourceId(storageAccountName_resource.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
+    dataShareAccountName
+    extensionResourceId(storageAccountName.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
   ]
 }
 
 resource dataShareAccountName_dataShareName_inviteName 'Microsoft.DataShare/accounts/shares/invitations@2019-11-01' = {
-  name: '${dataShareAccountName}/${dataShareName}/${inviteName}'
+  name: '${dataShareAccountName_var}/${dataShareName}/${inviteName}'
   properties: {
     targetEmail: invitationEmail
   }
   dependsOn: [
     dataShareAccountName_dataShareName
-    dataShareAccountName_resource
-    extensionResourceId(storageAccountName_resource.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
+    dataShareAccountName
+    extensionResourceId(storageAccountName.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
   ]
 }
 
 resource dataShareAccountName_dataShareName_dataShareName_synchronizationSetting 'Microsoft.DataShare/accounts/shares/synchronizationSettings@2019-11-01' = {
-  name: '${dataShareAccountName}/${dataShareName}/${dataShareName}_synchronizationSetting'
+  name: '${dataShareAccountName_var}/${dataShareName}/${dataShareName}_synchronizationSetting'
   kind: syncKind
   properties: {
     recurrenceInterval: syncInterval
@@ -154,7 +154,7 @@ resource dataShareAccountName_dataShareName_dataShareName_synchronizationSetting
   }
   dependsOn: [
     dataShareAccountName_dataShareName
-    dataShareAccountName_resource
-    extensionResourceId(storageAccountName_resource.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
+    dataShareAccountName
+    extensionResourceId(storageAccountName.id, 'Microsoft.Authorization/roleAssignments', roleAssignmentName)
   ]
 }

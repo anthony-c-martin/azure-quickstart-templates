@@ -29,7 +29,7 @@ param skuUnits string {
 
 var iotHubKeyName = 'iothubowner'
 
-resource iotHubName_resource 'Microsoft.Devices/IotHubs@2020-03-01' = {
+resource iotHubName_res 'Microsoft.Devices/IotHubs@2020-03-01' = {
   name: iotHubName
   location: location
   sku: {
@@ -39,7 +39,7 @@ resource iotHubName_resource 'Microsoft.Devices/IotHubs@2020-03-01' = {
   properties: {}
 }
 
-resource provisioningServiceName_resource 'Microsoft.Devices/provisioningServices@2020-01-01' = {
+resource provisioningServiceName_res 'Microsoft.Devices/provisioningServices@2020-01-01' = {
   name: provisioningServiceName
   location: location
   sku: {
@@ -49,13 +49,10 @@ resource provisioningServiceName_resource 'Microsoft.Devices/provisioningService
   properties: {
     iotHubs: [
       {
-        connectionString: 'HostName=${iotHubName_resource.properties.hostName};SharedAccessKeyName=${iotHubKeyName};SharedAccessKey=${listkeys(resourceId('Microsoft.Devices/Iothubs/Iothubkeys', iotHubName, iotHubKeyName), '2020-03-01').primaryKey}'
+        connectionString: 'HostName=${iotHubName_res.properties.hostName};SharedAccessKeyName=${iotHubKeyName};SharedAccessKey=${listkeys(resourceId('Microsoft.Devices/Iothubs/Iothubkeys', iotHubName, iotHubKeyName), '2020-03-01').primaryKey}'
         location: location
-        name: iotHubName_resource.properties.hostName
+        name: iotHubName_res.properties.hostName
       }
     ]
   }
-  dependsOn: [
-    iotHubName_resource
-  ]
 }

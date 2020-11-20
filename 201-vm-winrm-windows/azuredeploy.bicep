@@ -64,22 +64,22 @@ param location string {
 
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
-var nicName_variable = nicName
+var nicName_var = nicName
 var addressPrefix = '10.0.0.0/16'
-var subnetName_variable = subnetName
+var subnetName_var = subnetName
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName_variable = publicIPAddressName
+var publicIPAddressName_var = publicIPAddressName
 var publicIPAddressType = 'Dynamic'
-var vmName_variable = vmName
+var vmName_var = vmName
 var vmSize = 'Standard_A2'
-var virtualNetworkName_variable = virtualNetworkName
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_variable, subnetName_variable)
+var virtualNetworkName_var = virtualNetworkName
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName_var)
 var apiVersion = '2015-06-15'
 var hostDNSNameScriptArgument = '*.${location}.cloudapp.azure.com'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName_variable
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -89,8 +89,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -111,8 +111,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName_variable
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -122,23 +122,20 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
     }
     subnets: [
       {
-        name: subnetName_variable
+        name: subnetName_var
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName_variable
+resource nicName_res 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -147,7 +144,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName_res.id
           }
           subnet: {
             id: subnetRef
@@ -157,20 +154,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName_variable
+resource vmName_res 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName_variable
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -188,18 +184,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_WinRMCustomScriptExtension 'Microsoft.Compute/virtualMachines/extensions@[variables(\'apiVersion\')]' = {
-  name: '${vmName_variable}/WinRMCustomScriptExtension'
+  name: '${vmName_var}/WinRMCustomScriptExtension'
   location: location
   properties: {
     publisher: 'Microsoft.Compute'
@@ -215,6 +208,6 @@ resource vmName_WinRMCustomScriptExtension 'Microsoft.Compute/virtualMachines/ex
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

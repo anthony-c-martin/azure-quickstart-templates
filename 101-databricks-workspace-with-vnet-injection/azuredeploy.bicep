@@ -41,7 +41,7 @@ param location string {
 var managedResourceGroupId = subscriptionResourceId('Microsoft.Resources/resourceGroups', managedResourceGroupName)
 var managedResourceGroupName = 'databricks-rg-${workspaceName}-${uniqueString(workspaceName, resourceGroup().id)}'
 
-resource workspaceName_resource 'Microsoft.Databricks/workspaces@2018-04-01' = {
+resource workspaceName_res 'Microsoft.Databricks/workspaces@2018-04-01' = {
   name: workspaceName
   location: location
   sku: {

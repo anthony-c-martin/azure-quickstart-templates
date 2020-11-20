@@ -65,16 +65,16 @@ param workspaceName string {
 
 var managedResourceGroupName = 'databricks-rg-${workspaceName}-${uniqueString(workspaceName, resourceGroup().id)}'
 var managedResourceGroupId = subscriptionResourceId('Microsoft.Resources/resourceGroups', managedResourceGroupName)
-var nsgId = nsgName_resource.id
-var vnetId = vnetName_resource.id
+var nsgId = nsgName_res.id
+var vnetId = vnetName_res.id
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+resource nsgName_res 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
   location: location
   name: nsgName
   properties: {}
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   location: location
   name: vnetName
   properties: {
@@ -120,19 +120,16 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
       }
     ]
   }
-  dependsOn: [
-    nsgName_resource
-  ]
 }
 
-resource workspaceName_resource 'Microsoft.Databricks/workspaces@2018-04-01' = {
+resource workspaceName_res 'Microsoft.Databricks/workspaces@2018-04-01' = {
   location: location
   name: workspaceName
   sku: {
     name: pricingTier
   }
   properties: {
-    ManagedResourceGroupId: managedResourceGroupId
+    managedResourceGroupId: managedResourceGroupId
     parameters: {
       customVirtualNetworkId: {
         value: vnetId
@@ -146,7 +143,6 @@ resource workspaceName_resource 'Microsoft.Databricks/workspaces@2018-04-01' = {
     }
   }
   dependsOn: [
-    nsgName_resource
-    vnetName_resource
+    nsgName_res
   ]
 }

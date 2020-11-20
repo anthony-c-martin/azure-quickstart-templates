@@ -47,23 +47,23 @@ param windowsOSVersion string {
   default: '2016-Datacenter'
 }
 
-var storageAccountName = '${projectName}store'
-var networkInterfaceName = '${projectName}-nic'
+var storageAccountName_var = '${projectName}store'
+var networkInterfaceName_var = '${projectName}-nic'
 var vNetAddressPrefix = '10.0.0.0/16'
 var vNetSubnetName = 'default'
 var vNetSubnetAddressPrefix = '10.0.0.0/24'
-var publicIPAddressName = '${projectName}-ip'
-var vmName = '${projectName}-vm'
-var vNetName = '${projectName}-vnet'
-var vaultName = '${projectName}-vault'
+var publicIPAddressName_var = '${projectName}-ip'
+var vmName_var = '${projectName}-vm'
+var vNetName_var = '${projectName}-vnet'
+var vaultName_var = '${projectName}-vault'
 var backupFabric = 'Azure'
 var backupPolicyName = 'DefaultPolicy'
-var protectionContainer = 'iaasvmcontainer;iaasvmcontainerv2;${resourceGroup().name};${vmName}'
-var protectedItem = 'vm;iaasvmcontainerv2;${resourceGroup().name};${vmName}'
-var networkSecurityGroupName = 'default-NSG'
+var protectionContainer = 'iaasvmcontainer;iaasvmcontainerv2;${resourceGroup().name};${vmName_var}'
+var protectedItem = 'vm;iaasvmcontainerv2;${resourceGroup().name};${vmName_var}'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -72,8 +72,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -83,8 +83,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -105,8 +105,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vNetName
+resource vNetName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vNetName_var
   location: location
   properties: {
     addressSpace: {
@@ -120,19 +120,16 @@ resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
         properties: {
           addressPrefix: vNetSubnetAddressPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -141,30 +138,29 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vNetName, vNetSubnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vNetName_var, vNetSubnetName)
           }
         }
       }
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    vNetName_resource
+    vNetName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -189,25 +185,21 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAccountName_resource.properties.primaryEndpoints.blob
+        storageUri: storageAccountName.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    networkInterfaceName_resource
-  ]
 }
 
-resource vaultName_resource 'Microsoft.RecoveryServices/vaults@2020-02-02' = {
-  name: vaultName
+resource vaultName 'Microsoft.RecoveryServices/vaults@2020-02-02' = {
+  name: vaultName_var
   location: location
   sku: {
     name: 'RS0'
@@ -217,14 +209,13 @@ resource vaultName_resource 'Microsoft.RecoveryServices/vaults@2020-02-02' = {
 }
 
 resource vaultName_backupFabric_protectionContainer_protectedItem 'Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems@2020-02-02' = {
-  name: '${vaultName}/${backupFabric}/${protectionContainer}/${protectedItem}'
+  name: '${vaultName_var}/${backupFabric}/${protectionContainer}/${protectedItem}'
   properties: {
     protectedItemType: 'Microsoft.Compute/virtualMachines'
-    policyId: resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', vaultName, backupPolicyName)
-    sourceResourceId: vmName_resource.id
+    policyId: resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', vaultName_var, backupPolicyName)
+    sourceResourceId: vmName.id
   }
   dependsOn: [
-    vmName_resource
-    vaultName_resource
+    vaultName
   ]
 }

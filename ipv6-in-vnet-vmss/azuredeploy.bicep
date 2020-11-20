@@ -41,7 +41,7 @@ var vnetv4AddressRange = '10.0.0.0/16'
 var vnetv6AddressRange = 'ace:cab:deca::/48'
 var subnetv4AddressRange = '10.0.0.0/24'
 var subnetv6AddressRange = 'ace:cab:deca:deed::/64'
-var virtualNetworkName = '${vmssName}vnet'
+var virtualNetworkName_var = '${vmssName}vnet'
 var subnetName = '${vmssName}subnet'
 var natPoolName = '${vmssName}natpool'
 var bePoolName = '${vmssName}bepool'
@@ -59,8 +59,8 @@ var imageReference = {
   version: 'latest'
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-07-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-07-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     dhcpOptions: {
@@ -153,7 +153,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2019-07-01' = {
           frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', 'loadBalancer', 'LBFE')
           }
-          protocol: 'tcp'
+          protocol: 'Tcp'
           frontendPortRangeStart: natStartPort
           frontendPortRangeEnd: natEndPort
           backendPort: natBackendPort
@@ -161,10 +161,6 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2019-07-01' = {
       }
     ]
   }
-  dependsOn: [
-    PIPv4
-    PIPv6
-  ]
 }
 
 resource VmssNsg 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
@@ -176,7 +172,7 @@ resource VmssNsg 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
         name: 'allow-HTTP-in'
         properties: {
           description: 'Allow HTTP'
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '80'
           destinationPortRange: '80'
           sourceAddressPrefix: '*'
@@ -235,7 +231,7 @@ resource VmssNsg 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
   }
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01' = {
   name: vmssName
   location: location
   sku: {
@@ -276,10 +272,10 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
                   properties: {
                     primary: true
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     privateIPAddressVersion: 'IPv4'
-                    publicipaddressconfiguration: {
+                    publicIPAddressConfiguration: {
                       name: 'pub1'
                       properties: {
                         idleTimeoutInMinutes: 15
@@ -301,7 +297,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
                   name: ipConfigNameV6
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     privateIPAddressVersion: 'IPv6'
                     loadBalancerBackendAddressPools: [
@@ -320,6 +316,6 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-07-01
   }
   dependsOn: [
     loadBalancer
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }

@@ -86,13 +86,13 @@ param location string {
   default: resourceGroup().location
 }
 
-var vmssName_variable = toLower(take(vmssName, 9))
+var vmssName_var = toLower(take(vmssName, 9))
 var subnetId = resourceId(existingVirtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, existingVirtualNetworkSubnet)
 var appGwBePoolId = resourceId(existingAppGatewayResourceGroup, 'Microsoft.Network/applicationGateways/backendAddressPools/', existingAppGatewayName, existingAppGatewayBackendPoolName)
 var managedImageId = resourceId(existingManagedImageResourceGroup, 'Microsoft.Compute/images', existingManagedImageName)
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
-  name: vmssName_variable
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
+  name: vmssName_var
   location: location
   sku: {
     name: vmSku
@@ -112,7 +112,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01
         }
       }
       osProfile: {
-        computerNamePrefix: vmssName_variable
+        computerNamePrefix: vmssName_var
         adminUsername: adminUsername
         adminPassword: adminPassword
       }
@@ -129,7 +129,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01
                     subnet: {
                       id: subnetId
                     }
-                    ApplicationGatewayBackendAddressPools: [
+                    applicationGatewayBackendAddressPools: [
                       {
                         id: appGwBePoolId
                       }

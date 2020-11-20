@@ -94,25 +94,25 @@ param platformFaultDomainCount int {
   default: 1
 }
 
-var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
+var namingInfix_var = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
 var longNamingInfix = toLower(vmssName)
 var addressPrefix = '10.0.0.0/16'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = '${namingInfix}vnet'
-var publicIPAddressName = '${namingInfix}pip'
-var subnetName = '${namingInfix}subnet'
-var loadBalancerName = '${namingInfix}lb'
-var publicIPAddressID = publicIPAddressName_resource.id
-var lbProbeID = resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName, 'tcpProbe')
-var natPoolName = '${namingInfix}natpool'
-var bePoolName = '${namingInfix}bepool'
-var lbPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName, bePoolName)
+var virtualNetworkName_var = '${namingInfix_var}vnet'
+var publicIPAddressName_var = '${namingInfix_var}pip'
+var subnetName = '${namingInfix_var}subnet'
+var loadBalancerName_var = '${namingInfix_var}lb'
+var publicIPAddressID = publicIPAddressName.id
+var lbProbeID = resourceId('Microsoft.Network/loadBalancers/probes', loadBalancerName_var, 'tcpProbe')
+var natPoolName = '${namingInfix_var}natpool'
+var bePoolName = '${namingInfix_var}bepool'
+var lbPoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools', loadBalancerName_var, bePoolName)
 var natStartPort = 50000
 var natEndPort = 50119
 var natBackendPort = 3389
-var nicName = '${namingInfix}nic'
-var ipConfigName = '${namingInfix}ipconfig'
-var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName, 'loadBalancerFrontEnd')
+var nicName = '${namingInfix_var}nic'
+var ipConfigName = '${namingInfix_var}ipconfig'
+var frontEndIPConfigID = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', loadBalancerName_var, 'loadBalancerFrontEnd')
 var osType = {
   publisher: 'MicrosoftWindowsServer'
   offer: 'WindowsServer'
@@ -123,8 +123,8 @@ var imageReference = osType
 var webDeployPackageFullPath = uri(artifactsLocation, concat(webDeployPackage, artifactsLocationSasToken))
 var powershelldscZipFullPath = uri(artifactsLocation, concat(powershelldscZip, artifactsLocationSasToken))
 
-resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' = {
-  name: loadBalancerName
+resource loadBalancerName 'Microsoft.Network/loadBalancers@2020-06-01' = {
+  name: loadBalancerName_var
   location: location
   properties: {
     frontendIPConfigurations: [
@@ -189,13 +189,10 @@ resource loadBalancerName_resource 'Microsoft.Network/loadBalancers@2020-06-01' 
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
-resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
-  name: namingInfix
+resource namingInfix 'Microsoft.Compute/virtualMachineScaleSets@2020-06-01' = {
+  name: namingInfix_var
   location: location
   sku: {
     name: vmSku
@@ -218,7 +215,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06
         imageReference: imageReference
       }
       osProfile: {
-        computerNamePrefix: namingInfix
+        computerNamePrefix: namingInfix_var
         adminUsername: adminUsername
         adminPassword: adminPassword
       }
@@ -233,7 +230,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06
                   name: ipConfigName
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
@@ -242,7 +239,7 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06
                     ]
                     loadBalancerInboundNatPools: [
                       {
-                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName, natPoolName)
+                        id: resourceId('Microsoft.Network/loadBalancers/inboundNatPools', loadBalancerName_var, natPoolName)
                       }
                     ]
                   }
@@ -280,13 +277,13 @@ resource namingInfix_resource 'Microsoft.Compute/virtualMachineScaleSets@2020-06
     }
   }
   dependsOn: [
-    loadBalancerName_resource
-    virtualNetworkName_resource
+    loadBalancerName
+    virtualNetworkName
   ]
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -296,8 +293,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -321,7 +318,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
   location: location
   properties: {
     name: 'autoscalehost'
-    targetResourceUri: namingInfix_resource.id
+    targetResourceUri: namingInfix.id
     enabled: true
     profiles: [
       {
@@ -335,7 +332,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: namingInfix_resource.id
+              metricResourceUri: namingInfix.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -353,7 +350,7 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
           {
             metricTrigger: {
               metricName: 'Percentage CPU'
-              metricResourceUri: namingInfix_resource.id
+              metricResourceUri: namingInfix.id
               timeGrain: 'PT1M'
               statistic: 'Average'
               timeWindow: 'PT5M'
@@ -372,9 +369,6 @@ resource autoscalehost 'Microsoft.Insights/autoscaleSettings@2015-04-01' = {
       }
     ]
   }
-  dependsOn: [
-    namingInfix_resource
-  ]
 }
 
-output applicationUrl string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}/MyApp'
+output applicationUrl string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}/MyApp'

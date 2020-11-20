@@ -35,32 +35,32 @@ param location string {
   default: resourceGroup().location
 }
 
-var newStorageAccountName = '${uniqueString(resourceGroup().id)}stg'
+var newStorageAccountName_var = '${uniqueString(resourceGroup().id)}stg'
 var vmStorageAccountContainerName = 'vdh'
 var publicDnsName = 'coscale-${uniqueString(resourceGroup().id)}'
 var vmSize = 'Standard_DS4_v2'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var vmName = 'coscale'
-var nicName = 'coscaleNic'
-var networkSecurityGroupName = 'coscaleNSG'
-var publicIPAddressName = 'coscalePublicIP'
+var vmName_var = 'coscale'
+var nicName_var = 'coscaleNic'
+var networkSecurityGroupName_var = 'coscaleNSG'
+var publicIPAddressName_var = 'coscalePublicIP'
 var vmUser = 'cs'
 var vmPublicKey = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkbtWpHEyZYJ+Eyl+jFVUYOH+YBqGAAvyl9oJRzWieJlDp9PucYhbtlXTm7VhlSZvFi7MtcJoxzlQqk1FoNsUPtPyrCtVz8uEHS4FZiuOhb1UFLMayInfXWUWzBt0EEbELlgipRpqGgsi+pn3P07C+8VcBXhAPpMn7Y3qb3txlr7tCCowk8XbXE+MFwfLMXqHavgzIcI++6zECQoFCjb1ktpiAPcP/HkzNDJ2r3tAWyJWOMs1GH3f67corKaKh54LCmQRJS1FAUEnb9da4Xn+Tgx16f42aBF4gY5CEmg2NZ4tvbgE7hXKxJY0TEBTQ1zjUgv92gXOuGcRgu+XM8fut CoScaleAzure'
-var virtualNetworkName = 'coscaleVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'coscaleVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: newStorageAccountName
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: newStorageAccountName_var
   location: location
   properties: {
     accountType: 'Premium_LRS'
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -70,8 +70,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -90,8 +90,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -138,8 +138,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -148,7 +148,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -157,22 +157,20 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
     networkSecurityGroup: {
-      id: networkSecurityGroupName_resource.id
+      id: networkSecurityGroupName.id
     }
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: vmUser
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -197,13 +195,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
       dataDisks: [
         {
-          name: '${vmName}_DataDisk'
+          name: '${vmName_var}_DataDisk'
           diskSizeGB: 512
           lun: 0
           caching: 'ReadOnly'
@@ -214,19 +212,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName
   ]
 }
 
 resource vmName_vmName_install 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/${vmName}-install'
+  name: '${vmName_var}/${vmName_var}-install'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -237,12 +234,12 @@ resource vmName_vmName_install 'Microsoft.Compute/virtualMachines/extensions@201
       fileUris: [
         '${artifactsLocation}install.sh${artifactsLocationSasToken}'
       ]
-      commandToExecute: 'bash install.sh ${coscaleKey} ${coscaleEmail} ${coscalePassword} ${reference(publicIPAddressName).dnsSettings.fqdn}'
+      commandToExecute: 'bash install.sh ${coscaleKey} ${coscaleEmail} ${coscalePassword} ${reference(publicIPAddressName_var).dnsSettings.fqdn}'
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-output coscaleURL string = 'http://${reference(publicIPAddressName).dnsSettings.fqdn}'
+output coscaleURL string = 'http://${reference(publicIPAddressName_var).dnsSettings.fqdn}'

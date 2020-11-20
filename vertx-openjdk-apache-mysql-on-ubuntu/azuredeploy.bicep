@@ -50,17 +50,17 @@ param adminPasswordOrKey string {
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var OSDiskName = 'osdiskforvertx'
-var nicName = 'vertxNic'
+var nicName_var = 'vertxNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'vertxSubnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = 'vertxPublicIP'
+var publicIPAddressName_var = 'vertxPublicIP'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhds'
 var vmSize = 'Standard_A2'
-var virtualNetworkName = 'vertxVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = 'vertxVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -72,9 +72,9 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccountName
   location: location
   properties: {
@@ -82,8 +82,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -93,8 +93,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -115,8 +115,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -130,19 +130,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -151,7 +148,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -161,12 +158,11 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   properties: {
@@ -195,14 +191,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
@@ -222,6 +217,6 @@ resource vmName_newuserscript 'Microsoft.Compute/virtualMachines/extensions@2015
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

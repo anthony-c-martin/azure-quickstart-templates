@@ -41,15 +41,15 @@ param location string {
   default: resourceGroup().location
 }
 
-var publicIpName = '${natgatewayname}ip'
+var publicIpName_var = '${natgatewayname}ip'
 var publicIpAddresses = [
   {
-    id: publicIpName_resource.id
+    id: publicIpName.id
   }
 ]
 
-resource publicIpName_resource 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
-  name: publicIpName
+resource publicIpName 'Microsoft.Network/publicIPAddresses@2019-11-01' = {
+  name: publicIpName_var
   location: location
   sku: {
     name: 'Standard'
@@ -64,7 +64,7 @@ resource publicIpName_resource 'Microsoft.Network/publicIPAddresses@2019-11-01' 
   }
 }
 
-resource natgatewayname_resource 'Microsoft.Network/natGateways@2019-11-01' = {
+resource natgatewayname_res 'Microsoft.Network/natGateways@2019-11-01' = {
   name: natgatewayname
   location: location
   sku: {
@@ -74,12 +74,9 @@ resource natgatewayname_resource 'Microsoft.Network/natGateways@2019-11-01' = {
     idleTimeoutInMinutes: 4
     publicIpAddresses: ((!empty(publicipdns)) ? publicIpAddresses : json('null'))
   }
-  dependsOn: [
-    publicIpName_resource
-  ]
 }
 
-resource vnetname_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+resource vnetname_res 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   name: vnetname
   location: location
   properties: {
@@ -94,7 +91,7 @@ resource vnetname_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
         properties: {
           addressPrefix: vnetsubnetprefix
           natGateway: {
-            id: natgatewayname_resource.id
+            id: natgatewayname_res.id
           }
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
@@ -104,9 +101,6 @@ resource vnetname_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
     enableDdosProtection: false
     enableVmProtection: false
   }
-  dependsOn: [
-    natgatewayname_resource
-  ]
 }
 
 resource vnetname_mySubnet 'Microsoft.Network/virtualNetworks/subnets@2019-11-01' = {
@@ -114,13 +108,12 @@ resource vnetname_mySubnet 'Microsoft.Network/virtualNetworks/subnets@2019-11-01
   properties: {
     addressPrefix: vnetsubnetprefix
     natGateway: {
-      id: natgatewayname_resource.id
+      id: natgatewayname_res.id
     }
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
   }
   dependsOn: [
-    vnetname_resource
-    natgatewayname_resource
+    vnetname_res
   ]
 }

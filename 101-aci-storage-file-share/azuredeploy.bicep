@@ -36,10 +36,10 @@ param location string {
 var image = 'microsoft/azure-cli'
 var cpuCores = '1.0'
 var memoryInGb = '1.5'
-var containerGroupName = 'createshare-containerinstance'
+var containerGroupName_var = 'createshare-containerinstance'
 var containerName = 'createshare'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -48,8 +48,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'StorageV2'
 }
 
-resource containerGroupName_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
-  name: containerGroupName
+resource containerGroupName 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+  name: containerGroupName_var
   location: containerInstanceLocation
   properties: {
     containers: [
@@ -78,7 +78,7 @@ resource containerGroupName_resource 'Microsoft.ContainerInstance/containerGroup
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
         }
@@ -88,6 +88,6 @@ resource containerGroupName_resource 'Microsoft.ContainerInstance/containerGroup
     osType: 'Linux'
   }
   dependsOn: [
-    storageAccountName_resource
+    storageAccountName_res
   ]
 }

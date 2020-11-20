@@ -90,7 +90,7 @@ param gatewayName string {
 
 var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, gatewaySubnet)
 
-resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2015-05-01-preview' = {
+resource localGatewayName_res 'Microsoft.Network/localNetworkGateways@2015-05-01-preview' = {
   name: localGatewayName
   location: resourceGroup().location
   properties: {
@@ -103,7 +103,7 @@ resource localGatewayName_resource 'Microsoft.Network/localNetworkGateways@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   name: virtualNetworkName
   location: resourceGroup().location
   properties: {
@@ -129,7 +129,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+resource gatewayPublicIPName_res 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
   name: gatewayPublicIPName
   location: resourceGroup().location
   properties: {
@@ -137,7 +137,7 @@ resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-05-01-preview' = {
+resource gatewayName_res 'Microsoft.Network/virtualNetworkGateways@2015-05-01-preview' = {
   name: gatewayName
   location: resourceGroup().location
   properties: {
@@ -149,7 +149,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-05-
             id: gatewaySubnetRef
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName_res.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -160,7 +160,6 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-05-
     enableBgp: false
   }
   dependsOn: [
-    gatewayPublicIPName_resource
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }

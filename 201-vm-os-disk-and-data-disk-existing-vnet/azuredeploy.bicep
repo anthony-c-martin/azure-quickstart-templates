@@ -50,14 +50,14 @@ param location string {
   default: resourceGroup().location
 }
 
-var diagStorageAccountName = '${vmName}diag'
+var diagStorageAccountName_var = '${vmName}diag'
 var publicIPAddressType = 'Dynamic'
 var subnetRef = resourceId(existingVirtualNetworkResourceGroup, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, subnetName)
-var nicName = '${vmName}-nic1'
-var publicIPAddressName = '${vmName}-pip'
+var nicName_var = '${vmName}-nic1'
+var publicIPAddressName_var = '${vmName}-pip'
 
-resource diagStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-02-01' = {
-  name: diagStorageAccountName
+resource diagStorageAccountName 'Microsoft.Storage/storageAccounts@2018-02-01' = {
+  name: diagStorageAccountName_var
   location: location
   sku: {
     name: 'Standard_GRS'
@@ -66,8 +66,8 @@ resource diagStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2018
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   tags: {
     displayName: 'PublicIPAddress'
@@ -77,8 +77,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   tags: {
     displayName: 'NetworkInterface'
@@ -90,7 +90,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -99,9 +99,6 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-  ]
 }
 
 resource vmName_OSdisk 'Microsoft.Compute/disks@2017-03-30' = {
@@ -127,7 +124,7 @@ resource vmName_Datadisk 'Microsoft.Compute/disks@2017-03-30' = {
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   tags: {
@@ -160,20 +157,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: concat(reference('Microsoft.Storage/storageAccounts/${diagStorageAccountName}', '2016-01-01').primaryEndpoints.blob)
+        storageUri: concat(reference('Microsoft.Storage/storageAccounts/${diagStorageAccountName_var}', '2016-01-01').primaryEndpoints.blob)
       }
     }
   }
-  dependsOn: [
-    nicName_resource
-    vmName_OSdisk
-    vmName_Datadisk
-  ]
 }

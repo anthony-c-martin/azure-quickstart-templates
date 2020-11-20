@@ -137,22 +137,22 @@ var images = {
     publisher: 'OpenLogic'
   }
 }
-var vnetID = virtualNetworkName_resource.id
+var vnetID = virtualNetworkName.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var vmExtensionName = 'LinuxChefExtension'
-var vmName = vmDnsName
+var vmName_var = vmDnsName
 var storageAccountType = 'Standard_LRS'
-var newStorageAccountName = '${uniqueString(resourceGroup().id)}cheflinuxvm'
-var publicIPAddressName = 'myPublicIP1'
+var newStorageAccountName_var = '${uniqueString(resourceGroup().id)}cheflinuxvm'
+var publicIPAddressName_var = 'myPublicIP1'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhds'
-var virtualNetworkName = 'MyVNET1'
+var virtualNetworkName_var = 'MyVNET1'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'subnet-1'
 var subnet2Name = 'subnet-2'
 var subnet1Prefix = '10.0.0.0/24'
 var subnet2Prefix = '10.0.1.0/24'
-var nicName = 'myVMNic'
+var nicName_var = 'myVMNic'
 var dnsName = subnet1Name
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -165,18 +165,18 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
-  name: newStorageAccountName
+resource newStorageAccountName 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+  name: newStorageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -186,8 +186,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -208,8 +208,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -223,7 +223,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
@@ -235,13 +235,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -250,7 +247,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -259,21 +256,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -286,7 +279,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -294,19 +287,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName
   ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Chef.Bootstrap.WindowsAzure'
@@ -331,6 +323,6 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

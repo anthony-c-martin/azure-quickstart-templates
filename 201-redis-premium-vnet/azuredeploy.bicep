@@ -46,7 +46,7 @@ param enableNonSslPort bool {
 
 var subnetId = resourceId(existingVirtualNetworkResourceGroupName, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, existingSubnetName)
 
-resource redisCacheName_resource 'Microsoft.Cache/Redis@2019-07-01' = {
+resource redisCacheName_res 'Microsoft.Cache/Redis@2019-07-01' = {
   name: redisCacheName
   location: location
   properties: {

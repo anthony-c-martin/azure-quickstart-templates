@@ -38,20 +38,20 @@ param location string {
   default: resourceGroup().location
 }
 
-var dataFactoryName = 'SalesforceToAzureBlobDF${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'SalesforceToAzureBlobDF${uniqueString(resourceGroup().id)}'
 var SfLinkedServiceName = 'SflLinkedService'
 var storageLinkedServiceName = 'StorageLinkedService'
 var SfDataset = 'SfDataset'
 var StorageDataset = 'StorageContainerDataset'
 var PipelineName = 'SftoBlobsCopyPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: location
 }
 
 resource dataFactoryName_SfLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${SfLinkedServiceName}'
+  name: '${dataFactoryName_var}/${SfLinkedServiceName}'
   properties: {
     type: 'Salesforce'
     description: 'SalesForce Linked Service'
@@ -62,12 +62,12 @@ resource dataFactoryName_SfLinkedServiceName 'Microsoft.DataFactory/datafactorie
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
   ]
 }
 
 resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${storageLinkedServiceName}'
+  name: '${dataFactoryName_var}/${storageLinkedServiceName}'
   properties: {
     type: 'AzureStorage'
     description: 'Azure Blobs Storage Linked Service'
@@ -76,12 +76,12 @@ resource dataFactoryName_storageLinkedServiceName 'Microsoft.DataFactory/datafac
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
   ]
 }
 
 resource dataFactoryName_SfDataset 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${SfDataset}'
+  name: '${dataFactoryName_var}/${SfDataset}'
   properties: {
     type: 'RelationalTable'
     linkedServiceName: SfLinkedServiceName
@@ -95,13 +95,13 @@ resource dataFactoryName_SfDataset 'Microsoft.DataFactory/datafactories/datasets
     external: true
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_SfLinkedServiceName
   ]
 }
 
 resource dataFactoryName_StorageDataset 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${StorageDataset}'
+  name: '${dataFactoryName_var}/${StorageDataset}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: storageLinkedServiceName
@@ -144,13 +144,13 @@ resource dataFactoryName_StorageDataset 'Microsoft.DataFactory/datafactories/dat
     external: false
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_storageLinkedServiceName
   ]
 }
 
 resource dataFactoryName_PipelineName 'Microsoft.DataFactory/datafactories/datapipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${PipelineName}'
+  name: '${dataFactoryName_var}/${PipelineName}'
   properties: {
     description: 'Pipeline to copy data from SF Object to Azure Blobs'
     activities: [
@@ -186,7 +186,7 @@ resource dataFactoryName_PipelineName 'Microsoft.DataFactory/datafactories/datap
     end: '10/1/2016 12:00:00 AM'
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_storageLinkedServiceName
     dataFactoryName_SfLinkedServiceName
     dataFactoryName_SfDataset

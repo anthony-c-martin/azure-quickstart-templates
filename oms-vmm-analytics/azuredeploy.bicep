@@ -55,7 +55,7 @@ var runbooks = {
   }
 }
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2015-11-01-preview' = {
   name: workspaceName
   location: workspaceRegion
   properties: {
@@ -546,7 +546,7 @@ resource workspaceName_omsSolutions_customSolution_name 'Microsoft.OperationalIn
     }
   }
   dependsOn: [
-    workspaceName_resource
+    workspaceName_res
   ]
 }
 
@@ -560,19 +560,15 @@ resource omsSolutions_customSolution_solutionName 'Microsoft.OperationsManagemen
     promotionCode: ''
   }
   properties: {
-    workspaceResourceId: workspaceName_resource.id
+    workspaceResourceId: workspaceName_res.id
     referencedResources: []
     containedResources: [
       workspaceName_omsSolutions_customSolution_name.id
     ]
   }
-  dependsOn: [
-    workspaceName_resource
-    workspaceName_omsSolutions_customSolution_name
-  ]
 }
 
-resource automationName_resource 'Microsoft.Automation/automationAccounts@2015-10-31' = {
+resource automationName_res 'Microsoft.Automation/automationAccounts@2015-10-31' = {
   name: automationName
   location: automationRegion
   properties: {
@@ -581,7 +577,7 @@ resource automationName_resource 'Microsoft.Automation/automationAccounts@2015-1
     }
   }
   dependsOn: [
-    workspaceName_resource
+    workspaceName_res
   ]
 }
 
@@ -590,10 +586,10 @@ resource automationName_omsWorkspaceId 'Microsoft.Automation/automationAccounts/
   location: automationRegion
   properties: {
     description: 'OMS Workspace Id'
-    value: '"${reference(workspaceName_resource.id, '2015-11-01-preview').customerId}"'
+    value: '"${reference(workspaceName_res.id, '2015-11-01-preview').customerId}"'
   }
   dependsOn: [
-    automationName_resource
+    automationName_res
   ]
 }
 
@@ -605,7 +601,7 @@ resource automationName_lastRunTimeVariable 'Microsoft.Automation/automationAcco
     value: ''
   }
   dependsOn: [
-    automationName_resource
+    automationName_res
   ]
 }
 
@@ -617,7 +613,7 @@ resource automationName_vmmServersVariable 'Microsoft.Automation/automationAccou
     value: '"${vmmServers}"'
   }
   dependsOn: [
-    automationName_resource
+    automationName_res
   ]
 }
 
@@ -626,10 +622,10 @@ resource automationName_omsWorkspaceKey 'Microsoft.Automation/automationAccounts
   location: automationRegion
   properties: {
     description: 'OMS Workspace key'
-    value: '"${listKeys(workspaceName_resource.id, '2015-11-01-preview').primarySharedKey}"'
+    value: '"${listKeys(workspaceName_res.id, '2015-11-01-preview').primarySharedKey}"'
   }
   dependsOn: [
-    automationName_resource
+    automationName_res
   ]
 }
 
@@ -648,7 +644,7 @@ resource automationName_runbooks_vmmAnalytics_name 'Microsoft.Automation/automat
     }
   }
   dependsOn: [
-    automationName_resource
+    automationName_res
     automationName_omsWorkspaceId
     automationName_omsWorkspaceKey
   ]

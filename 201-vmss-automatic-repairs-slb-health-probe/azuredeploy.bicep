@@ -69,14 +69,14 @@ var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var namingInfix = toLower(substring(concat(vmssName, uniqueString(resourceGroup().id)), 0, 9))
-var virtualNetworkName = '${namingInfix}vnet'
-var lbName = '${namingInfix}lb'
-var bepoolName = '${lbName}bepool'
-var fepoolName = '${lbName}fepool'
+var virtualNetworkName_var = '${namingInfix}vnet'
+var lbName_var = '${namingInfix}lb'
+var bepoolName = '${lbName_var}bepool'
+var fepoolName = '${lbName_var}fepool'
 var feIpConfigName = '${fepoolName}IpConfig'
-var probeName = '${lbName}probe'
-var bepoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools/', lbName, bepoolName)
-var feIpConfigId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations/', lbName, feIpConfigName)
+var probeName = '${lbName_var}probe'
+var bepoolID = resourceId('Microsoft.Network/loadBalancers/backendAddressPools/', lbName_var, bepoolName)
+var feIpConfigId = resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations/', lbName_var, feIpConfigName)
 var platformImageReference = {
   publisher: imagePublisher
   offer: imageOffer
@@ -85,8 +85,8 @@ var platformImageReference = {
 }
 var imageReference = platformImageReference
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-12-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-12-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -105,8 +105,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-12-
   }
 }
 
-resource lbName_resource 'Microsoft.Network/loadBalancers@2019-12-01' = {
-  name: lbName
+resource lbName 'Microsoft.Network/loadBalancers@2019-12-01' = {
+  name: lbName_var
   location: location
   sku: {
     name: 'Standard'
@@ -117,7 +117,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2019-12-01' = {
         name: feIpConfigName
         properties: {
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
           }
         }
       }
@@ -144,7 +144,7 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2019-12-01' = {
           enableFloatingIP: false
           idleTimeoutInMinutes: 5
           probe: {
-            id: resourceId('Microsoft.Network/loadBalancers/probes/', lbName, probeName)
+            id: resourceId('Microsoft.Network/loadBalancers/probes/', lbName_var, probeName)
           }
         }
       }
@@ -163,11 +163,11 @@ resource lbName_resource 'Microsoft.Network/loadBalancers@2019-12-01' = {
     ]
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-03-01' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2019-03-01' = {
   name: vmssName
   location: location
   tags: {
@@ -216,7 +216,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-03-01
       }
       networkProfile: {
         healthProbe: {
-          id: resourceId('Microsoft.Network/loadBalancers/probes/', lbName, probeName)
+          id: resourceId('Microsoft.Network/loadBalancers/probes/', lbName_var, probeName)
         }
         networkInterfaceConfigurations: [
           {
@@ -228,14 +228,14 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-03-01
                   name: 'ip1'
                   properties: {
                     subnet: {
-                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+                      id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
                     }
                     loadBalancerBackendAddressPools: [
                       {
                         id: bepoolID
                       }
                     ]
-                    publicipaddressconfiguration: {
+                    publicIPAddressConfiguration: {
                       name: 'pub1'
                       properties: {
                         idleTimeoutInMinutes: 15
@@ -251,7 +251,7 @@ resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2019-03-01
     }
   }
   dependsOn: [
-    lbName_resource
-    virtualNetworkName_resource
+    lbName
+    virtualNetworkName
   ]
 }

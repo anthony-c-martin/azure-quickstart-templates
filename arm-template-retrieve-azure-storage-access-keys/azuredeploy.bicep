@@ -64,9 +64,9 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountId = storageAccountName_resource.id
+var storageAccountId = storageAccountName_res.id
 
-resource storageConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource storageConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   name: storageConnectionName
   location: location
   properties: {
@@ -84,12 +84,9 @@ resource storageConnectionName_resource 'Microsoft.Web/connections@2018-07-01-pr
       }
     ]
   }
-  dependsOn: [
-    storageAccountName_resource
-  ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-04-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-04-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -102,7 +99,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-04-
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -151,7 +148,7 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
       '$connections': {
         value: {
           azureblob: {
-            connectionId: storageConnectionName_resource.id
+            connectionId: storageConnectionName_res.id
             connectionName: 'azureblob'
             id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureblob')
           }
@@ -160,7 +157,4 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
     }
     state: 'Enabled'
   }
-  dependsOn: [
-    storageConnectionName_resource
-  ]
 }

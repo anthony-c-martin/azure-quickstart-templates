@@ -68,15 +68,15 @@ var scenarioPrefix = 'customscriptLinux'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var ubuntuOSVersion = '14.04.2-LTS'
-var nicName = '${scenarioPrefix}Nic'
+var nicName_var = '${scenarioPrefix}Nic'
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnetName = '${scenarioPrefix}Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = '${scenarioPrefix}PublicIp'
+var publicIPAddressName_var = '${scenarioPrefix}PublicIp'
 var publicIPAddressType = 'Dynamic'
-var vmName = '${scenarioPrefix}VM'
-var virtualNetworkName = '${scenarioPrefix}Vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = '${scenarioPrefix}VM'
+var virtualNetworkName_var = '${scenarioPrefix}Vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -89,8 +89,8 @@ var linuxConfiguration = {
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -100,8 +100,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -120,8 +120,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -130,7 +130,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -140,20 +140,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: username
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -173,18 +172,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName}/installcustomscript'
+  name: '${vmName_var}/installcustomscript'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -199,6 +195,6 @@ resource vmName_installcustomscript 'Microsoft.Compute/virtualMachines/extension
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

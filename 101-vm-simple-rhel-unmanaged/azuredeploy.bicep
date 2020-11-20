@@ -37,18 +37,18 @@ param vmSize string {
   default: 'Standard_A1_v2'
 }
 
-var storageAccountName = '${uniqueString(vmName)}storage'
+var storageAccountName_var = '${uniqueString(vmName)}storage'
 var imagePublisher = 'RedHat'
 var imageOffer = 'RHEL'
-var nicName = '${uniqueString(vmName)}nic'
+var nicName_var = '${uniqueString(vmName)}nic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = '${uniqueString(vmName)}publicip'
+var publicIPAddressName_var = '${uniqueString(vmName)}publicip'
 var publicIPAddressType = 'Dynamic'
-var virtualNetworkName = '${uniqueString(vmName)}vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var virtualNetworkName_var = '${uniqueString(vmName)}vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -60,10 +60,10 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = '${subnetName}-nsg'
+var networkSecurityGroupName_var = '${subnetName}-nsg'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountType
@@ -71,16 +71,16 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   kind: 'StorageV2'
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -101,8 +101,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -116,19 +116,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -137,7 +134,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -147,12 +144,11 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -195,19 +191,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: reference('Microsoft.Storage/storageAccounts/${storageAccountName}', '2019-06-01').primaryEndpoints.blob
+        storageUri: reference('Microsoft.Storage/storageAccounts/${storageAccountName_var}', '2019-06-01').primaryEndpoints.blob
       }
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nicName_resource
+    storageAccountName
   ]
 }

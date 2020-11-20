@@ -29,12 +29,12 @@ param location string {
   default: resourceGroup().location
 }
 
-resource topicName_resource 'Microsoft.EventGrid/topics@2018-01-01' = {
+resource topicName_res 'Microsoft.EventGrid/topics@2018-01-01' = {
   name: topicName
   location: location
 }
 
-resource eventHubNamespace_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource eventHubNamespace_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: eventHubNamespace
   location: location
   sku: {
@@ -53,7 +53,7 @@ resource eventHubNamespace_eventHubName 'Microsoft.EventHub/namespaces/EventHubs
     partitionCount: 2
   }
   dependsOn: [
-    eventHubNamespace_resource
+    eventHubNamespace_res
   ]
 }
 
@@ -76,8 +76,7 @@ resource topicName_Microsoft_EventGrid_subscriptionName 'Microsoft.EventGrid/top
     }
   }
   dependsOn: [
-    topicName_resource
-    eventHubNamespace_eventHubName
+    topicName_res
   ]
 }
 

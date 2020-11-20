@@ -6,7 +6,7 @@ param blueprintName string {
   default: 'sample-blueprint'
 }
 
-resource blueprintName_resource 'Microsoft.Blueprint/blueprints@2018-11-01-preview' = {
+resource blueprintName_res 'Microsoft.Blueprint/blueprints@2018-11-01-preview' = {
   name: blueprintName
   properties: {
     targetScope: 'subscription'
@@ -45,6 +45,6 @@ resource blueprintName_policyArtifact 'Microsoft.Blueprint/blueprints/artifacts@
     }
   }
   dependsOn: [
-    blueprintName_resource
+    blueprintName_res
   ]
 }

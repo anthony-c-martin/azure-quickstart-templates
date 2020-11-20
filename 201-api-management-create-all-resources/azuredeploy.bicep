@@ -84,10 +84,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var apiManagementServiceName = 'apiservice${uniqueString(resourceGroup().id)}'
+var apiManagementServiceName_var = 'apiservice${uniqueString(resourceGroup().id)}'
 
-resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2017-03-01' = {
-  name: apiManagementServiceName
+resource apiManagementServiceName 'Microsoft.ApiManagement/service@2017-03-01' = {
+  name: apiManagementServiceName_var
   location: location
   tags: {}
   sku: {
@@ -101,45 +101,45 @@ resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2017
 }
 
 resource apiManagementServiceName_policy 'Microsoft.ApiManagement/service/policies@2017-03-01' = {
-  name: '${apiManagementServiceName}/policy'
+  name: '${apiManagementServiceName_var}/policy'
   properties: {
     policyContent: tenantPolicy
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_PetStoreSwaggerImportExample 'Microsoft.ApiManagement/service/apis@2017-03-01' = {
-  name: '${apiManagementServiceName}/PetStoreSwaggerImportExample'
+  name: '${apiManagementServiceName_var}/PetStoreSwaggerImportExample'
   properties: {
     contentFormat: 'SwaggerLinkJson'
     contentValue: 'http://petstore.swagger.io/v2/swagger.json'
     path: 'examplepetstore'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleApi 'Microsoft.ApiManagement/service/apis@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleApi'
+  name: '${apiManagementServiceName_var}/exampleApi'
   properties: {
     displayName: 'Example API Name'
     description: 'Description for example API'
     serviceUrl: 'https://example.net'
     path: 'exampleapipath'
     protocols: [
-      'HTTPS'
+      'https'
     ]
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleApi_exampleOperationsDELETE 'Microsoft.ApiManagement/service/apis/operations@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleApi/exampleOperationsDELETE'
+  name: '${apiManagementServiceName_var}/exampleApi/exampleOperationsDELETE'
   properties: {
     displayName: 'DELETE resource'
     method: 'DELETE'
@@ -152,7 +152,7 @@ resource apiManagementServiceName_exampleApi_exampleOperationsDELETE 'Microsoft.
 }
 
 resource apiManagementServiceName_exampleApi_exampleOperationsGET 'Microsoft.ApiManagement/service/apis/operations@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleApi/exampleOperationsGET'
+  name: '${apiManagementServiceName_var}/exampleApi/exampleOperationsGET'
   properties: {
     displayName: 'GET resource'
     method: 'GET'
@@ -165,46 +165,46 @@ resource apiManagementServiceName_exampleApi_exampleOperationsGET 'Microsoft.Api
 }
 
 resource apiManagementServiceName_exampleApi_exampleOperationsGET_policy 'Microsoft.ApiManagement/service/apis/operations/policies@2017-03-01' = {
-  name: '${'${apiManagementServiceName}/exampleApi'}/exampleOperationsGET/policy'
+  name: '${'${apiManagementServiceName_var}/exampleApi'}/exampleOperationsGET/policy'
   properties: {
     policyContent: operationPolicy
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleApi
-    'Microsoft.ApiManagement/service/${apiManagementServiceName}/apis/exampleApi/operations/exampleOperationsGET'
+    'Microsoft.ApiManagement/service/${apiManagementServiceName_var}/apis/exampleApi/operations/exampleOperationsGET'
   ]
 }
 
 resource apiManagementServiceName_exampleApiWithPolicy 'Microsoft.ApiManagement/service/apis@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleApiWithPolicy'
+  name: '${apiManagementServiceName_var}/exampleApiWithPolicy'
   properties: {
     displayName: 'Example API Name with Policy'
     description: 'Description for example API with policy'
     serviceUrl: 'https://exampleapiwithpolicy.net'
     path: 'exampleapiwithpolicypath'
     protocols: [
-      'HTTPS'
+      'https'
     ]
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleApiWithPolicy_policy 'Microsoft.ApiManagement/service/apis/policies@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleApiWithPolicy/policy'
+  name: '${apiManagementServiceName_var}/exampleApiWithPolicy/policy'
   properties: {
     policyContent: apiPolicy
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleApiWithPolicy
   ]
 }
 
 resource apiManagementServiceName_exampleProduct 'Microsoft.ApiManagement/service/products@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleProduct'
+  name: '${apiManagementServiceName_var}/exampleProduct'
   properties: {
     displayName: 'Example Product Name'
     description: 'Description for example product'
@@ -215,32 +215,32 @@ resource apiManagementServiceName_exampleProduct 'Microsoft.ApiManagement/servic
     state: 'published'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleProduct_exampleApi 'Microsoft.ApiManagement/service/products/apis@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleProduct/exampleApi'
+  name: '${apiManagementServiceName_var}/exampleProduct/exampleApi'
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleApi
     apiManagementServiceName_exampleProduct
   ]
 }
 
 resource apiManagementServiceName_exampleProduct_policy 'Microsoft.ApiManagement/service/products/policies@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleProduct/policy'
+  name: '${apiManagementServiceName_var}/exampleProduct/policy'
   properties: {
     policyContent: productPolicy
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleProduct
   ]
 }
 
 resource apiManagementServiceName_exampleUser1 'Microsoft.ApiManagement/service/users@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleUser1'
+  name: '${apiManagementServiceName_var}/exampleUser1'
   properties: {
     firstName: 'ExampleFirstName1'
     lastName: 'ExampleLastName1'
@@ -249,12 +249,12 @@ resource apiManagementServiceName_exampleUser1 'Microsoft.ApiManagement/service/
     note: 'note for example user 1'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleUser2 'Microsoft.ApiManagement/service/users@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleUser2'
+  name: '${apiManagementServiceName_var}/exampleUser2'
   properties: {
     firstName: 'ExampleFirstName2'
     lastName: 'ExampleLastName2'
@@ -263,12 +263,12 @@ resource apiManagementServiceName_exampleUser2 'Microsoft.ApiManagement/service/
     note: 'note for example user 2'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleUser3 'Microsoft.ApiManagement/service/users@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleUser3'
+  name: '${apiManagementServiceName_var}/exampleUser3'
   properties: {
     firstName: 'ExampleFirstName3'
     lastName: 'ExampleLastName3'
@@ -277,12 +277,12 @@ resource apiManagementServiceName_exampleUser3 'Microsoft.ApiManagement/service/
     note: 'note for example user 3'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleproperties 'Microsoft.ApiManagement/service/properties@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleproperties'
+  name: '${apiManagementServiceName_var}/exampleproperties'
   properties: {
     displayName: 'propertyExampleName'
     value: 'propertyExampleValue'
@@ -291,31 +291,31 @@ resource apiManagementServiceName_exampleproperties 'Microsoft.ApiManagement/ser
     ]
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_examplesubscription1 'Microsoft.ApiManagement/service/subscriptions@2017-03-01' = {
-  name: '${apiManagementServiceName}/examplesubscription1'
+  name: '${apiManagementServiceName_var}/examplesubscription1'
   properties: {
     productId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/exampleServiceName/products/exampleProduct'
     userId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/exampleServiceName/users/exampleUser1'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleProduct
     apiManagementServiceName_exampleUser1
   ]
 }
 
 resource apiManagementServiceName_examplesubscription2 'Microsoft.ApiManagement/service/subscriptions@2017-03-01' = {
-  name: '${apiManagementServiceName}/examplesubscription2'
+  name: '${apiManagementServiceName_var}/examplesubscription2'
   properties: {
     productId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/exampleServiceName/products/exampleProduct'
     userId: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/exampleServiceName/users/exampleUser3'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleProduct
     apiManagementServiceName_exampleUser3
     apiManagementServiceName_examplesubscription1
@@ -323,37 +323,37 @@ resource apiManagementServiceName_examplesubscription2 'Microsoft.ApiManagement/
 }
 
 resource apiManagementServiceName_exampleCertificate 'Microsoft.ApiManagement/service/certificates@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleCertificate'
+  name: '${apiManagementServiceName_var}/exampleCertificate'
   properties: {
     data: mutualAuthenticationCertificate
     password: certificatePassword
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleGroup 'Microsoft.ApiManagement/service/groups@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleGroup'
+  name: '${apiManagementServiceName_var}/exampleGroup'
   properties: {
     displayName: 'Example Group Name'
     description: 'Example group description'
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleGroup_exampleUser3 'Microsoft.ApiManagement/service/groups/users@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleGroup/exampleUser3'
+  name: '${apiManagementServiceName_var}/exampleGroup/exampleUser3'
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
     apiManagementServiceName_exampleGroup
   ]
 }
 
 resource apiManagementServiceName_exampleOpenIdConnectProvider 'Microsoft.ApiManagement/service/openidConnectProviders@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleOpenIdConnectProvider'
+  name: '${apiManagementServiceName_var}/exampleOpenIdConnectProvider'
   properties: {
     displayName: 'exampleOpenIdConnectProviderName'
     description: 'Description for example OpenId Connect provider'
@@ -362,12 +362,12 @@ resource apiManagementServiceName_exampleOpenIdConnectProvider 'Microsoft.ApiMan
     clientSecret: openIdConnectClientSecret
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_exampleLogger 'Microsoft.ApiManagement/service/loggers@2017-03-01' = {
-  name: '${apiManagementServiceName}/exampleLogger'
+  name: '${apiManagementServiceName_var}/exampleLogger'
   properties: {
     loggerType: 'azureEventHub'
     description: 'Description for example logger'
@@ -377,17 +377,17 @@ resource apiManagementServiceName_exampleLogger 'Microsoft.ApiManagement/service
     }
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }
 
 resource apiManagementServiceName_google 'Microsoft.ApiManagement/service/identityProviders@2017-03-01' = {
-  name: '${apiManagementServiceName}/google'
+  name: '${apiManagementServiceName_var}/google'
   properties: {
     clientId: 'googleClientId'
     clientSecret: googleClientSecret
   }
   dependsOn: [
-    apiManagementServiceName_resource
+    apiManagementServiceName
   ]
 }

@@ -127,13 +127,13 @@ param location string {
 
 var jenkinsVMName = 'jenkins'
 var grafanaVMName = 'grafana'
-var cosmosDbName_variable = cosmosDbName
-var acrName_variable = acrName
-var virtualNetworkName = 'virtual-network'
+var cosmosDbName_var = cosmosDbName
+var acrName_var = acrName
+var virtualNetworkName_var = 'virtual-network'
 var subnetName = 'default-subnet'
 
-resource acrName_resource 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
-  name: acrName_variable
+resource acrName_res 'Microsoft.ContainerRegistry/registries@2019-05-01' = {
+  name: acrName_var
   location: location
   sku: {
     name: 'Basic'
@@ -143,17 +143,17 @@ resource acrName_resource 'Microsoft.ContainerRegistry/registries@2019-05-01' = 
   }
 }
 
-resource cosmosDbName_resource 'Microsoft.DocumentDb/databaseAccounts@2016-03-31' = {
+resource cosmosDbName_res 'Microsoft.DocumentDb/databaseAccounts@2016-03-31' = {
   kind: 'MongoDB'
-  name: cosmosDbName_variable
+  name: cosmosDbName_var
   location: location
   properties: {
     databaseAccountOfferType: 'Standard'
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -172,7 +172,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
   }
 }
 
-module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/jenkins.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module jenkinsDeployment '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/jenkins.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'jenkinsDeployment'
   params: {
     jenkinsVMName: jenkinsVMName
@@ -182,12 +182,12 @@ module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     linuxAdminUsername: linuxAdminUsername
     linuxAdminPassword: linuxAdminPassword
     dnsPrefix: jenkinsDnsPrefix
-    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
     gitRepository: gitRepository
-    acrServer: acrName_resource.properties.loginServer
-    acrUsername: listCredentials(acrName_resource.id, '2019-05-01').username
-    acrPassword: listCredentials(acrName_resource.id, '2019-05-01').passwords[0].value
-    mongoDbURI: 'mongodb://${cosmosDbName_variable}:${uriComponent(listKeys(cosmosDbName_resource.id, '2016-03-31').primaryMasterKey)}@${cosmosDbName_variable}.documents.azure.com:10255/?ssl=true&replicaSet=globaldb'
+    acrServer: acrName_res.properties.loginServer
+    acrUsername: listCredentials(acrName_res.id, '2019-05-01').username
+    acrPassword: listCredentials(acrName_res.id, '2019-05-01').passwords[0].value
+    mongoDbURI: 'mongodb://${cosmosDbName_var}:${uriComponent(listKeys(cosmosDbName_res.id, '2016-03-31').primaryMasterKey)}@${cosmosDbName_var}.documents.azure.com:10255/?ssl=true&replicaSet=globaldb'
     kubernetesResourceGroupName: resourceGroup().name
     kubernetesClusterName: kubernetesClusterName
     '_artifactsLocation': artifactsLocation
@@ -195,13 +195,13 @@ module jenkinsDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     location: location
   }
   dependsOn: [
-    acrName_resource
-    virtualNetworkName_resource
-    cosmosDbName_resource
+    acrName_res
+    virtualNetworkName
+    cosmosDbName_res
   ]
 }
 
-resource kubernetesClusterName_resource 'Microsoft.ContainerService/managedClusters@2019-10-01' = {
+resource kubernetesClusterName_res 'Microsoft.ContainerService/managedClusters@2019-10-01' = {
   location: location
   name: kubernetesClusterName
   properties: {
@@ -228,13 +228,13 @@ resource kubernetesClusterName_resource 'Microsoft.ContainerService/managedClust
       }
     }
     servicePrincipalProfile: {
-      ClientId: spClientId
-      Secret: spClientSecret
+      clientId: spClientId
+      secret: spClientSecret
     }
   }
 }
 
-module grafanaDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/grafana.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module grafanaDeployment '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/grafana.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'grafanaDeployment'
   params: {
     grafanaVMName: grafanaVMName
@@ -244,7 +244,7 @@ module grafanaDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     linuxAdminUsername: linuxAdminUsername
     linuxAdminPassword: linuxAdminPassword
     dnsPrefix: grafanaDnsPrefix
-    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+    subnetId: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
     cosmosDbName: cosmosDbName
     kubernetesClusterName: kubernetesClusterName
     '_artifactsLocation': artifactsLocation
@@ -252,13 +252,13 @@ module grafanaDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\
     location: location
   }
   dependsOn: [
-    cosmosDbName_resource
-    kubernetesClusterName_resource
+    cosmosDbName_res
+    kubernetesClusterName_res
   ]
 }
 
 output jenkinsURL string = reference('jenkinsDeployment').outputs.jenkinsURL.value
 output jenkinsSSH string = reference('jenkinsDeployment').outputs.jenkinsSSH.value
-output azureContainerRegistryUrl string = acrName_resource.properties.loginServer
+output azureContainerRegistryUrl string = acrName_res.properties.loginServer
 output kubernetesControlPlaneFQDN string = reference('Microsoft.ContainerService/managedClusters/${kubernetesClusterName}').fqdn
 output grafanaUrl string = reference('grafanaDeployment').outputs.grafanaURL.value

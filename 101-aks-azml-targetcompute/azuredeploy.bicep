@@ -74,7 +74,7 @@ param sshRSAPublicKey string {
 
 var dnsPrefix = clusterName
 
-resource clusterName_resource 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
+resource clusterName_res 'Microsoft.ContainerService/managedClusters@2020-03-01' = {
   name: clusterName
   location: location
   sku: {
@@ -117,7 +117,7 @@ resource clusterName_resource 'Microsoft.ContainerService/managedClusters@2020-0
     enableRBAC: true
     networkProfile: {
       networkPlugin: 'kubenet'
-      loadBalancerSku: 'Basic'
+      loadBalancerSku: 'basic'
       podCidr: podCidr
       serviceCidr: serviceCidr
       dnsServiceIP: dnsServiceIP
@@ -140,6 +140,6 @@ resource clusterName_agentpool 'Microsoft.ContainerService/managedClusters/agent
     osType: 'Linux'
   }
   dependsOn: [
-    clusterName_resource
+    clusterName_res
   ]
 }

@@ -51,20 +51,20 @@ param location string {
   default: resourceGroup().location
 }
 
-var dataFactoryName = 'HiveTransformDF${uniqueString(resourceGroup().id)}'
+var dataFactoryName_var = 'HiveTransformDF${uniqueString(resourceGroup().id)}'
 var azureStorageLinkedServiceName = 'AzureStorageLinkedService'
 var hdInsightOnDemandLinkedServiceName = 'HDInsightOnDemandLinkedService'
 var blobInputDatasetName = 'AzureBlobInput'
 var blobOutputDatasetName = 'AzureBlobOutput'
 var pipelineName = 'HiveTransformPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/datafactories@2015-10-01' = {
-  name: dataFactoryName
+resource dataFactoryName 'Microsoft.DataFactory/datafactories@2015-10-01' = {
+  name: dataFactoryName_var
   location: location
 }
 
 resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${azureStorageLinkedServiceName}'
+  name: '${dataFactoryName_var}/${azureStorageLinkedServiceName}'
   properties: {
     type: 'AzureStorage'
     description: 'Azure Storage linked service'
@@ -73,12 +73,12 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/da
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
   ]
 }
 
 resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFactory/datafactories/linkedservices@2015-10-01' = {
-  name: '${dataFactoryName}/${hdInsightOnDemandLinkedServiceName}'
+  name: '${dataFactoryName_var}/${hdInsightOnDemandLinkedServiceName}'
   properties: {
     type: 'HDInsightOnDemand'
     typeProperties: {
@@ -90,13 +90,13 @@ resource dataFactoryName_hdInsightOnDemandLinkedServiceName 'Microsoft.DataFacto
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
 
 resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${blobInputDatasetName}'
+  name: '${dataFactoryName_var}/${blobInputDatasetName}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: azureStorageLinkedServiceName
@@ -115,13 +115,13 @@ resource dataFactoryName_blobInputDatasetName 'Microsoft.DataFactory/datafactori
     external: true
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
 
 resource dataFactoryName_blobOutputDatasetName 'Microsoft.DataFactory/datafactories/datasets@2015-10-01' = {
-  name: '${dataFactoryName}/${blobOutputDatasetName}'
+  name: '${dataFactoryName_var}/${blobOutputDatasetName}'
   properties: {
     type: 'AzureBlob'
     linkedServiceName: azureStorageLinkedServiceName
@@ -138,13 +138,13 @@ resource dataFactoryName_blobOutputDatasetName 'Microsoft.DataFactory/datafactor
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
 
 resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datapipelines@2015-10-01' = {
-  name: '${dataFactoryName}/${pipelineName}'
+  name: '${dataFactoryName_var}/${pipelineName}'
   properties: {
     description: 'Pipeline that transforms data using Hive script.'
     activities: [
@@ -185,7 +185,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/datafactories/datap
     isPaused: false
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName
     dataFactoryName_azureStorageLinkedServiceName
     dataFactoryName_hdInsightOnDemandLinkedServiceName
     dataFactoryName_blobInputDatasetName

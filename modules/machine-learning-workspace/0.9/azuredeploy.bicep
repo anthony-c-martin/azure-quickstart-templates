@@ -29,7 +29,7 @@ param applicationInsightsName string {
   default: 'ai-${uniqueString(resourceGroup().id)}'
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   location: location
   sku: {
@@ -52,7 +52,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   }
 }
 
-resource keyVaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource keyVaultName_res 'Microsoft.KeyVault/vaults@2019-09-01' = {
   name: keyVaultName
   location: location
   properties: {
@@ -66,7 +66,7 @@ resource keyVaultName_resource 'Microsoft.KeyVault/vaults@2019-09-01' = {
   }
 }
 
-resource applicationInsightsName_resource 'Microsoft.Insights/components@2020-02-02-preview' = {
+resource applicationInsightsName_res 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: applicationInsightsName
   location: location
   kind: 'web'
@@ -75,7 +75,7 @@ resource applicationInsightsName_resource 'Microsoft.Insights/components@2020-02
   }
 }
 
-resource workspaceName_resource 'Microsoft.MachineLearningServices/workspaces@2020-08-01' = {
+resource workspaceName_res 'Microsoft.MachineLearningServices/workspaces@2020-08-01' = {
   name: workspaceName
   location: location
   identity: {
@@ -83,19 +83,14 @@ resource workspaceName_resource 'Microsoft.MachineLearningServices/workspaces@20
   }
   properties: {
     friendlyName: workspaceName
-    storageAccount: storageAccountName_resource.id
-    keyVault: keyVaultName_resource.id
-    applicationInsights: applicationInsightsName_resource.id
+    storageAccount: storageAccountName_res.id
+    keyVault: keyVaultName_res.id
+    applicationInsights: applicationInsightsName_res.id
   }
-  dependsOn: [
-    applicationInsightsName_resource
-    keyVaultName_resource
-    storageAccountName_resource
-  ]
 }
 
-output workspaceName_output string = workspaceName
-output storageAccountName_output string = storageAccountName
-output keyVaultName_output string = keyVaultName
-output applicationInsightsName_output string = applicationInsightsName
-output location_output string = location
+output workspaceName_out string = workspaceName
+output storageAccountName_out string = storageAccountName
+output keyVaultName_out string = keyVaultName
+output applicationInsightsName_out string = applicationInsightsName
+output location_out string = location

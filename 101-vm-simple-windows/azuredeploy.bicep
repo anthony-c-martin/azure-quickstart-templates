@@ -83,17 +83,17 @@ param vmName string {
   default: 'simple-vm'
 }
 
-var storageAccountName = 'bootdiags${uniqueString(resourceGroup().id)}'
-var nicName = 'myVMNic'
+var storageAccountName_var = 'bootdiags${uniqueString(resourceGroup().id)}'
+var nicName_var = 'myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var virtualNetworkName = 'MyVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var networkSecurityGroupName = 'default-NSG'
+var virtualNetworkName_var = 'MyVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -102,7 +102,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
+resource publicIPName_res 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: publicIpName
   location: location
   sku: {
@@ -116,8 +116,8 @@ resource publicIPName_resource 'Microsoft.Network/publicIPAddresses@2020-06-01' 
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -138,8 +138,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -153,19 +153,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -174,7 +171,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPName_resource.id
+            id: publicIPName_res.id
           }
           subnet: {
             id: subnetRef
@@ -184,12 +181,11 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-06-01' = {
     ]
   }
   dependsOn: [
-    publicIPName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -225,21 +221,17 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAccountName_resource.properties.primaryEndpoints.blob
+        storageUri: storageAccountName.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 output hostname string = reference(publicIpName).dnsSettings.fqdn

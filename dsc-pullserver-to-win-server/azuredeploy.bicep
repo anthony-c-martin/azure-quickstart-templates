@@ -73,16 +73,16 @@ var VirtualNetworkSubnet2Prefix = '10.0.1.0/24'
 var dscPullSrvOSDiskName = 'osdisk'
 var dscPullSrvSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', 'dscVirtualNetwork', VirtualNetworkSubnet1Name)
 var dscPullSrvStorageAccountContainerName = 'vhds'
-var dscPullSrvNicName = 'dscNetworkInterface'
-var dscPullIPName = 'dscPublicIPAddress'
+var dscPullSrvNicName_var = 'dscNetworkInterface'
+var dscPullIPName_var = 'dscPublicIPAddress'
 var deployDSCPullServerConfigurationFile = '${assetLocation}ConfigurePullServer.ps1.zip'
 var deployDSCPullServerConfigurationFunction = 'ConfigurePullServer.ps1\\ConfigurePullServer'
 var windowsOSVersion = '2012-R2-Datacenter'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource newStorageAccount_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccount_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccount
   location: location
   tags: {
@@ -94,8 +94,8 @@ resource newStorageAccount_resource 'Microsoft.Storage/storageAccounts@2015-05-0
   dependsOn: []
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -147,7 +147,7 @@ resource dscVirtualNetwork 'Microsoft.Network/virtualNetworks@2015-05-01-preview
         properties: {
           addressPrefix: VirtualNetworkSubnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
@@ -159,13 +159,10 @@ resource dscVirtualNetwork 'Microsoft.Network/virtualNetworks@2015-05-01-preview
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource dscPullSrvNicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: dscPullSrvNicName
+resource dscPullSrvNicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: dscPullSrvNicName_var
   location: location
   tags: {
     displayName: 'dscPullSrvNic'
@@ -181,7 +178,7 @@ resource dscPullSrvNicName_resource 'Microsoft.Network/networkInterfaces@2015-05
             id: dscPullSrvSubnetRef
           }
           publicIPAddress: {
-            id: dscPullIPName_resource.id
+            id: dscPullIPName.id
           }
         }
       }
@@ -192,7 +189,7 @@ resource dscPullSrvNicName_resource 'Microsoft.Network/networkInterfaces@2015-05
   ]
 }
 
-resource dscPullSrvName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource dscPullSrvName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: dscPullSrvName
   location: location
   tags: {
@@ -223,14 +220,13 @@ resource dscPullSrvName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: dscPullSrvNicName_resource.id
+          id: dscPullSrvNicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccount_resource
-    dscPullSrvNicName_resource
+    newStorageAccount_res
   ]
 }
 
@@ -253,12 +249,12 @@ resource dscPullSrvName_deployDSCPullServer 'Microsoft.Compute/virtualMachines/e
     protectedSettings: {}
   }
   dependsOn: [
-    dscPullSrvName_resource
+    dscPullSrvName_res
   ]
 }
 
-resource dscPullIPName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: dscPullIPName
+resource dscPullIPName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: dscPullIPName_var
   location: location
   tags: {
     displayName: 'dscPullIP'

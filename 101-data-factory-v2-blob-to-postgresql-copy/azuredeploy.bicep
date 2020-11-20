@@ -64,7 +64,7 @@ var inputDatasetName = 'Tutorial2_InputBlobDataset'
 var outputDatasetName = 'Tutorial2_OutputPostgreSqlDataset'
 var pipelineName = 'Tutorial2-CopyFromBlobToPostgreSqlPipeline'
 
-resource dataFactoryName_resource 'Microsoft.DataFactory/factories@2018-06-01' = {
+resource dataFactoryName_res 'Microsoft.DataFactory/factories@2018-06-01' = {
   name: dataFactoryName
   location: location
   properties: {}
@@ -83,7 +83,7 @@ resource dataFactoryName_azureStorageLinkedServiceName 'Microsoft.DataFactory/fa
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -100,7 +100,7 @@ resource dataFactoryName_azurePostgreSqlDatabaseLinkedServiceName 'Microsoft.Dat
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
   ]
 }
 
@@ -135,7 +135,7 @@ resource dataFactoryName_inputDatasetName 'Microsoft.DataFactory/factories/datas
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azureStorageLinkedServiceName
   ]
 }
@@ -153,7 +153,7 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
     }
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_azurePostgreSqlDatabaseLinkedServiceName
   ]
 }
@@ -191,7 +191,7 @@ resource dataFactoryName_pipelineName 'Microsoft.DataFactory/factories/pipelines
     ]
   }
   dependsOn: [
-    dataFactoryName_resource
+    dataFactoryName_res
     dataFactoryName_inputDatasetName
     dataFactoryName_outputDatasetName
   ]

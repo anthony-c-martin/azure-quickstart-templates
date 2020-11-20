@@ -141,10 +141,10 @@ param artifactsLocationSasToken string {
 
 var vnetRef = resourceId(existingVirtualNetworkRGName, 'Microsoft.Network/virtualNetworks', existingVirtualNetworkName)
 var deploySqlClusterTemplateURL = uri(artifactsLocation, 'nestedtemplates/deploy-sql-cluster.json${artifactsLocationSasToken}')
-var deploySqlCluster = 'deploySqlCluster'
+var deploySqlCluster_var = 'deploySqlCluster'
 
-module deploySqlCluster_resource '<failed to parse [variables(\'deploySqlClusterTemplateURL\')]>' = {
-  name: deploySqlCluster
+module deploySqlCluster '?' /*TODO: replace with correct path to [variables('deploySqlClusterTemplateURL')]*/ = {
+  name: deploySqlCluster_var
   params: {
     location: location
     namePrefix: namePrefix
@@ -169,4 +169,4 @@ module deploySqlCluster_resource '<failed to parse [variables(\'deploySqlCluster
   dependsOn: []
 }
 
-output agListenerName string = reference(deploySqlCluster).outputs.agListenerName.value
+output agListenerName string = reference(deploySqlCluster_var).outputs.agListenerName.value

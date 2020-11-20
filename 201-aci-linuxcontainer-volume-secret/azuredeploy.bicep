@@ -63,7 +63,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroups@2018-02-01-preview' = {
+resource containergroupname_res 'Microsoft.ContainerInstance/containerGroups@2018-02-01-preview' = {
   name: containergroupname
   location: location
   properties: {
@@ -81,7 +81,7 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
           resources: {
             requests: {
               cpu: cpuCores
-              memoryInGb: memoryInGb
+              memoryInGB: memoryInGb
             }
           }
           volumeMounts: [
@@ -100,7 +100,7 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
       dnsNameLabel: dnsnamelabel
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: port
         }
       ]
@@ -118,4 +118,4 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
   dependsOn: []
 }
 
-output containerIPAddressFqdn string = containergroupname_resource.properties.ipAddress.fqdn
+output containerIPAddressFqdn string = containergroupname_res.properties.ipAddress.fqdn

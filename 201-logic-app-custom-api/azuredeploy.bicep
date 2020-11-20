@@ -60,7 +60,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource svcPlanName_resource 'Microsoft.Web/serverfarms@2018-02-01' = {
+resource svcPlanName_res 'Microsoft.Web/serverfarms@2018-02-01' = {
   name: svcPlanName
   location: location
   sku: {
@@ -70,16 +70,13 @@ resource svcPlanName_resource 'Microsoft.Web/serverfarms@2018-02-01' = {
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2018-11-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2018-11-01' = {
   kind: 'api'
   name: webAppName
   location: location
   properties: {
-    serverFarmId: svcPlanName_resource.id
+    serverFarmId: svcPlanName_res.id
   }
-  dependsOn: [
-    svcPlanName_resource
-  ]
 }
 
 resource webAppName_web 'Microsoft.Web/sites/config@2018-11-01' = {
@@ -92,11 +89,11 @@ resource webAppName_web 'Microsoft.Web/sites/config@2018-11-01' = {
     }
   }
   dependsOn: [
-    webAppName_resource
+    webAppName_res
   ]
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2017-07-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2017-07-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -122,7 +119,7 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2017-07-01' = {
         pingSite: {
           type: 'Http'
           inputs: {
-            uri: 'https://${webAppName_resource.properties.hostNames[0]}'
+            uri: 'https://${webAppName_res.properties.hostNames[0]}'
             method: 'Get'
             authentication: {
               type: 'ActiveDirectoryOAuth'
@@ -147,7 +144,4 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2017-07-01' = {
       }
     }
   }
-  dependsOn: [
-    webAppName_resource
-  ]
 }

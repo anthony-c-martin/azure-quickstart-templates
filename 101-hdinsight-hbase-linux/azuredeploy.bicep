@@ -105,7 +105,7 @@ resource defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-0
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
@@ -175,9 +175,6 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    defaultStorageAccount_name
-  ]
 }
 
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties

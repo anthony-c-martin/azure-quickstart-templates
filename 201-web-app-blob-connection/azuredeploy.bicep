@@ -61,7 +61,7 @@ param location string {
 var packageURI = concat(deployPackageUri, sasToken)
 var storageAccountId = '${resourceGroup().id}/providers/Microsoft.Storage/storageAccounts/${storageAccountName}'
 
-resource WebAppSvcPlanName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
+resource WebAppSvcPlanName_res 'Microsoft.Web/serverfarms@2014-06-01' = {
   name: webAppSvcPlanName
   location: location
   tags: {
@@ -76,7 +76,7 @@ resource WebAppSvcPlanName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
   dependsOn: []
 }
 
-resource WebAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource WebAppName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: webAppName
   location: location
   tags: {
@@ -85,11 +85,8 @@ resource WebAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
   }
   properties: {
     name: webAppName
-    serverFarmId: WebAppSvcPlanName_resource.id
+    serverFarmId: WebAppSvcPlanName_res.id
   }
-  dependsOn: [
-    WebAppSvcPlanName_resource
-  ]
 }
 
 resource WebAppName_web 'Microsoft.Web/sites/config@2015-08-01' = {
@@ -107,7 +104,7 @@ resource WebAppName_web 'Microsoft.Web/sites/config@2015-08-01' = {
     remoteDebuggingVersion: 'VS2015'
   }
   dependsOn: [
-    WebAppName_resource
+    WebAppName_res
   ]
 }
 
@@ -121,7 +118,7 @@ resource WebAppName_MSDeploy 'Microsoft.Web/sites/extensions@2015-08-01' = {
     packageUri: packageURI
   }
   dependsOn: [
-    WebAppName_resource
+    WebAppName_res
   ]
 }
 
@@ -137,6 +134,6 @@ resource WebAppName_connectionstrings 'Microsoft.Web/sites/config@2015-08-01' = 
     }
   }
   dependsOn: [
-    WebAppName_resource
+    WebAppName_res
   ]
 }

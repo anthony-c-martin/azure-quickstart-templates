@@ -33,7 +33,7 @@ param acrReplicaLocation string {
   }
 }
 
-resource acrName_resource 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
+resource acrName_res 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
   name: acrName
   location: location
   sku: {
@@ -54,8 +54,8 @@ resource acrName_acrReplicaLocation 'Microsoft.ContainerRegistry/registries/repl
   location: acrReplicaLocation
   properties: {}
   dependsOn: [
-    acrName_resource
+    acrName_res
   ]
 }
 
-output acrLoginServer string = reference(acrName_resource.id, '2019-12-01-preview').loginServer
+output acrLoginServer string = reference(acrName_res.id, '2019-12-01-preview').loginServer

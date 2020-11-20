@@ -101,21 +101,21 @@ param webdeploypkg string {
   }
 }
 
-var virtualNetworkName = '${vmName}-VNET'
-var vnetID = virtualNetworkName_resource.id
-var nicName = '${vmName}-NIC'
+var virtualNetworkName_var = '${vmName}-VNET'
+var vnetID = virtualNetworkName.id
+var nicName_var = '${vmName}-NIC'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet2Name = 'Subnet-2'
 var subnet1Prefix = '10.0.0.0/24'
 var subnet2Prefix = '10.0.1.0/24'
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
-var publicIPAddressName = '${vmName}-PublicIP-VM'
+var publicIPAddressName_var = '${vmName}-PublicIP-VM'
 var storageAccountType = 'Standard_LRS'
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   tags: {
     displayName: 'PublicIPAddress'
@@ -128,8 +128,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: resourceGroup().location
   properties: {
     securityRules: [
@@ -163,8 +163,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   tags: {
     displayName: 'VirtualNetwork'
@@ -181,7 +181,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
@@ -193,13 +193,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: resourceGroup().location
   tags: {
     displayName: 'NetworkInterface'
@@ -211,7 +208,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -220,13 +217,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: resourceGroup().location
   tags: {
@@ -257,14 +250,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
 resource vmName_DSCExt1 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
@@ -295,11 +285,11 @@ resource vmName_DSCExt1 'Microsoft.Compute/virtualMachines/extensions@2015-05-01
     protectedSettings: {}
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 
-resource DatabaseServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
+resource DatabaseServerName_res 'Microsoft.Sql/servers@2014-04-01-preview' = {
   name: DatabaseServerName
   location: DatabaseServerLocation
   tags: {
@@ -320,7 +310,7 @@ resource DatabaseServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firew
     endIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    DatabaseServerName_resource
+    DatabaseServerName_res
   ]
 }
 
@@ -336,6 +326,6 @@ resource DatabaseServerName_databaseName 'Microsoft.Sql/servers/databases@2014-0
     maxSizeBytes: '1073741824'
   }
   dependsOn: [
-    DatabaseServerName_resource
+    DatabaseServerName_res
   ]
 }

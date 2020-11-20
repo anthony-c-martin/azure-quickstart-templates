@@ -116,7 +116,7 @@ param sqlStorageWorkloadType string {
   metadata: {
     description: 'SQL Server Virtual Machine Workload Type: GENERAL - general work load; DW - datawear house work load; OLTP - Transactional processing work load'
   }
-  default: 'General'
+  default: 'GENERAL'
 }
 param sqlAutopatchingDayOfWeek string {
   allowed: [
@@ -271,7 +271,7 @@ param location string {
 
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -280,7 +280,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
       adminUsername: adminUsername
       adminPassword: adminPassword
       windowsConfiguration: {
-        provisionVmAgent: 'true'
+        provisionVMAgent: 'true'
       }
     }
     hardwareProfile: {
@@ -317,14 +317,13 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2017-03-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName_res.id
         }
       ]
     }
   }
   dependsOn: [
-    networkInterfaceName_resource
-    storageAccountName_resource
+    storageAccountName_res
   ]
 }
 
@@ -358,8 +357,8 @@ resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/
       }
     }
     protectedSettings: {
-      StorageUrl: reference(sqlAutobackupStorageAccountName_resource.id, '2015-06-15').primaryEndpoints.blob
-      StorageAccessKey: listKeys(sqlAutobackupStorageAccountName_resource.id, '2015-06-15').key1
+      StorageUrl: reference(sqlAutobackupStorageAccountName_res.id, '2015-06-15').primaryEndpoints.blob
+      StorageAccessKey: listKeys(sqlAutobackupStorageAccountName_res.id, '2015-06-15').key1
       Password: sqlAutobackupEncryptionPassword
       PrivateKeyVaultCredentialSettings: {
         AzureKeyVaultUrl: sqlAkvUrl
@@ -369,11 +368,11 @@ resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/
     }
   }
   dependsOn: [
-    virtualMachineName_resource
+    virtualMachineName_res
   ]
 }
 
-module prepareSqlVmDeployment '<failed to parse https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sql-full/nested/preparingSqlServerSa.json>' = {
+module prepareSqlVmDeployment '?' /*TODO: replace with correct path to https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sql-full/nested/preparingSqlServerSa.json*/ = {
   name: 'prepareSqlVmDeployment'
   params: {
     sqlVMName: virtualMachineName
@@ -395,7 +394,7 @@ module prepareSqlVmDeployment '<failed to parse https://raw.githubusercontent.co
   ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource storageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: storageAccountName
   location: location
   properties: {
@@ -403,7 +402,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-
   }
 }
 
-resource sqlAutobackupStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+resource sqlAutobackupStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-06-15' = {
   name: sqlAutobackupStorageAccountName
   location: location
   properties: {
@@ -411,7 +410,7 @@ resource sqlAutobackupStorageAccountName_resource 'Microsoft.Storage/storageAcco
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -431,7 +430,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+resource networkInterfaceName_res 'Microsoft.Network/networkInterfaces@2015-06-15' = {
   name: networkInterfaceName
   location: location
   properties: {
@@ -443,24 +442,24 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2015
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: resourceId(resourceGroup().Name, 'Microsoft.Network/publicIpAddresses', publicIpAddressName)
+          publicIPAddress: {
+            id: resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', publicIpAddressName)
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: resourceId(resourceGroup().Name, 'Microsoft.Network/networkSecurityGroups', networkSecurityGroupName)
+      id: resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', networkSecurityGroupName)
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName_res
+    publicIpAddressName_res
+    networkSecurityGroupName_res
   ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+resource publicIpAddressName_res 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: publicIpAddressName
   location: location
   properties: {
@@ -468,7 +467,7 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2015-06-15' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -481,7 +480,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
           protocol: 'Tcp'
           destinationPortRange: '3389'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
@@ -494,7 +493,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
           protocol: 'Tcp'
           destinationPortRange: '1433'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
@@ -503,4 +502,4 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

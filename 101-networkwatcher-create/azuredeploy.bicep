@@ -11,7 +11,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource networkWatcherName_resource 'Microsoft.Network/networkWatchers@2020-05-01' = {
+resource networkWatcherName_res 'Microsoft.Network/networkWatchers@2020-05-01' = {
   name: networkWatcherName
   location: location
   properties: {}

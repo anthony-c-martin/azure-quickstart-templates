@@ -66,22 +66,22 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}dokku'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}dokku'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'dokkuVMNic'
+var nicName_var = 'dokkuVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = 'dokkuPublicIP'
+var publicIPAddressName_var = 'dokkuPublicIP'
 var publicIPAddressType = 'Dynamic'
-var vmName = 'DokkuVM'
-var virtualNetworkName = 'DokkuVNet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName, subnetName)
+var vmName_var = 'DokkuVM'
+var virtualNetworkName_var = 'DokkuVNet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', virtualNetworkName_var, subnetName)
 var sshKeyPath = '/home/${adminUsername}/.ssh/authorized_keys'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -90,8 +90,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-
   properties: {}
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -101,8 +101,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -121,8 +121,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -131,7 +131,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -141,20 +141,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -185,25 +184,21 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: storageAccountName_resource.properties.primaryEndpoints.blob
+        storageUri: storageAccountName.properties.primaryEndpoints.blob
       }
     }
   }
-  dependsOn: [
-    storageAccountName_resource
-    nicName_resource
-  ]
 }
 
 resource vmName_initdokku 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
-  name: '${vmName}/initdokku'
+  name: '${vmName_var}/initdokku'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -218,6 +213,6 @@ resource vmName_initdokku 'Microsoft.Compute/virtualMachines/extensions@2020-06-
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

@@ -84,13 +84,13 @@ var vnet01Subnet1Name = 'Subnet-1'
 var vnet01Subnet1Prefix = '10.0.0.0/24'
 var vmImagePublisher = 'MicrosoftVisualStudio'
 var vmImageOffer = 'Windows'
-var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, vnet01Subnet1Name)
-var vmNicName = '${vmName}NetworkInterface'
-var vmIP01Name = 'VMIP01'
-var vnetName = 'VNet01'
+var vmSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName_var, vnet01Subnet1Name)
+var vmNicName_var = '${vmName}NetworkInterface'
+var vmIP01Name_var = 'VMIP01'
+var vnetName_var = 'VNet01'
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+  name: vnetName_var
   location: location
   tags: {
     displayName: 'variables(\'vnetName\')'
@@ -112,8 +112,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
   }
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2019-06-01' = {
+  name: vmNicName_var
   location: location
   tags: {
     displayName: 'VMNic01'
@@ -128,19 +128,18 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
             id: vmSubnetRef
           }
           publicIPAddress: {
-            id: vmIP01Name_resource.id
+            id: vmIP01Name.id
           }
         }
       }
     ]
   }
   dependsOn: [
-    vnetName_resource
-    vmIP01Name_resource
+    vnetName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: vmName
   location: location
   tags: {
@@ -171,14 +170,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vmNicName_resource
-  ]
 }
 
 resource vmName_SetupOffice 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
@@ -206,12 +202,12 @@ resource vmName_SetupOffice 'Microsoft.Compute/virtualMachines/extensions@2019-0
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 
-resource vmIP01Name_resource 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
-  name: vmIP01Name
+resource vmIP01Name 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
+  name: vmIP01Name_var
   location: location
   tags: {
     displayName: 'VMIP01'

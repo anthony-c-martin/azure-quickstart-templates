@@ -31,26 +31,26 @@ param postRecurrence object {
   }
 }
 
-var serviceBusNamespaceName_variable = serviceBusNamespaceName
+var serviceBusNamespaceName_var = serviceBusNamespaceName
 var queueSendOnlyKeyName = 'Scheduler'
-var schedulerJobCollectionName = 'QueuePoster'
+var schedulerJobCollectionName_var = 'QueuePoster'
 var schedulerJobName = 'PostMessage'
 
-resource serviceBusNamespaceName_resource 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
-  name: serviceBusNamespaceName_variable
+resource serviceBusNamespaceName_res 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+  name: serviceBusNamespaceName_var
   location: location
   properties: {}
 }
 
 resource serviceBusNamespaceName_queueName 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
-  name: '${serviceBusNamespaceName_variable}/${queueName}'
+  name: '${serviceBusNamespaceName_var}/${queueName}'
   dependsOn: [
-    serviceBusNamespaceName_resource
+    serviceBusNamespaceName_res
   ]
 }
 
 resource serviceBusNamespaceName_queueName_queueSendOnlyKeyName 'Microsoft.ServiceBus/namespaces/queues/authorizationRules@2017-04-01' = {
-  name: '${serviceBusNamespaceName_variable}/${queueName}/${queueSendOnlyKeyName}'
+  name: '${serviceBusNamespaceName_var}/${queueName}/${queueSendOnlyKeyName}'
   properties: {
     rights: [
       'Send'
@@ -61,8 +61,8 @@ resource serviceBusNamespaceName_queueName_queueSendOnlyKeyName 'Microsoft.Servi
   ]
 }
 
-resource schedulerJobCollectionName_resource 'Microsoft.Scheduler/jobCollections@2016-03-01' = {
-  name: schedulerJobCollectionName
+resource schedulerJobCollectionName 'Microsoft.Scheduler/jobCollections@2016-03-01' = {
+  name: schedulerJobCollectionName_var
   location: location
   properties: {
     sku: {
@@ -72,13 +72,13 @@ resource schedulerJobCollectionName_resource 'Microsoft.Scheduler/jobCollections
 }
 
 resource schedulerJobCollectionName_schedulerJobName 'Microsoft.Scheduler/jobCollections/jobs@2016-03-01' = {
-  name: '${schedulerJobCollectionName}/${schedulerJobName}'
+  name: '${schedulerJobCollectionName_var}/${schedulerJobName}'
   properties: {
     state: 'Enabled'
     action: {
       type: 'ServiceBusQueue'
       serviceBusQueueMessage: {
-        namespace: serviceBusNamespaceName_variable
+        namespace: serviceBusNamespaceName_var
         queueName: queueName
         transportType: 'AMQP'
         authentication: {
@@ -92,7 +92,7 @@ resource schedulerJobCollectionName_schedulerJobName 'Microsoft.Scheduler/jobCol
     recurrence: postRecurrence
   }
   dependsOn: [
-    schedulerJobCollectionName_resource
+    schedulerJobCollectionName
     serviceBusNamespaceName_queueName_queueSendOnlyKeyName
   ]
 }

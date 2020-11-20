@@ -88,11 +88,11 @@ param licenseType string {
   default: 'LicenseIncluded'
 }
 
-var networkSecurityGroupName = 'SQLMI-${managedInstanceName}-NSG'
-var routeTableName = 'SQLMI-${managedInstanceName}-Route-Table'
+var networkSecurityGroupName_var = 'SQLMI-${managedInstanceName}-NSG'
+var routeTableName_var = 'SQLMI-${managedInstanceName}-Route-Table'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -156,15 +156,15 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource routeTableName_resource 'Microsoft.Network/routeTables@2020-06-01' = {
-  name: routeTableName
+resource routeTableName 'Microsoft.Network/routeTables@2020-06-01' = {
+  name: routeTableName_var
   location: location
   properties: {
     disableBgpRoutePropagation: false
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -179,10 +179,10 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
         properties: {
           addressPrefix: subnetPrefix
           routeTable: {
-            id: routeTableName_resource.id
+            id: routeTableName.id
           }
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
           delegations: [
             {
@@ -196,13 +196,9 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-06-
       }
     ]
   }
-  dependsOn: [
-    routeTableName_resource
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2020-02-02-preview' = {
+resource managedInstanceName_res 'Microsoft.Sql/managedInstances@2020-02-02-preview' = {
   name: managedInstanceName
   location: location
   sku: {
@@ -220,6 +216,6 @@ resource managedInstanceName_resource 'Microsoft.Sql/managedInstances@2020-02-02
     licenseType: licenseType
   }
   dependsOn: [
-    virtualNetworkName_resource
+    virtualNetworkName_res
   ]
 }

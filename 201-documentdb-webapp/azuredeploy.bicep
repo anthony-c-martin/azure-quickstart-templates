@@ -41,7 +41,7 @@ param location string {
 
 var databaseAccountTier = 'Standard'
 
-resource databaseAccountName_resource 'Microsoft.DocumentDb/databaseAccounts@2015-04-08' = {
+resource databaseAccountName_res 'Microsoft.DocumentDb/databaseAccounts@2015-04-08' = {
   name: databaseAccountName
   location: location
   properties: {
@@ -56,7 +56,7 @@ resource databaseAccountName_resource 'Microsoft.DocumentDb/databaseAccounts@201
   }
 }
 
-resource appSvcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource appSvcPlanName_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   name: appSvcPlanName
   location: location
   sku: {
@@ -66,7 +66,7 @@ resource appSvcPlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/Sites@2015-08-01' = {
+resource webAppName_res 'Microsoft.Web/Sites@2015-08-01' = {
   name: webAppName
   location: location
   properties: {
@@ -81,12 +81,12 @@ resource webAppName_resource 'Microsoft.Web/Sites@2015-08-01' = {
         }
         {
           Name: 'DOCUMENTDB_PRIMARY_KEY'
-          Value: listKeys(databaseAccountName_resource.id, '2015-04-08').primaryMasterKey
+          Value: listKeys(databaseAccountName_res.id, '2015-04-08').primaryMasterKey
         }
       ]
     }
   }
   dependsOn: [
-    appSvcPlanName_resource
+    appSvcPlanName_res
   ]
 }

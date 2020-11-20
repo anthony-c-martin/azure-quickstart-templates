@@ -107,10 +107,10 @@ param artifactsLocationSasToken string {
 
 var subnetRef = resourceId(existingVirtualNetworkRGName, 'Microsoft.Network/virtualNetworks/subnets', existingVirtualNetworkName, existingSubnetName)
 var deployS2DClusterTemplateURL = '${artifactsLocation}/nestedtemplates/deploy-s2d-cluster.json${artifactsLocationSasToken}'
-var deployS2DCluster = 'deployS2DCluster'
+var deployS2DCluster_var = 'deployS2DCluster'
 
-module deployS2DCluster_resource '<failed to parse [variables(\'deployS2DClusterTemplateURL\')]>' = {
-  name: deployS2DCluster
+module deployS2DCluster '?' /*TODO: replace with correct path to [variables('deployS2DClusterTemplateURL')]*/ = {
+  name: deployS2DCluster_var
   params: {
     namePrefix: namePrefix
     domainName: existingDomainName
@@ -130,4 +130,4 @@ module deployS2DCluster_resource '<failed to parse [variables(\'deployS2DCluster
   dependsOn: []
 }
 
-output sofsPath string = '\\\\${reference(deployS2DCluster).outputs.sofsName.value}\\${reference(deployS2DCluster).outputs.shareName.value}'
+output sofsPath string = '\\\\${reference(deployS2DCluster_var).outputs.sofsName.value}\\${reference(deployS2DCluster_var).outputs.shareName.value}'

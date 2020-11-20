@@ -43,7 +43,7 @@ param location string {
 
 var singleQuote = '\''
 
-resource sqlConnectionName_resource 'Microsoft.Web/connections@2018-07-01-preview' = {
+resource sqlConnectionName_res 'Microsoft.Web/connections@2018-07-01-preview' = {
   location: location
   name: sqlConnectionName
   properties: {
@@ -61,7 +61,7 @@ resource sqlConnectionName_resource 'Microsoft.Web/connections@2018-07-01-previe
   }
 }
 
-resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+resource logicAppName_res 'Microsoft.Logic/workflows@2019-05-01' = {
   name: logicAppName
   location: location
   properties: {
@@ -108,7 +108,7 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
       '$connections': {
         value: {
           sql: {
-            connectionId: sqlConnectionName_resource.id
+            connectionId: sqlConnectionName_res.id
             connectionName: sqlConnectionName
             id: '${subscription().id}/providers/Microsoft.Web/locations/${location}/managedApis/sql'
           }
@@ -116,7 +116,4 @@ resource logicAppName_resource 'Microsoft.Logic/workflows@2019-05-01' = {
       }
     }
   }
-  dependsOn: [
-    sqlConnectionName_resource
-  ]
 }

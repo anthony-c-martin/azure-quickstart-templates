@@ -28,7 +28,7 @@ param administratorLoginPassword string {
   secure: true
 }
 
-resource serverName_resource 'Microsoft.Sql/servers@2020-02-02-preview' = {
+resource serverName_res 'Microsoft.Sql/servers@2020-02-02-preview' = {
   name: serverName
   location: location
   properties: {
@@ -45,6 +45,6 @@ resource serverName_sqlDBName 'Microsoft.Sql/servers/databases@2020-02-02-previe
     tier: 'Standard'
   }
   dependsOn: [
-    serverName_resource
+    serverName_res
   ]
 }

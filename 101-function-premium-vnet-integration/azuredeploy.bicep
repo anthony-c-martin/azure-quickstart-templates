@@ -50,14 +50,14 @@ param subnetName string {
 
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnetAddressPrefix = '10.0.0.0/24'
-var functionAppName = appName
-var hostingPlanName = appName
-var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var functionAppName_var = appName
+var hostingPlanName_var = appName
+var applicationInsightsName_var = appName
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}azfunctions'
 var functionWorkerRuntime = runtime
-var appInsightsResourceId = applicationInsightsName_resource.id
+var appInsightsResourceId = applicationInsightsName.id
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
+resource vnetName_res 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   location: location
   name: vnetName
   properties: {
@@ -88,27 +88,27 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2019-11-01' = {
   }
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   location: location
-  name: storageAccountName
+  name: storageAccountName_var
   sku: {
     name: storageAccountType
   }
   kind: 'Storage'
 }
 
-resource applicationInsightsName_resource 'Microsoft.Insights/components@2018-05-01-preview' = {
+resource applicationInsightsName 'Microsoft.Insights/components@2018-05-01-preview' = {
   location: appInsightsLocation
-  name: applicationInsightsName
+  name: applicationInsightsName_var
   kind: 'web'
   properties: {
     Application_Type: 'web'
-    ApplicationId: applicationInsightsName
+    ApplicationId: applicationInsightsName_var
   }
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2019-08-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: 'EP1'
@@ -120,12 +120,12 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2019-08-01' = {
   }
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
-  name: functionAppName
+resource functionAppName 'Microsoft.Web/sites@2019-08-01' = {
+  name: functionAppName_var
   location: location
   kind: 'functionapp'
   properties: {
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName.id
     siteConfig: {
       appSettings: [
         {
@@ -138,7 +138,7 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listkeys(storageAccountName_resource.id, '2019-06-01').keys[0].value};'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listkeys(storageAccountName.id, '2019-06-01').keys[0].value};'
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -156,19 +156,17 @@ resource functionAppName_resource 'Microsoft.Web/sites@2019-08-01' = {
     }
   }
   dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-    vnetName_resource
+    vnetName_res
   ]
 }
 
 resource functionAppName_virtualNetwork 'Microsoft.Web/sites/networkConfig@2019-08-01' = {
-  name: '${functionAppName}/virtualNetwork'
+  name: '${functionAppName_var}/virtualNetwork'
   properties: {
     subnetResourceId: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetName, subnetName)
     isSwift: true
   }
   dependsOn: [
-    functionAppName_resource
+    functionAppName
   ]
 }

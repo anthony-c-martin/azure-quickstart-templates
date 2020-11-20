@@ -70,8 +70,8 @@ var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var ubuntuOSVersion = '16.04-LTS'
 var OSDiskName = 'osDisk'
-var nsgName = '${vmName}NeoNSG'
-var nicName = '${vmName}NeoNIC'
+var nsgName_var = '${vmName}NeoNSG'
+var nicName_var = '${vmName}NeoNIC'
 var dockerExtensionName = 'DockerExtension'
 var azureVMUtilsName = 'vmCustomizationExt'
 var azureVMUtilsScriptUrl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/docker-neo4j/extras/setup_data_disk.sh'
@@ -79,15 +79,15 @@ var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = '${vmName}NeoPublicIP'
+var publicIPAddressName_var = '${vmName}NeoPublicIP'
 var publicIPAddressType = 'Dynamic'
 var vmStorageAccountContainerName = 'vhds'
-var vmName_variable = vmName
-var vmSize_variable = vmSize
-var virtualNetworkName = '${vmName}NeoVNET'
-var nsgID = nsgName_resource.id
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var dataDisk1VhdName = 'http://${newStorageAccountName}.blob.core.windows.net/${vmStorageAccountContainerName}/${vmName_variable}dataDisk1.vhd'
+var vmName_var = vmName
+var vmSize_var = vmSize
+var virtualNetworkName_var = '${vmName}NeoVNET'
+var nsgID = nsgName.id
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var dataDisk1VhdName = 'http://${newStorageAccountName}.blob.core.windows.net/${vmStorageAccountContainerName}/${vmName_var}dataDisk1.vhd'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -100,7 +100,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccountName
   location: location
   properties: {
@@ -108,8 +108,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -119,8 +119,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -145,8 +145,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -155,7 +155,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -165,13 +165,12 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-05-01-preview' = {
-  name: nsgName
+resource nsgName 'Microsoft.Network/networkSecurityGroups@2015-05-01-preview' = {
+  name: nsgName_var
   location: location
   properties: {
     securityRules: [
@@ -235,15 +234,15 @@ resource nsgName_resource 'Microsoft.Network/networkSecurityGroups@2015-05-01-pr
   }
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName_variable
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
-      vmSize: vmSize_variable
+      vmSize: vmSize_var
     }
     osProfile: {
-      computerName: vmName_variable
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -256,13 +255,13 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName_variable}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
       dataDisks: [
         {
-          name: '${vmName_variable}_DataDisk1'
+          name: '${vmName_var}_DataDisk1'
           diskSizeGB: '10'
           lun: 0
           createOption: 'Empty'
@@ -272,19 +271,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
 resource vmName_azureVMUtilsName 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName_variable}/${azureVMUtilsName}'
+  name: '${vmName_var}/${azureVMUtilsName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -299,12 +297,12 @@ resource vmName_azureVMUtilsName 'Microsoft.Compute/virtualMachines/extensions@2
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }
 
 resource vmName_dockerExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-05-01-preview' = {
-  name: '${vmName_variable}/${dockerExtensionName}'
+  name: '${vmName_var}/${dockerExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'

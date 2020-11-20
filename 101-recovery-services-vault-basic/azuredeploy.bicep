@@ -10,7 +10,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource vaultName_resource 'Microsoft.RecoveryServices/vaults@2020-02-02-preview' = {
+resource vaultName_res 'Microsoft.RecoveryServices/vaults@2020-02-02-preview' = {
   name: vaultName
   location: location
   properties: {}

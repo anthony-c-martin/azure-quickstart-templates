@@ -111,7 +111,7 @@ param sqlStorageWorkloadType string {
   metadata: {
     description: 'SQL Server Virtual Machine Workload Type: GENERAL - general work load; DW - datawear house work load; OLTP - Transactional processing work load'
   }
-  default: 'General'
+  default: 'GENERAL'
 }
 param sqlAkvCredentialName string {
   metadata: {
@@ -168,7 +168,7 @@ param artifactsLocationSasToken string {
 
 var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
 
-resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-01' = {
+resource virtualMachineName_res 'Microsoft.Compute/virtualMachines@2019-03-01' = {
   name: virtualMachineName
   location: location
   properties: {
@@ -177,7 +177,7 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-
       adminUsername: adminUsername
       adminPassword: adminPassword
       windowsConfiguration: {
-        provisionVmAgent: 'true'
+        provisionVMAgent: 'true'
       }
     }
     hardwareProfile: {
@@ -217,14 +217,11 @@ resource virtualMachineName_resource 'Microsoft.Compute/virtualMachines@2019-03-
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName_res.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }
 
 resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/extensions@2019-03-01' = {
@@ -253,11 +250,11 @@ resource virtualMachineName_SqlIaasExtension 'Microsoft.Compute/virtualMachines/
     }
   }
   dependsOn: [
-    virtualMachineName_resource
+    virtualMachineName_res
   ]
 }
 
-module prepareSqlVmDeployment '<failed to parse [uri(parameters(\'_artifactsLocation\'), concat(\'nested/preparingSqlServerSa.json\', parameters(\'_artifactsLocationSasToken\')))]>' = {
+module prepareSqlVmDeployment '?' /*TODO: replace with correct path to [uri(parameters('_artifactsLocation'), concat('nested/preparingSqlServerSa.json', parameters('_artifactsLocationSasToken')))]*/ = {
   name: 'prepareSqlVmDeployment'
   params: {
     sqlVMName: virtualMachineName
@@ -279,7 +276,7 @@ module prepareSqlVmDeployment '<failed to parse [uri(parameters(\'_artifactsLoca
   ]
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2019-06-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -299,7 +296,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2019-06-
   }
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019-06-01' = {
+resource networkInterfaceName_res 'Microsoft.Network/networkInterfaces@2019-06-01' = {
   name: networkInterfaceName
   location: location
   properties: {
@@ -311,24 +308,22 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2019
             id: subnetRef
           }
           privateIPAllocationMethod: 'Dynamic'
-          publicIpAddress: {
-            id: publicIpAddressName_resource.id
+          publicIPAddress: {
+            id: publicIpAddressName_res.id
           }
         }
       }
     ]
     networkSecurityGroup: {
-      id: networkSecurityGroupName_resource.id
+      id: networkSecurityGroupName_res.id
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    publicIpAddressName_resource
-    networkSecurityGroupName_resource
+    virtualNetworkName_res
   ]
 }
 
-resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
+resource publicIpAddressName_res 'Microsoft.Network/publicIPAddresses@2019-06-01' = {
   name: publicIpAddressName
   location: location
   sku: {
@@ -339,7 +334,7 @@ resource publicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2019-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
+resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
   name: networkSecurityGroupName
   location: location
   properties: {
@@ -352,7 +347,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
           protocol: 'Tcp'
           destinationPortRange: '3389'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
@@ -365,7 +360,7 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
           protocol: 'Tcp'
           destinationPortRange: '1433'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
@@ -374,4 +369,4 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-output adminUsername_output string = adminUsername
+output adminUsername_out string = adminUsername

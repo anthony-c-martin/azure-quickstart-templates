@@ -10,9 +10,9 @@ param location string {
   default: resourceGroup().location
 }
 
-resource newLabName_resource 'Microsoft.DevTestLab/labs@2015-05-21-preview' = {
+resource newLabName_res 'Microsoft.DevTestLab/labs@2015-05-21-preview' = {
   name: newLabName
   location: location
 }
 
-output labId string = newLabName_resource.id
+output labId string = newLabName_res.id

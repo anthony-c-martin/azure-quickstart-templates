@@ -17,10 +17,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var serviceBusnamespacename = '${MessageRouterServiceBusnamespacePrefix}-${uniqueString(resourceGroup().id)}'
+var serviceBusnamespacename_var = '${MessageRouterServiceBusnamespacePrefix}-${uniqueString(resourceGroup().id)}'
 
-resource serviceBusnamespacename_resource 'Microsoft.ServiceBus/namespaces@2015-08-01' = {
-  name: serviceBusnamespacename
+resource serviceBusnamespacename 'Microsoft.ServiceBus/namespaces@2015-08-01' = {
+  name: serviceBusnamespacename_var
   location: location
   kind: 'Messaging'
   sku: {
@@ -32,7 +32,7 @@ resource serviceBusnamespacename_resource 'Microsoft.ServiceBus/namespaces@2015-
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname 'Microsoft.ServiceBus/namespaces/topics@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}'
   location: location
   properties: {
     defaultMessageTimeToLive: '14.00:00:00'
@@ -49,12 +49,12 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname 'Microsoft.Se
     supportOrdering: false
   }
   dependsOn: [
-    serviceBusnamespacename_resource
+    serviceBusnamespacename
   ]
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_HighPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/HighPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/HighPriority'
   location: location
   properties: {
     deadLetteringOnFilterEvaluationExceptions: false
@@ -66,13 +66,13 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_HighPriority 
     requiresSession: false
   }
   dependsOn: [
-    serviceBusnamespacename_resource
+    serviceBusnamespacename
     serviceBusnamespacename_IncomingDeliveryRequestsTopicname
   ]
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_HighPriority_HighPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions/Rules@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/HighPriority/HighPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/HighPriority/HighPriority'
   properties: {
     filter: {
       sqlExpression: 'Priority=\'High\''
@@ -84,7 +84,7 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_HighPriority_
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_Log 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/Log'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/Log'
   location: location
   properties: {
     deadLetteringOnFilterEvaluationExceptions: false
@@ -96,13 +96,13 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_Log 'Microsof
     requiresSession: false
   }
   dependsOn: [
-    serviceBusnamespacename_resource
+    serviceBusnamespacename
     serviceBusnamespacename_IncomingDeliveryRequestsTopicname
   ]
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_Log_LogAll 'Microsoft.ServiceBus/namespaces/topics/subscriptions/Rules@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/Log/LogAll'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/Log/LogAll'
   properties: {
     filter: {
       sqlExpression: '1=1'
@@ -114,7 +114,7 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_Log_LogAll 'M
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_LowPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/LowPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/LowPriority'
   location: location
   properties: {
     deadLetteringOnFilterEvaluationExceptions: false
@@ -126,13 +126,13 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_LowPriority '
     requiresSession: false
   }
   dependsOn: [
-    serviceBusnamespacename_resource
+    serviceBusnamespacename
     serviceBusnamespacename_IncomingDeliveryRequestsTopicname
   ]
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_LowPriority_LowPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions/Rules@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/LowPriority/LowPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/LowPriority/LowPriority'
   properties: {
     filter: {
       sqlExpression: 'Priority=\'Low\''
@@ -144,7 +144,7 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_LowPriority_L
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_NormalPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/NormalPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/NormalPriority'
   location: location
   properties: {
     deadLetteringOnFilterEvaluationExceptions: false
@@ -156,13 +156,13 @@ resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_NormalPriorit
     requiresSession: false
   }
   dependsOn: [
-    serviceBusnamespacename_resource
+    serviceBusnamespacename
     serviceBusnamespacename_IncomingDeliveryRequestsTopicname
   ]
 }
 
 resource serviceBusnamespacename_IncomingDeliveryRequestsTopicname_NormalPriority_NormalPriority 'Microsoft.ServiceBus/namespaces/topics/subscriptions/Rules@2015-08-01' = {
-  name: '${serviceBusnamespacename}/${IncomingDeliveryRequestsTopicname}/NormalPriority/NormalPriority'
+  name: '${serviceBusnamespacename_var}/${IncomingDeliveryRequestsTopicname}/NormalPriority/NormalPriority'
   properties: {
     filter: {
       sqlExpression: 'Priority=\'Normal\''

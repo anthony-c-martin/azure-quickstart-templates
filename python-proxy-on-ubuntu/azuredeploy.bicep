@@ -87,7 +87,7 @@ var subnet1Prefix = '10.0.0.0/24'
 var subnet2Prefix = '10.0.1.0/24'
 var publicIPAddressType = 'Dynamic'
 var storageAccountType = 'Standard_LRS'
-var vnetID = virtualNetworkName_resource.id
+var vnetID = virtualNetworkName_res.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -101,7 +101,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2015-05-01-preview' = {
   name: newStorageAccountName
   location: location
   properties: {
@@ -109,7 +109,7 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
+resource publicIPAddressName_res 'Microsoft.Network/publicIPAddresses@2015-05-01-preview' = {
   name: publicIPAddressName
   location: location
   properties: {
@@ -120,7 +120,7 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2015-05-01-preview' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -146,7 +146,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
+resource nicName_res 'Microsoft.Network/networkInterfaces@2015-05-01-preview' = {
   name: nicName
   location: location
   properties: {
@@ -156,7 +156,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName_res.id
           }
           subnet: {
             id: subnet1Ref
@@ -165,13 +165,9 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-05-01-previe
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
   location: location
   properties: {
@@ -200,7 +196,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName_res.id
         }
       ]
       inputEndpoints: [
@@ -222,8 +218,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
@@ -243,6 +238,6 @@ resource vmName_installPythonProxy 'Microsoft.Compute/virtualMachines/extensions
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

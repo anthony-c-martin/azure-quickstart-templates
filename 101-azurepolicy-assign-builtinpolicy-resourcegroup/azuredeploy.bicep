@@ -10,7 +10,7 @@ param policyDefinitionID string {
   }
 }
 
-resource policyAssignmentName_resource 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
+resource policyAssignmentName_res 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
   name: policyAssignmentName
   properties: {
     scope: subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)

@@ -120,16 +120,16 @@ var scenarioPrefix = 'ospatchingLinux'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var ubuntuOSVersion = '18.04-LTS'
-var nicName = '${scenarioPrefix}Nic'
+var nicName_var = '${scenarioPrefix}Nic'
 var vnetAddressPrefix = '10.0.0.0/16'
 var subnetName = '${scenarioPrefix}Subnet'
 var subnetPrefix = '10.0.0.0/24'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = '${scenarioPrefix}PublicIp'
+var publicIPAddressName_var = '${scenarioPrefix}PublicIp'
 var publicIPAddressType = 'Dynamic'
-var vmName = '${scenarioPrefix}VM'
-var virtualNetworkName = '${scenarioPrefix}Vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
+var vmName_var = '${scenarioPrefix}VM'
+var virtualNetworkName_var = '${scenarioPrefix}Vnet'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
 var linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
@@ -142,7 +142,7 @@ var linuxConfiguration = {
   }
 }
 
-resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource newStorageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: newStorageAccountName
   location: location
   sku: {
@@ -151,8 +151,8 @@ resource newStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-
   kind: 'StorageV2'
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -162,8 +162,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -182,8 +182,8 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -192,7 +192,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -202,20 +202,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: username
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
@@ -228,7 +227,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -236,19 +235,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccountName_resource
-    nicName_resource
+    newStorageAccountName_res
   ]
 }
 
 resource vmName_installospatching 'Microsoft.Compute/virtualMachines/extensions@2019-12-01' = {
-  name: '${vmName}/installospatching'
+  name: '${vmName_var}/installospatching'
   location: location
   properties: {
     publisher: 'Microsoft.OSTCExtensions'
@@ -276,6 +274,6 @@ resource vmName_installospatching 'Microsoft.Compute/virtualMachines/extensions@
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }

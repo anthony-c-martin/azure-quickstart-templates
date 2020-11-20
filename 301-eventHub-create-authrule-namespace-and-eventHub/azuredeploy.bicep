@@ -75,7 +75,7 @@ var nsAuthorizationRuleId = namespaceName_namespaceAuthorizationRuleName.id
 var ehAuthorizationRuleId1 = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', namespaceName, eventHubName, eventhubAuthorizationRuleName)
 var ehAuthorizationRuleId2 = resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', namespaceName, eventHubName, eventhubAuthorizationRuleName1)
 
-resource namespaceName_resource 'Microsoft.EventHub/namespaces@2017-04-01' = {
+resource namespaceName_res 'Microsoft.EventHub/namespaces@2017-04-01' = {
   name: namespaceName
   location: location
   sku: {
@@ -94,7 +94,7 @@ resource namespaceName_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@201
     partitionCount: 4
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 
@@ -144,7 +144,7 @@ resource namespaceName_namespaceAuthorizationRuleName 'Microsoft.EventHub/namesp
     ]
   }
   dependsOn: [
-    namespaceName_resource
+    namespaceName_res
   ]
 }
 

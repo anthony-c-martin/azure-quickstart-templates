@@ -30,10 +30,10 @@ param repoUrl string {
   default: ' '
 }
 
-var appServicePlanPortalName = 'AppServicePlan-${webAppName}'
+var appServicePlanPortalName_var = 'AppServicePlan-${webAppName}'
 
-resource appServicePlanPortalName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: appServicePlanPortalName
+resource appServicePlanPortalName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: appServicePlanPortalName_var
   location: location
   sku: {
     name: sku
@@ -44,11 +44,11 @@ resource appServicePlanPortalName_resource 'Microsoft.Web/serverfarms@2020-06-01
   }
 }
 
-resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource webAppName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: webAppName
   location: location
   properties: {
-    serverFarmId: appServicePlanPortalName_resource.id
+    serverFarmId: appServicePlanPortalName.id
     siteConfig: {
       linuxFxVersion: linuxFxVersion
     }
@@ -60,7 +60,7 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
         name: 'web'
         location: location
         dependsOn: [
-          webAppName_resource.id
+          webAppName_res.id
         ]
         properties: {
           repoUrl: repoUrl
@@ -70,7 +70,4 @@ resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
       }
     ]
   }
-  dependsOn: [
-    appServicePlanPortalName_resource
-  ]
 }

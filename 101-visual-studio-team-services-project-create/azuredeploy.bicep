@@ -36,7 +36,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource accountName_resource 'microsoft.visualstudio/account@2014-04-01-preview' = {
+resource accountName_res 'microsoft.visualstudio/account@2014-04-01-preview' = {
   name: accountName
   location: location
   properties: {
@@ -53,6 +53,6 @@ resource accountName_projectName 'microsoft.visualstudio/account/project@2014-04
     VersionControlOption: versionControlOption
   }
   dependsOn: [
-    accountName_resource
+    accountName_res
   ]
 }

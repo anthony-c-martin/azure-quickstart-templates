@@ -51,10 +51,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var apiManagementServiceName = 'apiservice1${uniqueString(resourceGroup().id)}'
+var apiManagementServiceName_var = 'apiservice1${uniqueString(resourceGroup().id)}'
 
-resource apiManagementServiceName_resource 'Microsoft.ApiManagement/service@2018-01-01' = {
-  name: apiManagementServiceName
+resource apiManagementServiceName 'Microsoft.ApiManagement/service@2018-01-01' = {
+  name: apiManagementServiceName_var
   location: location
   tags: {}
   sku: {

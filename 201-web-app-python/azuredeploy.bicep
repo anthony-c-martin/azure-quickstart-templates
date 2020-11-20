@@ -45,7 +45,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
+resource hostingPlanName_res 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: hostingPlanName
   location: location
   tags: {
@@ -61,7 +61,7 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource webSiteName_resource 'Microsoft.Web/sites@2020-06-01' = {
+resource webSiteName_res 'Microsoft.Web/sites@2020-06-01' = {
   name: webSiteName
   location: location
   tags: {
@@ -70,12 +70,9 @@ resource webSiteName_resource 'Microsoft.Web/sites@2020-06-01' = {
   }
   properties: {
     name: webSiteName
-    serverFarmId: hostingPlanName_resource.id
+    serverFarmId: hostingPlanName_res.id
     siteConfig: {
       linuxFxVersion: 'PYTHON|3.7'
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-  ]
 }

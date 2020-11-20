@@ -52,12 +52,12 @@ param location string {
   default: resourceGroup().location
 }
 
-var functionAppName = appName
-var hostingPlanName = '${appName}-plan'
-var storageAccountName = '${uniqueString(resourceGroup().id)}functions'
+var functionAppName_var = appName
+var hostingPlanName_var = '${appName}-plan'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}functions'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-11-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2018-11-01' = {
+  name: storageAccountName_var
   location: location
   kind: 'Storage'
   sku: {
@@ -65,8 +65,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2018-11-
   }
 }
 
-resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2018-11-01' = {
-  name: hostingPlanName
+resource hostingPlanName 'Microsoft.Web/serverfarms@2018-11-01' = {
+  name: hostingPlanName_var
   location: location
   sku: {
     name: sku
@@ -77,13 +77,13 @@ resource hostingPlanName_resource 'Microsoft.Web/serverfarms@2018-11-01' = {
   }
 }
 
-resource functionAppName_resource 'Microsoft.Web/sites@2018-11-01' = {
-  name: functionAppName
+resource functionAppName 'Microsoft.Web/sites@2018-11-01' = {
+  name: functionAppName_var
   location: location
   kind: 'functionapp'
   properties: {
-    name: functionAppName
-    serverFarmId: hostingPlanName_resource.id
+    name: functionAppName_var
+    serverFarmId: hostingPlanName.id
     clientAffinityEnabled: false
     siteConfig: {
       alwaysOn: true
@@ -99,29 +99,25 @@ resource functionAppName_resource 'Microsoft.Web/sites@2018-11-01' = {
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listkeys(storageAccountName_resource.id, '2018-11-01').keys[0].value};'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};AccountKey=${listkeys(storageAccountName.id, '2018-11-01').keys[0].value};'
         }
         {
           name: 'AzureWebJobsDashboard'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${listkeys(storageAccountName_resource.id, '2018-11-01').keys[0].value};'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName_var};AccountKey=${listkeys(storageAccountName.id, '2018-11-01').keys[0].value};'
         }
       ]
     }
   }
-  dependsOn: [
-    hostingPlanName_resource
-    storageAccountName_resource
-  ]
 }
 
 resource functionAppName_web 'Microsoft.Web/sites/sourcecontrols@2018-11-01' = {
-  name: '${functionAppName}/web'
+  name: '${functionAppName_var}/web'
   properties: {
-    RepoUrl: repoURL
+    repoUrl: repoURL
     branch: branch
-    IsManualIntegration: true
+    isManualIntegration: true
   }
   dependsOn: [
-    functionAppName_resource
+    functionAppName
   ]
 }

@@ -96,7 +96,7 @@ param sharedKey string {
   }
 }
 
-resource virtualNetworkName1_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName1_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName1
   location: location1
   properties: {
@@ -122,7 +122,7 @@ resource virtualNetworkName1_resource 'Microsoft.Network/virtualNetworks@2020-05
   }
 }
 
-resource virtualNetworkName2_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName2_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName2
   location: location2
   properties: {
@@ -148,7 +148,7 @@ resource virtualNetworkName2_resource 'Microsoft.Network/virtualNetworks@2020-05
   }
 }
 
-resource gatewayPublicIPName1_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource gatewayPublicIPName1_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: gatewayPublicIPName1
   location: location1
   properties: {
@@ -156,7 +156,7 @@ resource gatewayPublicIPName1_resource 'Microsoft.Network/publicIPAddresses@2020
   }
 }
 
-resource gatewayPublicIPName2_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource gatewayPublicIPName2_res 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: gatewayPublicIPName2
   location: location2
   properties: {
@@ -164,7 +164,7 @@ resource gatewayPublicIPName2_resource 'Microsoft.Network/publicIPAddresses@2020
   }
 }
 
-resource gatewayName1_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
+resource gatewayName1_res 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
   name: gatewayName1
   location: location1
   properties: {
@@ -176,7 +176,7 @@ resource gatewayName1_resource 'Microsoft.Network/virtualNetworkGateways@2020-05
             id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName1, 'GatewaySubnet')
           }
           publicIPAddress: {
-            id: gatewayPublicIPName1_resource.id
+            id: gatewayPublicIPName1_res.id
           }
         }
         name: 'vnetGatewayConfig1'
@@ -187,12 +187,11 @@ resource gatewayName1_resource 'Microsoft.Network/virtualNetworkGateways@2020-05
     enableBgp: false
   }
   dependsOn: [
-    gatewayPublicIPName1_resource
-    virtualNetworkName1_resource
+    virtualNetworkName1_res
   ]
 }
 
-resource gatewayName2_resource 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
+resource gatewayName2_res 'Microsoft.Network/virtualNetworkGateways@2020-05-01' = {
   name: gatewayName2
   location: location2
   properties: {
@@ -204,7 +203,7 @@ resource gatewayName2_resource 'Microsoft.Network/virtualNetworkGateways@2020-05
             id: resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName2, 'GatewaySubnet')
           }
           publicIPAddress: {
-            id: gatewayPublicIPName2_resource.id
+            id: gatewayPublicIPName2_res.id
           }
         }
         name: 'vnetGatewayConfig2'
@@ -215,47 +214,38 @@ resource gatewayName2_resource 'Microsoft.Network/virtualNetworkGateways@2020-05
     enableBgp: false
   }
   dependsOn: [
-    gatewayPublicIPName2_resource
-    virtualNetworkName2_resource
+    virtualNetworkName2_res
   ]
 }
 
-resource connectionName1_resource 'Microsoft.Network/connections@2020-05-01' = {
+resource connectionName1_res 'Microsoft.Network/connections@2020-05-01' = {
   name: connectionName1
   location: location1
   properties: {
     virtualNetworkGateway1: {
-      id: gatewayName1_resource.id
+      id: gatewayName1_res.id
     }
     virtualNetworkGateway2: {
-      id: gatewayName2_resource.id
+      id: gatewayName2_res.id
     }
     connectionType: 'Vnet2Vnet'
     routingWeight: 3
     sharedKey: sharedKey
   }
-  dependsOn: [
-    gatewayName1_resource
-    gatewayName2_resource
-  ]
 }
 
-resource connectionName2_resource 'Microsoft.Network/connections@2020-05-01' = {
+resource connectionName2_res 'Microsoft.Network/connections@2020-05-01' = {
   name: connectionName2
   location: location2
   properties: {
     virtualNetworkGateway1: {
-      id: gatewayName2_resource.id
+      id: gatewayName2_res.id
     }
     virtualNetworkGateway2: {
-      id: gatewayName1_resource.id
+      id: gatewayName1_res.id
     }
     connectionType: 'Vnet2Vnet'
     routingWeight: 3
     sharedKey: sharedKey
   }
-  dependsOn: [
-    gatewayName1_resource
-    gatewayName2_resource
-  ]
 }

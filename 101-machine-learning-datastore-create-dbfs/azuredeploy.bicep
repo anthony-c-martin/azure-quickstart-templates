@@ -29,7 +29,7 @@ resource workspaceName_datastoreName 'Microsoft.MachineLearningServices/workspac
   name: '${workspaceName}/${datastoreName}'
   location: location
   properties: {
-    DataStoreType: 'dbfs'
+    dataStoreType: 'DBFS'
     SkipValidation: skipValidation
   }
 }

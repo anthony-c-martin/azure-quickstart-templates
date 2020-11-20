@@ -43,13 +43,13 @@ param location string {
 var distinguishedName = 'CN=*.${rootHostname}'
 var wwwHostname = 'www.${rootHostname}'
 
-resource certificateOrderName_resource 'Microsoft.CertificateRegistration/certificateOrders@2015-08-01' = {
+resource certificateOrderName_res 'Microsoft.CertificateRegistration/certificateOrders@2015-08-01' = {
   name: certificateOrderName
   location: 'global'
   properties: {
-    DistinguishedName: distinguishedName
-    ValidityInYears: 1
-    ProductType: productType
+    distinguishedName: distinguishedName
+    validityInYears: 1
+    productType: productType
   }
 }
 
@@ -57,11 +57,8 @@ resource rootHostname_certificateOrderName 'Microsoft.DomainRegistration/domains
   name: concat(rootHostname, '/${certificateOrderName}')
   location: 'global'
   properties: {
-    ownershipId: certificateOrderName_resource.properties.DomainVerificationToken
+    ownershipId: certificateOrderName_res.properties.domainVerificationToken
   }
-  dependsOn: [
-    certificateOrderName_resource
-  ]
 }
 
 resource certificateOrderName_certificateOrderName 'Microsoft.CertificateRegistration/certificateOrders/certificates@2015-08-01' = {
@@ -72,7 +69,7 @@ resource certificateOrderName_certificateOrderName 'Microsoft.CertificateRegistr
     keyVaultSecretName: certificateOrderName
   }
   dependsOn: [
-    certificateOrderName_resource
+    certificateOrderName_res
     resourceId('Microsoft.DomainRegistration/domains/domainOwnershipIdentifiers', rootHostname, certificateOrderName)
   ]
 }
@@ -89,7 +86,7 @@ resource Microsoft_Web_certificates_certificateOrderName 'Microsoft.Web/certific
   ]
 }
 
-resource existingAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource existingAppName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: existingAppName
   location: existingAppLocation
   properties: {
@@ -98,13 +95,13 @@ resource existingAppName_resource 'Microsoft.Web/sites@2015-08-01' = {
       {
         name: rootHostname
         sslState: 1
-        thumbprint: certificateOrderName_resource.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.signedCertificate.thumbprint
         toUpdate: true
       }
       {
         name: wwwHostname
         sslState: 1
-        thumbprint: certificateOrderName_resource.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.signedCertificate.thumbprint
         toUpdate: true
       }
     ]

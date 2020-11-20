@@ -36,7 +36,7 @@ param numberOfWorkersFromWorkerPool int {
   default: 1
 }
 
-resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
+resource appServicePlanName_res 'Microsoft.Web/serverfarms@2015-08-01' = {
   name: appServicePlanName
   location: existingAseLocation
   properties: {
@@ -54,17 +54,14 @@ resource appServicePlanName_resource 'Microsoft.Web/serverfarms@2015-08-01' = {
   }
 }
 
-resource siteName_resource 'Microsoft.Web/sites@2015-08-01' = {
+resource siteName_res 'Microsoft.Web/sites@2015-08-01' = {
   name: siteName
   location: existingAseLocation
   properties: {
     name: siteName
-    serverFarmId: appServicePlanName_resource.id
+    serverFarmId: appServicePlanName_res.id
     hostingEnvironmentProfile: {
       id: resourceId('Microsoft.Web/hostingEnvironments', appServiceEnvironmentName)
     }
   }
-  dependsOn: [
-    appServicePlanName_resource
-  ]
 }

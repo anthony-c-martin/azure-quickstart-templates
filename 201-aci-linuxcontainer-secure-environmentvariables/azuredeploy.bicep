@@ -49,7 +49,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
+resource containergroupname_res 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
   name: containergroupname
   location: location
   properties: {
@@ -83,7 +83,7 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: port
         }
       ]
@@ -91,4 +91,4 @@ resource containergroupname_resource 'Microsoft.ContainerInstance/containerGroup
   }
 }
 
-output containerIPv4Address string = containergroupname_resource.properties.ipAddress.ip
+output containerIPv4Address string = containergroupname_res.properties.ipAddress.ip

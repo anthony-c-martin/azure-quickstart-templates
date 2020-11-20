@@ -48,7 +48,7 @@ param osType string {
   default: 'Linux'
 }
 
-resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
+resource aksClusterName_res 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
   location: location
   name: aksClusterName
   tags: {
@@ -75,4 +75,4 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
   }
 }
 
-output controlPlaneFQDN string = aksClusterName_resource.properties.fqdn
+output controlPlaneFQDN string = aksClusterName_res.properties.fqdn

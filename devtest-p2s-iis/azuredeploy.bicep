@@ -33,20 +33,20 @@ param clientRootCertData string {
 }
 
 var location = resourceGroup().location
-var newStorageAccount = '${uniqueString(resourceGroup().id)}store'
+var newStorageAccount_var = '${uniqueString(resourceGroup().id)}store'
 var storageAccountType = 'Standard_LRS'
-var vnetName = '${environmentPrefix}Vnet'
+var vnetName_var = '${environmentPrefix}Vnet'
 var vnetAddressPrefix = '10.0.0.0/23'
 var gatewaySubnetPrefix = '10.0.1.0/24'
-var gatewayPublicIPName = '${environmentPrefix}GatewayPIP'
-var gatewayName = '${environmentPrefix}Gateway'
+var gatewayPublicIPName_var = '${environmentPrefix}GatewayPIP'
+var gatewayName_var = '${environmentPrefix}Gateway'
 var gatewaySku = 'Basic'
-var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName, 'GatewaySubnet')
+var gatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName_var, 'GatewaySubnet')
 var appSubnetName = 'appSubnet'
 var appSubnetPrefix = '10.0.0.0/24'
-var appSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName, appSubnetName)
-var nicName = '${environmentPrefix}NIC01'
-var vmName = '${environmentPrefix}VM01'
+var appSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets/', vnetName_var, appSubnetName)
+var nicName_var = '${environmentPrefix}NIC01'
+var vmName_var = '${environmentPrefix}VM01'
 var vmSize = 'Standard_D1'
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
@@ -55,24 +55,24 @@ var vmExtensionName = 'dscExtension'
 var modulesUrl = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/devtest-p2s-iis/DevTestWebsite.ps1.zip'
 var configurationFunction = 'DevTestWebsite.ps1\\DevTestWebsite'
 
-resource newStorageAccount_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: newStorageAccount
+resource newStorageAccount 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: newStorageAccount_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource gatewayPublicIPName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: gatewayPublicIPName
+resource gatewayPublicIPName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: gatewayPublicIPName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: vnetName
+resource vnetName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: vnetName_var
   location: location
   properties: {
     addressSpace: {
@@ -97,8 +97,8 @@ resource vnetName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
   }
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -114,19 +114,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
     ]
   }
   dependsOn: [
-    vnetName_resource
+    vnetName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -138,7 +138,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -146,19 +146,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    newStorageAccount_resource
-    nicName_resource
+    newStorageAccount
   ]
 }
 
 resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/${vmExtensionName}'
+  name: '${vmName_var}/${vmExtensionName}'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -169,18 +168,18 @@ resource vmName_vmExtensionName 'Microsoft.Compute/virtualMachines/extensions@20
       ModulesUrl: modulesUrl
       ConfigurationFunction: configurationFunction
       Properties: {
-        MachineName: vmName
+        MachineName: vmName_var
       }
     }
     protectedSettings: null
   }
   dependsOn: [
-    vmName_resource
+    vmName
   ]
 }
 
-resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-15' = {
-  name: gatewayName
+resource gatewayName 'Microsoft.Network/virtualNetworkGateways@2015-06-15' = {
+  name: gatewayName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -191,7 +190,7 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-
             id: gatewaySubnetRef
           }
           publicIPAddress: {
-            id: gatewayPublicIPName_resource.id
+            id: gatewayPublicIPName.id
           }
         }
         name: 'vnetGatewayConfig'
@@ -214,14 +213,13 @@ resource gatewayName_resource 'Microsoft.Network/virtualNetworkGateways@2015-06-
         {
           name: clientRootCertName
           properties: {
-            PublicCertData: clientRootCertData
+            publicCertData: clientRootCertData
           }
         }
       ]
     }
   }
   dependsOn: [
-    gatewayPublicIPName_resource
-    vnetName_resource
+    vnetName
   ]
 }

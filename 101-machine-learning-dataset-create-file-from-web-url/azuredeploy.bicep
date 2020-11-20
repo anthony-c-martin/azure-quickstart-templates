@@ -43,7 +43,7 @@ resource workspaceName_datasetName 'Microsoft.MachineLearningServices/workspaces
   location: location
   properties: {
     SkipValidation: skipValidation
-    DatasetType: 'file'
+    datasetType: 'file'
     Parameters: {
       Path: {
         HttpUrl: httpUrl

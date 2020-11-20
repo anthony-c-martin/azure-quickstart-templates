@@ -1,7 +1,7 @@
 param workspaceName string
 param location string = resourceGroup().location
 
-resource workspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+resource workspaceName_res 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
   name: workspaceName
   location: location
   properties: {
@@ -18,7 +18,7 @@ resource SecurityInsights_workspaceName 'Microsoft.OperationsManagement/solution
   name: 'SecurityInsights(${workspaceName})'
   location: location
   properties: {
-    workspaceResourceId: workspaceName_resource.id
+    workspaceResourceId: workspaceName_res.id
   }
   plan: {
     name: 'SecurityInsights(${workspaceName})'
@@ -26,7 +26,4 @@ resource SecurityInsights_workspaceName 'Microsoft.OperationsManagement/solution
     publisher: 'Microsoft'
     promotionCode: ''
   }
-  dependsOn: [
-    workspaceName_resource
-  ]
 }

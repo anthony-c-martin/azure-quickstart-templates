@@ -39,7 +39,7 @@ param existingSubnetName string {
   }
 }
 
-resource vmssName_resource 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
+resource vmssName_res 'Microsoft.Compute/virtualMachineScaleSets@2017-03-30' = {
   name: vmssName
   location: resourceGroup().location
   sku: {

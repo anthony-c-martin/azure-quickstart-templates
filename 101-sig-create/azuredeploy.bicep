@@ -10,7 +10,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource galleryName_resource 'Microsoft.Compute/galleries@2019-12-01' = {
+resource galleryName_res 'Microsoft.Compute/galleries@2019-12-01' = {
   name: galleryName
   location: location
   properties: {

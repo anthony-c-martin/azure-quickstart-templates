@@ -23,22 +23,22 @@ param location string {
   default: resourceGroup().location
 }
 
-var storageAccountName_variable = '${uniqueString(resourceGroup().id)}storage'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
 
-resource storageAccountname_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
-  name: storageAccountName_variable
+resource storageAccountname_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: storageAccountName_var
   location: location
   sku: {
     name: storageAccountsku
   }
   kind: 'StorageV2'
   tags: {
-    ObjectName: storageAccountName_variable
+    ObjectName: storageAccountName_var
   }
   properties: {}
 }
 
-resource batchAccountName_resource 'Microsoft.Batch/batchAccounts@2020-05-01' = {
+resource batchAccountName_res 'Microsoft.Batch/batchAccounts@2020-05-01' = {
   name: batchAccountName
   location: location
   tags: {
@@ -46,13 +46,10 @@ resource batchAccountName_resource 'Microsoft.Batch/batchAccounts@2020-05-01' = 
   }
   properties: {
     autoStorage: {
-      storageAccountId: storageAccountname_resource.id
+      storageAccountId: storageAccountname_res.id
     }
   }
-  dependsOn: [
-    storageAccountname_resource
-  ]
 }
 
-output storageAccountName string = storageAccountName_variable
-output batchAccountName_output string = batchAccountName
+output storageAccountName string = storageAccountName_var
+output batchAccountName_out string = batchAccountName

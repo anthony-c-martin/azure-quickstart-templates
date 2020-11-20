@@ -39,7 +39,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource bcMemberName_resource 'Microsoft.Blockchain/blockchainMembers@2018-06-01-preview' = {
+resource bcMemberName_res 'Microsoft.Blockchain/blockchainMembers@2018-06-01-preview' = {
   name: bcMemberName
   location: location
   sku: {

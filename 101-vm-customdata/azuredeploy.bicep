@@ -54,19 +54,19 @@ param adminPasswordOrKey string {
   secure: true
 }
 
-var storageAccountName = '${uniqueString(resourceGroup().id)}sacustmdata'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}sacustmdata'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
-var nicName = 'networkInterface1'
-var vmName = 'vm1'
-var virtualNetworkName = 'virtualNetwork1'
-var publicIPAddressName = 'publicIp1'
+var nicName_var = 'networkInterface1'
+var vmName_var = 'vm1'
+var virtualNetworkName_var = 'virtualNetwork1'
+var publicIPAddressName_var = 'publicIp1'
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'Subnet-1'
 var subnet1Prefix = '10.0.0.0/24'
 var publicIPAddressType = 'Dynamic'
 var storageAccountType = 'Standard_LRS'
-var vnetID = virtualNetworkName_resource.id
+var vnetID = virtualNetworkName.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var apiVersion = '2015-06-15'
 var linuxConfiguration = {
@@ -80,18 +80,18 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
   location: location
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: publicIPAddressType
@@ -101,8 +101,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -123,8 +123,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -138,19 +138,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -159,7 +156,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -168,21 +165,17 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       customData: base64(customData)
@@ -202,19 +195,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' 
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
     diagnosticsProfile: {
       bootDiagnostics: {
         enabled: true
-        storageUri: concat(reference('Microsoft.Storage/storageAccounts/${storageAccountName}', apiVersion).primaryEndpoints.blob)
+        storageUri: concat(reference('Microsoft.Storage/storageAccounts/${storageAccountName_var}', apiVersion).primaryEndpoints.blob)
       }
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nicName_resource
+    storageAccountName
   ]
 }

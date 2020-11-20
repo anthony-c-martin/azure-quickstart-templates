@@ -185,10 +185,10 @@ param location string {
   default: resourceGroup().location
 }
 
-var sqlServerName = '${uniqueString(resourceGroup().id)}sqlserver'
-var storageAccountName = '${uniqueString(resourceGroup().id)}storage'
+var sqlServerName_var = '${uniqueString(resourceGroup().id)}sqlserver'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}storage'
 
-resource databaseAccountName_resource 'Microsoft.DocumentDB/databaseAccounts@2015-04-08' = {
+resource databaseAccountName_res 'Microsoft.DocumentDB/databaseAccounts@2015-04-08' = {
   name: databaseAccountName
   location: location
   tags: {
@@ -211,8 +211,8 @@ resource databaseAccountName_resource 'Microsoft.DocumentDB/databaseAccounts@201
   }
 }
 
-resource sqlServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
-  name: sqlServerName
+resource sqlServerName 'Microsoft.Sql/servers@2014-04-01-preview' = {
+  name: sqlServerName_var
   location: location
   tags: {
     displayName: 'SQL Server'
@@ -226,19 +226,19 @@ resource sqlServerName_resource 'Microsoft.Sql/servers@2014-04-01-preview' = {
 }
 
 resource sqlServerName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallrules@2014-04-01-preview' = {
-  name: '${sqlServerName}/AllowAllWindowsAzureIps'
+  name: '${sqlServerName_var}/AllowAllWindowsAzureIps'
   location: location
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName
   ]
 }
 
 resource sqlServerName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2014-04-01-preview' = {
-  name: '${sqlServerName}/${sqlDatabaseName}'
+  name: '${sqlServerName_var}/${sqlDatabaseName}'
   location: location
   tags: {
     displayName: 'SQL Database'
@@ -250,11 +250,11 @@ resource sqlServerName_sqlDatabaseName 'Microsoft.Sql/servers/databases@2014-04-
     requestedServiceObjectiveName: sqldatabaseRequestedServiceObjectiveName
   }
   dependsOn: [
-    sqlServerName_resource
+    sqlServerName
   ]
 }
 
-resource webAppName_resource 'Microsoft.Web/serverfarms@2014-06-01' = {
+resource webAppName_res 'Microsoft.Web/serverfarms@2014-06-01' = {
   name: webAppName
   location: location
   tags: {
@@ -278,15 +278,12 @@ resource Microsoft_Web_sites_webAppName 'Microsoft.Web/sites@2015-08-01' = {
   }
   properties: {
     name: webAppName
-    serverFarmId: webAppName_resource.id
+    serverFarmId: webAppName_res.id
   }
-  dependsOn: [
-    webAppName_resource
-  ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
   location: location
   tags: {
     displayName: 'Storage Account'
@@ -297,7 +294,7 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-
   dependsOn: []
 }
 
-resource azureSearchname_resource 'Microsoft.Search/searchServices@2015-02-28' = {
+resource azureSearchname_res 'Microsoft.Search/searchServices@2015-02-28' = {
   name: azureSearchname
   location: location
   tags: {

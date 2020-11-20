@@ -25,7 +25,7 @@ param location string {
   default: resourceGroup().location
 }
 
-resource serviceBusNamespaceNameSecondary_resource 'Microsoft.ServiceBus/Namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceNameSecondary_res 'Microsoft.ServiceBus/Namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceNameSecondary
   location: locationSecondaryNamepsace
   sku: {
@@ -39,7 +39,7 @@ resource serviceBusNamespaceNameSecondary_resource 'Microsoft.ServiceBus/Namespa
   }
 }
 
-resource serviceBusNamespaceNamePrimary_resource 'Microsoft.ServiceBus/Namespaces@2018-01-01-preview' = {
+resource serviceBusNamespaceNamePrimary_res 'Microsoft.ServiceBus/Namespaces@2018-01-01-preview' = {
   name: serviceBusNamespaceNamePrimary
   location: location
   sku: {
@@ -52,16 +52,16 @@ resource serviceBusNamespaceNamePrimary_resource 'Microsoft.ServiceBus/Namespace
     tag2: 'value2'
   }
   dependsOn: [
-    serviceBusNamespaceNameSecondary_resource
+    serviceBusNamespaceNameSecondary_res
   ]
 }
 
 resource serviceBusNamespaceNamePrimary_aliasName 'Microsoft.ServiceBus/Namespaces/disasterRecoveryConfigs@2017-04-01' = {
   name: '${serviceBusNamespaceNamePrimary}/${aliasName}'
   properties: {
-    partnerNamespace: serviceBusNamespaceNameSecondary_resource.id
+    partnerNamespace: serviceBusNamespaceNameSecondary_res.id
   }
   dependsOn: [
-    serviceBusNamespaceNamePrimary_resource
+    serviceBusNamespaceNamePrimary_res
   ]
 }

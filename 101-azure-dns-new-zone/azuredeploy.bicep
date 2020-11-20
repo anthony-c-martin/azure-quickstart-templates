@@ -11,7 +11,7 @@ param newRecordName string {
   default: 'www'
 }
 
-resource newZoneName_resource 'Microsoft.Network/dnsZones@2018-05-01' = {
+resource newZoneName_res 'Microsoft.Network/dnsZones@2018-05-01' = {
   name: newZoneName
   location: 'global'
 }
@@ -31,7 +31,7 @@ resource newZoneName_newRecordName 'Microsoft.Network/dnsZones/A@2018-05-01' = {
     ]
   }
   dependsOn: [
-    newZoneName_resource
+    newZoneName_res
   ]
 }
 

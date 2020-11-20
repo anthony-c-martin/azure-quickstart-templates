@@ -46,18 +46,18 @@ param adminPasswordOrKey string {
 var addressPrefix = '10.0.0.0/16'
 var subnet1Name = 'DefaultSubnet'
 var subnet1Prefix = '10.0.0.0/24'
-var storageAccountName = '${uniqueString(resourceGroup().id)}phab'
+var storageAccountName_var = '${uniqueString(resourceGroup().id)}phab'
 var vmStorageAccountContainerName = 'vhds'
 var publicIPAddressType = 'Dynamic'
 var storageAccountType = 'Standard_LRS'
-var publicIPAddressName = 'phabricatorvip'
-var location_variable = location
+var publicIPAddressName_var = 'phabricatorvip'
+var location_var = location
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var imageSKU = '16.04.0-LTS'
-var virtualNetworkName = 'phabricatorvnet'
-var nicName = 'phabricatornic'
-var vnetID = virtualNetworkName_resource.id
+var virtualNetworkName_var = 'phabricatorvnet'
+var nicName_var = 'phabricatornic'
+var vnetID = virtualNetworkName.id
 var subnet1Ref = '${vnetID}/subnets/${subnet1Name}'
 var linuxConfiguration = {
   disablePasswordAuthentication: true
@@ -70,19 +70,19 @@ var linuxConfiguration = {
     ]
   }
 }
-var networkSecurityGroupName = 'default-NSG'
+var networkSecurityGroupName_var = 'default-NSG'
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2015-06-15' = {
-  name: storageAccountName
-  location: location_variable
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2015-06-15' = {
+  name: storageAccountName_var
+  location: location_var
   properties: {
     accountType: storageAccountType
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
-  name: publicIPAddressName
-  location: location_variable
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
+  name: publicIPAddressName_var
+  location: location_var
   properties: {
     publicIPAllocationMethod: publicIPAddressType
     dnsSettings: {
@@ -91,8 +91,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2015-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -126,9 +126,9 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-15' = {
-  name: virtualNetworkName
-  location: location_variable
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2015-06-15' = {
+  name: virtualNetworkName_var
+  location: location_var
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -141,20 +141,17 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2015-06-
         properties: {
           addressPrefix: subnet1Prefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
-  name: nicName
-  location: location_variable
+resource nicName 'Microsoft.Network/networkInterfaces@2015-06-15' = {
+  name: nicName_var
+  location: location_var
   properties: {
     ipConfigurations: [
       {
@@ -162,7 +159,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnet1Ref
@@ -171,15 +168,11 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2015-06-15' = {
       }
     ]
   }
-  dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
-  ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2017-03-30' = {
   name: vmName
-  location: location_variable
+  location: location_var
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -206,20 +199,19 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    nicName_resource
+    storageAccountName
   ]
 }
 
 resource vmName_installphabricator 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
   name: '${vmName}/installphabricator'
-  location: location_variable
+  location: location_var
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
     type: 'CustomScript'
@@ -229,10 +221,10 @@ resource vmName_installphabricator 'Microsoft.Compute/virtualMachines/extensions
       fileUris: [
         'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/phabricator-on-ubuntu/scripts/phabricator-install-ubuntu.sh'
       ]
-      commandToExecute: 'sudo sh phabricator-install-ubuntu.sh ${publicIPAddressName_resource.properties.dnsSettings.fqdn}'
+      commandToExecute: 'sudo sh phabricator-install-ubuntu.sh ${publicIPAddressName.properties.dnsSettings.fqdn}'
     }
   }
   dependsOn: [
-    vmName_resource
+    vmName_res
   ]
 }

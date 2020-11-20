@@ -30,18 +30,18 @@ param galleryImageVersionName string {
   }
 }
 
-var nicName = '${uniqueString(resourceGroup().id)}myVMNic'
+var nicName_var = '${uniqueString(resourceGroup().id)}myVMNic'
 var addressPrefix = '10.0.0.0/16'
 var subnetName = 'Subnet'
 var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName = '${uniqueString(resourceGroup().id)}myPublicIP'
-var vmName = '${uniqueString(resourceGroup().id)}myVMFromGalleryImageVersion'
-var virtualNetworkName = 'MyVNET'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, subnetName)
-var networkSecurityGroupName = '${subnetName}-nsg'
+var publicIPAddressName_var = '${uniqueString(resourceGroup().id)}myPublicIP'
+var vmName_var = '${uniqueString(resourceGroup().id)}myVMFromGalleryImageVersion'
+var virtualNetworkName_var = 'MyVNET'
+var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
+var networkSecurityGroupName_var = '${subnetName}-nsg'
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: publicIPAddressName_var
   location: resourceGroup().location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -51,8 +51,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-
   }
 }
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2019-08-01' = {
+  name: networkSecurityGroupName_var
   location: resourceGroup().location
   properties: {
     securityRules: [
@@ -86,8 +86,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-30' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-03-30' = {
+  name: virtualNetworkName_var
   location: resourceGroup().location
   properties: {
     addressSpace: {
@@ -101,19 +101,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-
         properties: {
           addressPrefix: subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName_resource.id
+            id: networkSecurityGroupName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName_resource
-  ]
 }
 
-resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: nicName
+resource nicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: nicName_var
   location: resourceGroup().location
   properties: {
     ipConfigurations: [
@@ -122,7 +119,7 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
             id: subnetRef
@@ -132,20 +129,19 @@ resource nicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-04-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2018-04-01' = {
+  name: vmName_var
   location: resourceGroup().location
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_A1'
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -157,14 +153,11 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2018-04-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName_resource.id
+          id: nicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    nicName_resource
-  ]
 }
 
-output hostname string = reference(publicIPAddressName).dnsSettings.fqdn
+output hostname string = reference(publicIPAddressName_var).dnsSettings.fqdn

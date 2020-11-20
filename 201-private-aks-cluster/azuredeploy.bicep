@@ -420,23 +420,23 @@ param bastionHostName string {
   default: '${aksClusterName}Bastion'
 }
 
-var vmSubnetNsgName = '${vmSubnetName}Nsg'
-var vmSubnetNsgId = vmSubnetNsgName_resource.id
-var bastionSubnetNsgName = '${bastionHostName}Nsg'
-var bastionSubnetNsgId = bastionSubnetNsgName_resource.id
-var vnetId = virtualNetworkName_resource.id
+var vmSubnetNsgName_var = '${vmSubnetName}Nsg'
+var vmSubnetNsgId = vmSubnetNsgName.id
+var bastionSubnetNsgName_var = '${bastionHostName}Nsg'
+var bastionSubnetNsgId = bastionSubnetNsgName.id
+var vnetId = virtualNetworkName_res.id
 var vmSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, vmSubnetName)
 var aksSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, aksSubnetName)
-var vmNicName = '${vmName}Nic'
-var vmNicId = vmNicName_resource.id
-var blobStorageAccountId = blobStorageAccountName_resource.id
+var vmNicName_var = '${vmName}Nic'
+var vmNicId = vmNicName.id
+var blobStorageAccountId = blobStorageAccountName_res.id
 var blobPublicDNSZoneForwarder = '.blob.${environment().suffixes.storage}'
-var blobPrivateDnsZoneName = 'privatelink${blobPublicDNSZoneForwarder}'
-var blobPrivateDnsZoneId = blobPrivateDnsZoneName_resource.id
+var blobPrivateDnsZoneName_var = 'privatelink${blobPublicDNSZoneForwarder}'
+var blobPrivateDnsZoneId = blobPrivateDnsZoneName.id
 var blobStorageAccountPrivateEndpointGroupName = 'blob'
-var blobPrivateDnsZoneGroup = '${blobStorageAccountPrivateEndpointName}/${blobStorageAccountPrivateEndpointGroupName}PrivateDnsZoneGroup'
-var blobStorageAccountPrivateEndpointId = blobStorageAccountPrivateEndpointName_resource.id
-var vmId = vmName_resource.id
+var blobPrivateDnsZoneGroup_var = '${blobStorageAccountPrivateEndpointName}/${blobStorageAccountPrivateEndpointGroupName}PrivateDnsZoneGroup'
+var blobStorageAccountPrivateEndpointId = blobStorageAccountPrivateEndpointName_res.id
+var vmId = vmName_res.id
 var omsAgentForLinuxName = 'LogAnalytics'
 var omsAgentForLinuxId = vmName_omsAgentForLinuxName.id
 var omsDependencyAgentForLinuxName = 'DependencyAgent'
@@ -452,11 +452,11 @@ var linuxConfiguration = {
   }
   provisionVMAgent: true
 }
-var bastionPublicIpAddressName = '${bastionHostName}PublicIp'
-var bastionPublicIpAddressId = bastionPublicIpAddressName_resource.id
+var bastionPublicIpAddressName_var = '${bastionHostName}PublicIp'
+var bastionPublicIpAddressId = bastionPublicIpAddressName.id
 var bastionSubnetName = 'AzureBastionSubnet'
 var bastionSubnetId = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, bastionSubnetName)
-var workspaceId = logAnalyticsWorkspaceName_resource.id
+var workspaceId = logAnalyticsWorkspaceName_res.id
 var aadProfileConfiguration = {
   managed: aadProfileManaged
   enableAzureRBAC: aadProfileEnableAzureRBAC
@@ -464,8 +464,8 @@ var aadProfileConfiguration = {
   tenantID: aadProfileTenantId
 }
 
-resource bastionPublicIpAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: bastionPublicIpAddressName
+resource bastionPublicIpAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: bastionPublicIpAddressName_var
   location: location
   sku: {
     name: 'Standard'
@@ -475,8 +475,8 @@ resource bastionPublicIpAddressName_resource 'Microsoft.Network/publicIPAddresse
   }
 }
 
-resource bastionSubnetNsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: bastionSubnetNsgName
+resource bastionSubnetNsgName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: bastionSubnetNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -555,7 +555,7 @@ resource bastionSubnetNsgName_resource 'Microsoft.Network/networkSecurityGroups@
   }
 }
 
-resource bastionHostName_resource 'Microsoft.Network/bastionHosts@2020-05-01' = {
+resource bastionHostName_res 'Microsoft.Network/bastionHosts@2020-05-01' = {
   name: bastionHostName
   location: location
   properties: {
@@ -579,7 +579,7 @@ resource bastionHostName_resource 'Microsoft.Network/bastionHosts@2020-05-01' = 
   ]
 }
 
-resource blobStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+resource blobStorageAccountName_res 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: blobStorageAccountName
   location: location
   sku: {
@@ -588,8 +588,8 @@ resource blobStorageAccountName_resource 'Microsoft.Storage/storageAccounts@2019
   kind: 'StorageV2'
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2020-04-01' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2020-04-01' = {
+  name: vmNicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -609,7 +609,7 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2020-04-01' = {
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+resource vmName_res 'Microsoft.Compute/virtualMachines@2019-12-01' = {
   name: vmName
   location: location
   properties: {
@@ -658,7 +658,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
@@ -711,8 +711,8 @@ resource vmName_omsDependencyAgentForLinuxName 'Microsoft.Compute/virtualMachine
   ]
 }
 
-resource vmSubnetNsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: vmSubnetNsgName
+resource vmSubnetNsgName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: vmSubnetNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -733,7 +733,7 @@ resource vmSubnetNsgName_resource 'Microsoft.Network/networkSecurityGroups@2020-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+resource virtualNetworkName_res 'Microsoft.Network/virtualNetworks@2020-05-01' = {
   name: virtualNetworkName
   location: location
   properties: {
@@ -780,7 +780,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2020-05-
   ]
 }
 
-resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
+resource aksClusterName_res 'Microsoft.ContainerService/managedClusters@2020-07-01' = {
   name: aksClusterName
   location: location
   identity: {
@@ -853,7 +853,7 @@ resource aksClusterName_resource 'Microsoft.ContainerService/managedClusters@202
   ]
 }
 
-resource logAnalyticsWorkspaceName_resource 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
+resource logAnalyticsWorkspaceName_res 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: logAnalyticsWorkspaceName
   location: location
   properties: {
@@ -864,8 +864,8 @@ resource logAnalyticsWorkspaceName_resource 'Microsoft.OperationalInsights/works
   }
 }
 
-resource blobPrivateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020-01-01' = {
-  name: blobPrivateDnsZoneName
+resource blobPrivateDnsZoneName 'Microsoft.Network/privateDnsZones@2020-01-01' = {
+  name: blobPrivateDnsZoneName_var
   location: 'global'
   properties: {
     maxNumberOfRecordSets: 25000
@@ -875,7 +875,7 @@ resource blobPrivateDnsZoneName_resource 'Microsoft.Network/privateDnsZones@2020
 }
 
 resource blobPrivateDnsZoneName_link_to_virtualNetworkName 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-01-01' = {
-  name: '${blobPrivateDnsZoneName}/link_to_${toLower(virtualNetworkName)}'
+  name: '${blobPrivateDnsZoneName_var}/link_to_${toLower(virtualNetworkName)}'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -889,7 +889,7 @@ resource blobPrivateDnsZoneName_link_to_virtualNetworkName 'Microsoft.Network/pr
   ]
 }
 
-resource blobStorageAccountPrivateEndpointName_resource 'Microsoft.Network/privateEndpoints@2020-04-01' = {
+resource blobStorageAccountPrivateEndpointName_res 'Microsoft.Network/privateEndpoints@2020-04-01' = {
   name: blobStorageAccountPrivateEndpointName
   location: location
   properties: {
@@ -919,8 +919,8 @@ resource blobStorageAccountPrivateEndpointName_resource 'Microsoft.Network/priva
   ]
 }
 
-resource blobPrivateDnsZoneGroup_resource 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
-  name: blobPrivateDnsZoneGroup
+resource blobPrivateDnsZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
+  name: blobPrivateDnsZoneGroup_var
   location: location
   properties: {
     privateDnsZoneConfigs: [

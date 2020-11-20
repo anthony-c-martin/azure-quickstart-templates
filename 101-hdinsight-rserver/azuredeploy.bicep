@@ -47,13 +47,13 @@ resource defaultStorageAccount_name 'Microsoft.Storage/storageAccounts@2019-06-0
   properties: {}
 }
 
-resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
+resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   name: clusterName
   location: location
   properties: {
     clusterVersion: '3.6'
     osType: 'Linux'
-    tier: 'standard'
+    tier: 'Standard'
     clusterDefinition: {
       kind: 'rserver'
       configurations: {
@@ -136,10 +136,7 @@ resource clusterName_resource 'Microsoft.HDInsight/clusters@2018-06-01-preview' 
       ]
     }
   }
-  dependsOn: [
-    defaultStorageAccount_name
-  ]
 }
 
 output storage object = defaultStorageAccount_name.properties
-output cluster object = clusterName_resource.properties
+output cluster object = clusterName_res.properties

@@ -26,18 +26,18 @@ param vmSize string {
   default: 'Standard_D2s_v3'
 }
 
-var vNetName = '${projectName}-vnet'
+var vNetName_var = '${projectName}-vnet'
 var vNetAddressPrefixes = '10.0.0.0/16'
 var vNetSubnetName = 'default'
 var vNetSubnetAddressPrefix = '10.0.0.0/24'
-var vmName = '${projectName}-vm'
-var publicIPAddressName = '${projectName}-ip'
-var networkInterfaceName = '${projectName}-nic'
-var networkSecurityGroupName = '${projectName}-nsg'
-var networkSecurityGroupName2 = '${vNetSubnetName}-nsg'
+var vmName_var = '${projectName}-vm'
+var publicIPAddressName_var = '${projectName}-ip'
+var networkInterfaceName_var = '${projectName}-nic'
+var networkSecurityGroupName_var = '${projectName}-nsg'
+var networkSecurityGroupName2_var = '${vNetSubnetName}-nsg'
 
-resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName
+resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName_var
   location: location
   properties: {
     securityRules: [
@@ -59,8 +59,8 @@ resource networkSecurityGroupName_resource 'Microsoft.Network/networkSecurityGro
   }
 }
 
-resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName
+resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: publicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
@@ -70,8 +70,8 @@ resource publicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2020-
   }
 }
 
-resource networkSecurityGroupName2_resource 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
-  name: networkSecurityGroupName2
+resource networkSecurityGroupName2 'Microsoft.Network/networkSecurityGroups@2020-05-01' = {
+  name: networkSecurityGroupName2_var
   location: location
   properties: {
     securityRules: [
@@ -92,8 +92,8 @@ resource networkSecurityGroupName2_resource 'Microsoft.Network/networkSecurityGr
   }
 }
 
-resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
-  name: vNetName
+resource vNetName 'Microsoft.Network/virtualNetworks@2020-05-01' = {
+  name: vNetName_var
   location: location
   properties: {
     addressSpace: {
@@ -107,19 +107,16 @@ resource vNetName_resource 'Microsoft.Network/virtualNetworks@2020-05-01' = {
         properties: {
           addressPrefix: vNetSubnetAddressPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName2_resource.id
+            id: networkSecurityGroupName2.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    networkSecurityGroupName2_resource
-  ]
 }
 
-resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020-05-01' = {
-  name: networkInterfaceName
+resource networkInterfaceName 'Microsoft.Network/networkInterfaces@2020-05-01' = {
+  name: networkInterfaceName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -128,31 +125,30 @@ resource networkInterfaceName_resource 'Microsoft.Network/networkInterfaces@2020
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName_resource.id
+            id: publicIPAddressName.id
           }
           subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vNetName, vNetSubnetName)
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', vNetName_var, vNetSubnetName)
           }
         }
       }
     ]
   }
   dependsOn: [
-    publicIPAddressName_resource
-    vNetName_resource
-    networkSecurityGroupName_resource
+    vNetName
+    networkSecurityGroupName
   ]
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
+  name: vmName_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
@@ -174,18 +170,15 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
       }
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: networkInterfaceName_resource.id
+          id: networkInterfaceName.id
         }
       ]
     }
   }
-  dependsOn: [
-    networkInterfaceName_resource
-  ]
 }

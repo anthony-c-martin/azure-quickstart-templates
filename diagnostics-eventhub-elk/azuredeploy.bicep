@@ -171,25 +171,25 @@ param location string {
 }
 
 var storageAccountPrefix = concat(substring(uniqueString(resourceGroup().id, esClusterName), 0, 6), substring(esClusterName, 0, 3))
-var storageAccountName = '${storageAccountPrefix}log'
+var storageAccountName_var = '${storageAccountPrefix}log'
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var OSDiskName = 'osdiskforlinuxsimple'
 var storageAccountType = 'Standard_LRS'
 var vmStorageAccountContainerName = 'vhds'
-var vmName = 'logstashvm1'
+var vmName_var = 'logstashvm1'
 var vmSize = 'Standard_D1'
-var vmNicName = '${vmName}-nic'
-var vmNsgName = '${vmName}-nsg'
-var vmPipName = '${vmName}-pip'
+var vmNicName_var = '${vmName_var}-nic'
+var vmNsgName_var = '${vmName_var}-nsg'
+var vmPipName_var = '${vmName_var}-pip'
 var virtualNetworkName = 'elkvnet2'
 var subnetRef = '${resourceId('Microsoft.Network/virtualNetworks', virtualNetworkName)}/subnets/other'
 var esHost = '10.0.2.100'
 var esTemplateBase = 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/elasticsearch'
-var esDeploymentName = 'esDeploymentForDiagnosticsEventHubELK'
+var esDeploymentName_var = 'esDeploymentForDiagnosticsEventHubELK'
 
-module esDeploymentName_resource '<failed to parse [concat(variables(\'esTemplateBase\'), \'/\', \'azuredeploy.json\')]>' = {
-  name: esDeploymentName
+module esDeploymentName '?' /*TODO: replace with correct path to [concat(variables('esTemplateBase'), '/', 'azuredeploy.json')]*/ = {
+  name: esDeploymentName_var
   params: {
     adminUsername: adminUsername
     adminPassword: adminPassword
@@ -221,8 +221,8 @@ module esDeploymentName_resource '<failed to parse [concat(variables(\'esTemplat
   }
 }
 
-resource vmNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: vmNsgName
+resource vmNsgName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: vmNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -244,16 +244,16 @@ resource vmNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30'
   }
 }
 
-resource vmPipName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: vmPipName
+resource vmPipName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: vmPipName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Static'
   }
 }
 
-resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: vmNicName
+resource vmNicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: vmNicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -262,27 +262,25 @@ resource vmNicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: vmPipName_resource.id
+            id: vmPipName.id
           }
           subnet: {
             id: subnetRef
           }
           networkSecurityGroup: {
-            id: vmNsgName_resource.id
+            id: vmNsgName.id
           }
         }
       }
     ]
   }
   dependsOn: [
-    esDeploymentName_resource
-    vmNsgName_resource
-    vmPipName_resource
+    esDeploymentName
   ]
 }
 
-resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-01' = {
-  name: storageAccountName
+resource storageAccountName 'Microsoft.Storage/storageAccounts@2016-01-01' = {
+  name: storageAccountName_var
   sku: {
     name: storageAccountType
   }
@@ -294,8 +292,8 @@ resource storageAccountName_resource 'Microsoft.Storage/storageAccounts@2016-01-
   properties: {}
 }
 
-resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
-  name: vmName
+resource vmName 'Microsoft.Compute/virtualMachines@2017-03-30' = {
+  name: vmName_var
   location: location
   tags: {
     displayName: 'VirtualMachine'
@@ -305,7 +303,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vmName
+      computerName: vmName_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -317,7 +315,7 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmName}_OSDisk'
+        name: '${vmName_var}_OSDisk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
@@ -325,19 +323,18 @@ resource vmName_resource 'Microsoft.Compute/virtualMachines@2017-03-30' = {
     networkProfile: {
       networkInterfaces: [
         {
-          id: vmNicName_resource.id
+          id: vmNicName.id
         }
       ]
     }
   }
   dependsOn: [
-    storageAccountName_resource
-    vmNicName_resource
+    storageAccountName
   ]
 }
 
 resource vmName_InstallEventHubELK 'Microsoft.Compute/virtualMachines/extensions@2015-06-15' = {
-  name: '${vmName}/InstallEventHubELK'
+  name: '${vmName_var}/InstallEventHubELK'
   location: location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
@@ -354,7 +351,7 @@ resource vmName_InstallEventHubELK 'Microsoft.Compute/virtualMachines/extensions
     }
   }
   dependsOn: [
-    vmName_resource
-    esDeploymentName_resource
+    vmName
+    esDeploymentName
   ]
 }

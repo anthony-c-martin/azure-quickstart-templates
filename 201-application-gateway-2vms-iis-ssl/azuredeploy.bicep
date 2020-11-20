@@ -126,91 +126,87 @@ param location string {
 
 var imagePublisher = 'MicrosoftWindowsServer'
 var imageOffer = 'WindowsServer'
-var vm1NicName = 'vm1Nic'
-var vm2NicName = 'vm2Nic'
+var vm1NicName_var = 'vm1Nic'
+var vm2NicName_var = 'vm2Nic'
 var addressPrefix = '10.0.0.0/16'
 var webSubnetName = 'WebSubnet'
 var webSubnetPrefix = '10.0.0.0/24'
 var appGatewaySubnetName = 'AppGatewaySubnet'
 var appGatewaySubnetPrefix = '10.0.1.0/24'
-var vm1PublicIPAddressName = 'vm1PublicIP'
+var vm1PublicIPAddressName_var = 'vm1PublicIP'
 var vm1PublicIPAddressType = 'Dynamic'
-var vm2PublicIPAddressName = 'vm2PublicIP'
+var vm2PublicIPAddressName_var = 'vm2PublicIP'
 var vm2PublicIPAddressType = 'Dynamic'
 var vm1IpAddress = '10.0.0.4'
 var vm2IpAddress = '10.0.0.5'
-var vm1Name = 'iisvm1'
-var vm2Name = 'iisvm2'
+var vm1Name_var = 'iisvm1'
+var vm2Name_var = 'iisvm2'
 var vmSize = virtualMachineSize
-var virtualNetworkName = 'MyVNet'
-var webSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, webSubnetName)
-var webAvailabilitySetName = 'IISAvailabilitySet'
-var webNsgName = 'WebNSG'
-var appGwNsgName = 'AppGwNSG'
-var applicationGatewayName = 'ApplicationGateway'
-var appGwPublicIpName = 'ApplicationGatewayPublicIp'
-var appGatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName, appGatewaySubnetName)
-var appGwPublicIPRef = appGwPublicIpName_resource.id
+var virtualNetworkName_var = 'MyVNet'
+var webSubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, webSubnetName)
+var webAvailabilitySetName_var = 'IISAvailabilitySet'
+var webNsgName_var = 'WebNSG'
+var appGwNsgName_var = 'AppGwNSG'
+var applicationGatewayName_var = 'ApplicationGateway'
+var appGwPublicIpName_var = 'ApplicationGatewayPublicIp'
+var appGatewaySubnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, appGatewaySubnetName)
+var appGwPublicIPRef = appGwPublicIpName.id
 var wafEnabled = true
-var wafMode_variable = wafMode
+var wafMode_var = wafMode
 var wafRuleSetType = 'OWASP'
 var wafRuleSetVersion = '3.0'
-var applicationGatewayID = applicationGatewayName_resource.id
+var applicationGatewayID = applicationGatewayName.id
 var dscZipFullPath = '${artifactsLocation}/DSC/iisInstall.ps1.zip${artifactsLocationSasToken}'
 var webConfigFullPath = '${artifactsLocation}/artifacts/web.config${artifactsLocationSasToken}'
 var vm1DefaultHtmFullPath = '${artifactsLocation}/artifacts/vm1.default.htm${artifactsLocationSasToken}'
 var vm2DefaultHtmFullPath = '${artifactsLocation}/artifacts/vm2.default.htm${artifactsLocationSasToken}'
 
-resource webAvailabilitySetName_resource 'Microsoft.Compute/availabilitySets@2016-04-30-preview' = {
+resource webAvailabilitySetName 'Microsoft.Compute/availabilitySets@2016-04-30-preview' = {
   sku: {
     name: 'Aligned'
   }
-  name: webAvailabilitySetName
+  name: webAvailabilitySetName_var
   location: location
   properties: {
     platformUpdateDomainCount: 5
     platformFaultDomainCount: 2
     virtualMachines: [
       {
-        id: vm1Name_resource.id
+        id: vm1Name.id
       }
       {
-        id: vm2Name_resource.id
+        id: vm2Name.id
       }
     ]
   }
-  dependsOn: [
-    vm1Name_resource
-    vm2Name_resource
-  ]
 }
 
-resource vm1PublicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: vm1PublicIPAddressName
+resource vm1PublicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: vm1PublicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: vm1PublicIPAddressType
   }
 }
 
-resource vm2PublicIPAddressName_resource 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
-  name: vm2PublicIPAddressName
+resource vm2PublicIPAddressName 'Microsoft.Network/publicIPAddresses@2016-03-30' = {
+  name: vm2PublicIPAddressName_var
   location: location
   properties: {
     publicIPAllocationMethod: vm2PublicIPAddressType
   }
 }
 
-resource appGwPublicIpName_resource 'Microsoft.Network/publicIPAddresses@2017-03-01' = {
-  name: appGwPublicIpName
+resource appGwPublicIpName 'Microsoft.Network/publicIPAddresses@2017-03-01' = {
+  name: appGwPublicIpName_var
   location: location
   properties: {
     publicIPAllocationMethod: 'Dynamic'
   }
 }
 
-resource webNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: webNsgName
+resource webNsgName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: webNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -260,8 +256,8 @@ resource webNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30
   }
 }
 
-resource appGwNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
-  name: appGwNsgName
+resource appGwNsgName 'Microsoft.Network/networkSecurityGroups@2016-03-30' = {
+  name: appGwNsgName_var
   location: location
   properties: {
     securityRules: [
@@ -311,8 +307,8 @@ resource appGwNsgName_resource 'Microsoft.Network/networkSecurityGroups@2016-03-
   }
 }
 
-resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-30' = {
-  name: virtualNetworkName
+resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2016-03-30' = {
+  name: virtualNetworkName_var
   location: location
   properties: {
     addressSpace: {
@@ -326,7 +322,7 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-
         properties: {
           addressPrefix: webSubnetPrefix
           networkSecurityGroup: {
-            id: webNsgName_resource.id
+            id: webNsgName.id
           }
         }
       }
@@ -335,20 +331,16 @@ resource virtualNetworkName_resource 'Microsoft.Network/virtualNetworks@2016-03-
         properties: {
           addressPrefix: appGatewaySubnetPrefix
           networkSecurityGroup: {
-            id: appGwNsgName_resource.id
+            id: appGwNsgName.id
           }
         }
       }
     ]
   }
-  dependsOn: [
-    webNsgName_resource
-    appGwNsgName_resource
-  ]
 }
 
-resource vm1NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: vm1NicName
+resource vm1NicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: vm1NicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -358,7 +350,7 @@ resource vm1NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = 
           privateIPAddress: vm1IpAddress
           privateIPAllocationMethod: 'Static'
           publicIPAddress: {
-            id: vm1PublicIPAddressName_resource.id
+            id: vm1PublicIPAddressName.id
           }
           subnet: {
             id: webSubnetRef
@@ -368,13 +360,12 @@ resource vm1NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = 
     ]
   }
   dependsOn: [
-    vm1PublicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vm2NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = {
-  name: vm2NicName
+resource vm2NicName 'Microsoft.Network/networkInterfaces@2016-03-30' = {
+  name: vm2NicName_var
   location: location
   properties: {
     ipConfigurations: [
@@ -384,7 +375,7 @@ resource vm2NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = 
           privateIPAddress: vm2IpAddress
           privateIPAllocationMethod: 'Static'
           publicIPAddress: {
-            id: vm2PublicIPAddressName_resource.id
+            id: vm2PublicIPAddressName.id
           }
           subnet: {
             id: webSubnetRef
@@ -394,20 +385,19 @@ resource vm2NicName_resource 'Microsoft.Network/networkInterfaces@2016-03-30' = 
     ]
   }
   dependsOn: [
-    vm2PublicIPAddressName_resource
-    virtualNetworkName_resource
+    virtualNetworkName
   ]
 }
 
-resource vm1Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vm1Name
+resource vm1Name 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vm1Name_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vm1Name
+      computerName: vm1Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -419,7 +409,7 @@ resource vm1Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview'
         version: 'latest'
       }
       osDisk: {
-        name: vm1Name
+        name: vm1Name_var
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -430,18 +420,15 @@ resource vm1Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview'
     networkProfile: {
       networkInterfaces: [
         {
-          id: vm1NicName_resource.id
+          id: vm1NicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vm1NicName_resource
-  ]
 }
 
 resource vm1Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/extensions@2016-04-30-preview' = {
-  name: '${vm1Name}/Microsoft.Powershell.DSC'
+  name: '${vm1Name_var}/Microsoft.Powershell.DSC'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -456,7 +443,7 @@ resource vm1Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/ext
         function: 'InstallIIS'
       }
       configurationArguments: {
-        nodeName: vm1Name
+        nodeName: vm1Name_var
         vmNumber: 'vm1'
         backendCert: backendCertData
         backendCertPw: backendCertPassword
@@ -468,19 +455,19 @@ resource vm1Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/ext
     protectedSettings: {}
   }
   dependsOn: [
-    vm1Name_resource
+    vm1Name
   ]
 }
 
-resource vm2Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
-  name: vm2Name
+resource vm2Name 'Microsoft.Compute/virtualMachines@2016-04-30-preview' = {
+  name: vm2Name_var
   location: location
   properties: {
     hardwareProfile: {
       vmSize: vmSize
     }
     osProfile: {
-      computerName: vm2Name
+      computerName: vm2Name_var
       adminUsername: adminUsername
       adminPassword: adminPassword
     }
@@ -492,7 +479,7 @@ resource vm2Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview'
         version: 'latest'
       }
       osDisk: {
-        name: vm2Name
+        name: vm2Name_var
         caching: 'ReadWrite'
         createOption: 'FromImage'
         managedDisk: {
@@ -503,18 +490,15 @@ resource vm2Name_resource 'Microsoft.Compute/virtualMachines@2016-04-30-preview'
     networkProfile: {
       networkInterfaces: [
         {
-          id: vm2NicName_resource.id
+          id: vm2NicName.id
         }
       ]
     }
   }
-  dependsOn: [
-    vm2NicName_resource
-  ]
 }
 
 resource vm2Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/extensions@2016-04-30-preview' = {
-  name: '${vm2Name}/Microsoft.Powershell.DSC'
+  name: '${vm2Name_var}/Microsoft.Powershell.DSC'
   location: location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -529,7 +513,7 @@ resource vm2Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/ext
         function: 'InstallIIS'
       }
       configurationArguments: {
-        nodeName: vm2Name
+        nodeName: vm2Name_var
         vmNumber: 'vm2'
         backendCert: backendCertData
         backendCertPw: backendCertPassword
@@ -541,12 +525,12 @@ resource vm2Name_Microsoft_Powershell_DSC 'Microsoft.Compute/virtualMachines/ext
     protectedSettings: {}
   }
   dependsOn: [
-    vm2Name_resource
+    vm2Name
   ]
 }
 
-resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@2017-06-01' = {
-  name: applicationGatewayName
+resource applicationGatewayName 'Microsoft.Network/applicationGateways@2017-06-01' = {
+  name: applicationGatewayName_var
   location: location
   properties: {
     sku: {
@@ -585,7 +569,7 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendIP'
         properties: {
-          PublicIPAddress: {
+          publicIPAddress: {
             id: appGwPublicIPRef
           }
         }
@@ -595,13 +579,13 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayFrontendPort80'
         properties: {
-          Port: 80
+          port: 80
         }
       }
       {
         name: 'appGatewayFrontendPort443'
         properties: {
-          Port: 443
+          port: 443
         }
       }
     ]
@@ -609,12 +593,12 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendPool'
         properties: {
-          BackendAddresses: [
+          backendAddresses: [
             {
-              IpAddress: vm1IpAddress
+              ipAddress: vm1IpAddress
             }
             {
-              IpAddress: vm2IpAddress
+              ipAddress: vm2IpAddress
             }
           ]
         }
@@ -624,20 +608,20 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayBackendHttpSettings'
         properties: {
-          Port: 80
-          Protocol: 'Http'
-          CookieBasedAffinity: 'Disabled'
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
         }
       }
       {
         name: 'appGatewayBackendHttpsSettings'
         properties: {
-          Port: 443
-          Protocol: 'Https'
-          CookieBasedAffinity: 'Disabled'
-          AuthenticationCertificates: [
+          port: 443
+          protocol: 'Https'
+          cookieBasedAffinity: 'Disabled'
+          authenticationCertificates: [
             {
-              Id: '${applicationGatewayID}/authenticationCertificates/appGatewayBackendCert'
+              id: '${applicationGatewayID}/authenticationCertificates/appGatewayBackendCert'
             }
           ]
         }
@@ -647,37 +631,37 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
       {
         name: 'appGatewayHttpListener'
         properties: {
-          FrontendIPConfiguration: {
-            Id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
+          frontendIPConfiguration: {
+            id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
           }
-          FrontendPort: {
-            Id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort80'
+          frontendPort: {
+            id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort80'
           }
-          Protocol: 'Http'
-          SslCertificate: null
+          protocol: 'Http'
+          sslCertificate: null
         }
       }
       {
         name: 'appGatewayHttpsListener'
         properties: {
-          FrontendIPConfiguration: {
-            Id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
+          frontendIPConfiguration: {
+            id: '${applicationGatewayID}/frontendIPConfigurations/appGatewayFrontendIP'
           }
-          FrontendPort: {
-            Id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort443'
+          frontendPort: {
+            id: '${applicationGatewayID}/frontendPorts/appGatewayFrontendPort443'
           }
-          Protocol: 'Https'
-          SslCertificate: {
-            Id: '${applicationGatewayID}/sslCertificates/appGatewayFrontEndSslCert'
+          protocol: 'Https'
+          sslCertificate: {
+            id: '${applicationGatewayID}/sslCertificates/appGatewayFrontEndSslCert'
           }
         }
       }
     ]
     requestRoutingRules: [
       {
-        Name: 'HTTPRule'
+        name: 'HTTPRule'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: '${applicationGatewayID}/httpListeners/appGatewayHttpListener'
           }
@@ -690,9 +674,9 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
         }
       }
       {
-        Name: 'HTTPSRule'
+        name: 'HTTPSRule'
         properties: {
-          RuleType: 'Basic'
+          ruleType: 'Basic'
           httpListener: {
             id: '${applicationGatewayID}/httpListeners/appGatewayHttpsListener'
           }
@@ -707,14 +691,13 @@ resource applicationGatewayName_resource 'Microsoft.Network/applicationGateways@
     ]
     webApplicationFirewallConfiguration: {
       enabled: wafEnabled
-      firewallMode: wafMode_variable
+      firewallMode: wafMode_var
       ruleSetType: wafRuleSetType
       ruleSetVersion: wafRuleSetVersion
       disabledRuleGroups: []
     }
   }
   dependsOn: [
-    virtualNetworkName_resource
-    appGwPublicIpName_resource
+    virtualNetworkName
   ]
 }
