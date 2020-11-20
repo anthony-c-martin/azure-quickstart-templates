@@ -54,7 +54,7 @@ resource existingWebAppName_res 'Microsoft.Web/sites@2019-08-01' = {
       {
         name: hostname
         sslState: 'SniEnabled'
-        thumbprint: certificateName_res.properties.Thumbprint
+        thumbprint: certificateName_res.properties.thumbprint
         toUpdate: true
       }
     ]

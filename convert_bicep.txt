@@ -1182,13 +1182,10 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(58,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.DomainRegistration/domains/domainOwnershipIdentifiers". Permissible properties include "dependsOn", "kind".
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(60,54) : Warning BCP083: The type "schemas:2_properties" does not contain property "DomainVerificationToken". Did you mean "domainVerificationToken"?
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(73,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(85,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(93,5) : Warning BCP038: The property "name" is not allowed on objects of type "schemas:1_properties". Permissible properties include "keyVaultId", "keyVaultSecretName", "provisioningState".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(94,5) : Warning BCP038: The property "hostNameSslStates" is not allowed on objects of type "schemas:1_properties". Permissible properties include "keyVaultId", "keyVaultSecretName", "provisioningState".
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(98,57) : Warning BCP083: The type "schemas:2_properties" does not contain property "SignedCertificate". Did you mean "signedCertificate"?
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-wildcard/azuredeploy.bicep(104,57) : Warning BCP083: The type "schemas:2_properties" does not contain property "SignedCertificate". Did you mean "signedCertificate"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -1607,8 +1604,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(210,27) : Warning BCP036: The property "provisionVMAgent" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(286,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(341,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(347,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2949,13 +2944,10 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(58,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Web/sites/domainOwnershipIdentifiers". Permissible properties include "dependsOn", "kind".
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(60,45) : Warning BCP083: The type "schemas:2_properties" does not contain property "DomainVerificationToken". Did you mean "domainVerificationToken"?
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(73,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(85,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(93,5) : Warning BCP038: The property "name" is not allowed on objects of type "schemas:1_properties". Permissible properties include "keyVaultId", "keyVaultSecretName", "provisioningState".
 /Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(94,5) : Warning BCP038: The property "hostNameSslStates" is not allowed on objects of type "schemas:1_properties". Permissible properties include "keyVaultId", "keyVaultSecretName", "provisioningState".
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(98,57) : Warning BCP083: The type "schemas:2_properties" does not contain property "SignedCertificate". Did you mean "signedCertificate"?
-/Users/ant/Code/azure-quickstart-templates/101-app-service-certificate-standard/azuredeploy.bicep(104,57) : Warning BCP083: The type "schemas:2_properties" does not contain property "SignedCertificate". Did you mean "signedCertificate"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4111,8 +4103,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(194,27) : Warning BCP036: The property "provisionVMAgent" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(273,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(336,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(342,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4639,11 +4629,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(276,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Automation/automationAccounts/variables".
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(277,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Automation/automationAccounts/variables".
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(281,5) : Warning BCP037: No other properties are allowed on objects of type "VariableCreateOrUpdateProperties".
-/Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(294,22) : Error BCP083: The type "object" does not contain property "azureRMOperationalInsights". Did you mean "azureRmOperationalInsights"?
-/Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(308,22) : Error BCP083: The type "object" does not contain property "AzureRMResources". Did you mean "azureRmResources"?
-/Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(322,22) : Error BCP083: The type "object" does not contain property "azureRMAutomation". Did you mean "azureRmAutomation"?
-/Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(380,22) : Error BCP083: The type "object" does not contain property "AzureRmSiteRecovery". Did you mean "azureRmSiteRecovery"?
-/Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(391,50) : Error BCP083: The type "object" does not contain property "azureRmbackup". Did you mean "azureRmBackup"?
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(482,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Automation/automationAccounts/schedules".
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(483,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Automation/automationAccounts/schedules".
 /Users/ant/Code/azure-quickstart-templates/asr-oms-monitoring/azuredeploy.bicep(487,5) : Warning BCP073: The property "isEnabled" is read-only. Expressions cannot be assigned to read-only properties.
@@ -6460,7 +6445,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-web-app-certificate-from-key-vault/azuredeploy.bicep(41,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "password".
 /Users/ant/Code/azure-quickstart-templates/201-web-app-certificate-from-key-vault/azuredeploy.bicep(52,5) : Warning BCP038: The property "name" is not allowed on objects of type "schemas:49_properties". Permissible properties include "clientAffinityEnabled", "clientCertEnabled", "clientCertExclusionPaths", "cloningInfo", "containerSize", "dailyMemoryTimeQuota", "enabled", "hostingEnvironmentProfile", "hostNamesDisabled", "httpsOnly", "hyperV", "isXenon", "redundancyMode", "reserved", "scmSiteAlsoStopped", "serverFarmId", "siteConfig".
-/Users/ant/Code/azure-quickstart-templates/201-web-app-certificate-from-key-vault/azuredeploy.bicep(57,52) : Warning BCP083: The type "schemas:0_properties" does not contain property "Thumbprint". Did you mean "thumbprint"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -6949,8 +6933,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(108,12) : Error BCP036: The property "default" expected a value of type "int" but the provided value is of type "'2'".
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(283,27) : Warning BCP036: The property "provisionVMAgent" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(375,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(446,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(452,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.

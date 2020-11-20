@@ -291,7 +291,7 @@ resource omsAutomationAccountName_psModules_azureRmOperationalInsights_name 'Mic
   tags: {}
   properties: {
     contentLink: {
-      uri: psModules.azureRMOperationalInsights.url
+      uri: psModules.azureRmOperationalInsights.url
     }
   }
   dependsOn: [
@@ -305,7 +305,7 @@ resource omsAutomationAccountName_psModules_azureRmResources_name 'Microsoft.Aut
   tags: {}
   properties: {
     contentLink: {
-      uri: psModules.AzureRMResources.url
+      uri: psModules.azureRmResources.url
     }
   }
   dependsOn: [
@@ -319,7 +319,7 @@ resource omsAutomationAccountName_psModules_azureRmAutomation_name 'Microsoft.Au
   tags: {}
   properties: {
     contentLink: {
-      uri: psModules.azureRMAutomation.url
+      uri: psModules.azureRmAutomation.url
     }
   }
   dependsOn: [
@@ -377,7 +377,7 @@ resource omsAutomationAccountName_psModules_azureRmSiteRecovery_name 'Microsoft.
   tags: {}
   properties: {
     contentLink: {
-      uri: psModules.AzureRmSiteRecovery.url
+      uri: psModules.azureRmSiteRecovery.url
     }
   }
   dependsOn: [
@@ -388,7 +388,7 @@ resource omsAutomationAccountName_psModules_azureRmSiteRecovery_name 'Microsoft.
 }
 
 resource omsAutomationAccountName_psModules_azureRmbackup_name 'Microsoft.Automation/automationAccounts/Modules@2015-10-31' = {
-  name: '${omsAutomationAccountName}/${psModules.azureRmbackup.name}'
+  name: '${omsAutomationAccountName}/${psModules.azureRmBackup.name}'
   tags: {}
   properties: {
     contentLink: {

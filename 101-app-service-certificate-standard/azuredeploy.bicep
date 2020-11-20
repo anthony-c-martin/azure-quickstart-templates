@@ -57,7 +57,7 @@ resource existingAppName_certificateOrderName 'Microsoft.Web/sites/domainOwnersh
   name: concat(existingAppName, '/${certificateOrderName}')
   location: existingAppLocation
   properties: {
-    id: certificateOrderName_res.properties.DomainVerificationToken
+    id: certificateOrderName_res.properties.domainVerificationToken
   }
 }
 
@@ -95,13 +95,13 @@ resource existingAppName_res 'Microsoft.Web/sites@2015-08-01' = {
       {
         name: rootHostname
         sslState: 1
-        thumbprint: certificateOrderName_res.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.signedCertificate.thumbprint
         toUpdate: true
       }
       {
         name: wwwHostname
         sslState: 1
-        thumbprint: certificateOrderName_res.properties.SignedCertificate.Thumbprint
+        thumbprint: certificateOrderName_res.properties.signedCertificate.thumbprint
         toUpdate: true
       }
     ]

@@ -393,6 +393,6 @@ resource workspaceName_omsSolutions_customSolution_solutionName 'Microsoft.Opera
     ]
   }
   dependsOn: [
-    resourceId('Microsoft.OperationalInsights/workspaces/views', workspaceName, omsSolutions.customSolution.Name)
+    resourceId('Microsoft.OperationalInsights/workspaces/views', workspaceName, omsSolutions.customSolution.name)
   ]
 }
