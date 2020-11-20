@@ -112,7 +112,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'SSH'
         properties: {
           priority: 1000
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -206,7 +206,7 @@ resource vmName_res 'Microsoft.Compute/virtualMachines@2020-06-01' = {
     }
     storageProfile: {
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: osDiskType
         }

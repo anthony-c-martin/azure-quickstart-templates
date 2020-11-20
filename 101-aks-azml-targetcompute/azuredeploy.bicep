@@ -117,7 +117,7 @@ resource clusterName_res 'Microsoft.ContainerService/managedClusters@2020-03-01'
     enableRBAC: true
     networkProfile: {
       networkPlugin: 'kubenet'
-      loadBalancerSku: 'Basic'
+      loadBalancerSku: 'basic'
       podCidr: podCidr
       serviceCidr: serviceCidr
       dnsServiceIP: dnsServiceIP

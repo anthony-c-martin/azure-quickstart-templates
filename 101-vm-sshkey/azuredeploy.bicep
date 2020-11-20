@@ -170,7 +170,7 @@ resource vmName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
       }
     }
     networkProfile: {

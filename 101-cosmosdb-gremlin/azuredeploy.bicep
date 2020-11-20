@@ -148,7 +148,7 @@ resource accountName_databaseName_graphName 'Microsoft.DocumentDb/databaseAccoun
     resource: {
       id: graphName
       indexingPolicy: {
-        indexingMode: 'consistent'
+        indexingMode: 'Consistent'
         includedPaths: [
           {
             path: '/*'

@@ -136,7 +136,7 @@ resource containerGroupName_res 'Microsoft.ContainerInstance/containerGroups@201
           ports: [
             {
               port: port
-              protocol: 'Tcp'
+              protocol: 'TCP'
             }
           ]
           resources: {

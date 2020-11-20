@@ -375,7 +375,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
           protocol: 'Tcp'
           destinationPortRange: '3389'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
@@ -388,7 +388,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
           protocol: 'Tcp'
           destinationPortRange: '1433'
           access: 'Allow'
-          direction: 'inbound'
+          direction: 'Inbound'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }

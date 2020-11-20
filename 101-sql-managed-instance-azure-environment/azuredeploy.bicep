@@ -102,7 +102,7 @@ resource nsgForManagedInstanceSubnet_res 'Microsoft.Network/networkSecurityGroup
         name: 'allow_tds_inbound'
         properties: {
           description: 'Allow access to data'
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '1433'
           sourceAddressPrefix: 'VirtualNetwork'

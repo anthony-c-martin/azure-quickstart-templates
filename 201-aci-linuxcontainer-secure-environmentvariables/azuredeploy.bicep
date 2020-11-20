@@ -83,7 +83,7 @@ resource containergroupname_res 'Microsoft.ContainerInstance/containerGroups@201
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: port
         }
       ]

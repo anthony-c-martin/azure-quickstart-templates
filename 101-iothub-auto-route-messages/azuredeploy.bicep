@@ -80,7 +80,7 @@ resource IoTHubName 'Microsoft.Devices/IotHubs@2020-07-10-preview' = {
             fileNameFormat: '{iothub}/{partition}/{YYYY}/{MM}/{DD}/{HH}/{mm}'
             batchFrequencyInSeconds: 100
             maxChunkSizeInBytes: 104857600
-            encoding: 'json'
+            encoding: 'JSON'
             name: storageEndpoint
           }
         ]

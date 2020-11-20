@@ -53,7 +53,7 @@ resource clusterName_res 'Microsoft.HDInsight/clusters@2018-06-01-preview' = {
   properties: {
     clusterVersion: '3.6'
     osType: 'Linux'
-    tier: 'standard'
+    tier: 'Standard'
     clusterDefinition: {
       kind: 'rserver'
       configurations: {

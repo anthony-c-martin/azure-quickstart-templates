@@ -147,7 +147,7 @@ resource accountName_databaseName_containerName 'Microsoft.DocumentDB/databaseAc
         kind: 'Hash'
       }
       indexingPolicy: {
-        indexingMode: 'consistent'
+        indexingMode: 'Consistent'
         includedPaths: [
           {
             path: '/*'

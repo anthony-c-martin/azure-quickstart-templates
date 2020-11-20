@@ -124,7 +124,7 @@ resource dataFactoryName_outputDatasetName 'Microsoft.DataFactory/factories/data
     }
     parameters: {
       DWTableName: {
-        type: 'string'
+        type: 'String'
       }
     }
     type: 'AzureSqlDWTable'

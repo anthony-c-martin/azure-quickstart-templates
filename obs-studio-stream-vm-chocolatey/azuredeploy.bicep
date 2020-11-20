@@ -91,7 +91,7 @@ resource networkSecurityGroup_name_res 'Microsoft.Network/networkSecurityGroups@
       {
         name: 'RDP'
         properties: {
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '3389'
           sourceAddressPrefix: '*'

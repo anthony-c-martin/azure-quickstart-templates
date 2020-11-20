@@ -55,7 +55,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql/azuredeploy.bicep(120,15) : Warning BCP078: The property "createMode" requires a value of type "'Default' | 'Restore'", but none was supplied.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql/azuredeploy.bicep(130,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
-/Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql/azuredeploy.bicep(152,23) : Warning BCP088: The property "indexingMode" expected a value of type "'Consistent' | 'Lazy' | 'None'" but the provided value is of type "'consistent'". Did you mean "'Consistent'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql/azuredeploy.bicep(167,22) : Warning BCP088: The property "order" expected a value of type "'Ascending' | 'Descending'" but the provided value is of type "'ascending'". Did you mean "'Ascending'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql/azuredeploy.bicep(171,22) : Warning BCP088: The property "order" expected a value of type "'Ascending' | 'Descending'" but the provided value is of type "'descending'". Did you mean "'Descending'"?
 
@@ -70,7 +69,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin-autoscale/azuredeploy.bicep(133,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
-/Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin-autoscale/azuredeploy.bicep(149,23) : Warning BCP088: The property "indexingMode" expected a value of type "'Consistent' | 'Lazy' | 'None'" but the provided value is of type "'consistent'". Did you mean "'Consistent'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -435,8 +433,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-keyvault/azuredeploy.bicep(103,12) : Error BCP036: The property "default" expected a value of type "int" but the provided value is of type "'2'".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-keyvault/azuredeploy.bicep(180,27) : Warning BCP036: The property "provisionVMAgent" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-keyvault/azuredeploy.bicep(257,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-keyvault/azuredeploy.bicep(350,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-keyvault/azuredeploy.bicep(363,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -459,7 +455,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/ubuntu-desktop-gnome-rdp/azuredeploy.bicep(149,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -756,7 +751,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-aci-sftp-files/azuredeploy.bicep(55,5) : Warning BCP073: The property "scope" is read-only. Expressions cannot be assigned to read-only properties.
-/Users/ant/Code/azure-quickstart-templates/201-aci-sftp-files/azuredeploy.bicep(141,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -808,8 +802,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/ipv6-in-vnet-vmss/azuredeploy.bicep(156,21) : Warning BCP088: The property "protocol" expected a value of type "'All' | 'Tcp' | 'Udp'" but the provided value is of type "'tcp'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/ipv6-in-vnet-vmss/azuredeploy.bicep(175,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/ipv6-in-vnet-vmss/azuredeploy.bicep(243,20) : Warning BCP036: The property "overprovision" expected a value of type "bool" but the provided value is of type "'false'".
 
 
@@ -818,7 +810,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-sqlmi-new-vnet-w-jumpbox/azuredeploy.bicep(243,34) : Warning BCP081: Resource type "Microsoft.Sql/managedInstances@2019-06-01-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/201-sqlmi-new-vnet-w-jumpbox/azuredeploy.bicep(274,27) : Warning BCP036: The property "provisionVMAgent" expected a value of type "bool" but the provided value is of type "'true'".
-/Users/ant/Code/azure-quickstart-templates/201-sqlmi-new-vnet-w-jumpbox/azuredeploy.bicep(288,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -927,7 +918,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-hdinsight-rserver/azuredeploy.bicep(56,11) : Warning BCP088: The property "tier" expected a value of type "'Premium' | 'Standard'" but the provided value is of type "'standard'". Did you mean "'Standard'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -990,7 +980,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/201-data-factory-v2-azure-sql-database-to-sql-data-warehouse-copy/azuredeploy.bicep(127,15) : Warning BCP088: The property "type" expected a value of type "'Array' | 'Bool' | 'Float' | 'Int' | 'Object' | 'SecureString' | 'String'" but the provided value is of type "'string'". Did you mean "'String'"?
 /Users/ant/Code/azure-quickstart-templates/201-data-factory-v2-azure-sql-database-to-sql-data-warehouse-copy/azuredeploy.bicep(151,15) : Warning BCP036: The property "type" expected a value of type "'Container' | 'Execution'" but the provided value is of type "'ForEach'".
 /Users/ant/Code/azure-quickstart-templates/201-data-factory-v2-azure-sql-database-to-sql-data-warehouse-copy/azuredeploy.bicep(230,15) : Warning BCP036: The property "type" expected a value of type "'Container' | 'Execution'" but the provided value is of type "'Lookup'".
 /Users/ant/Code/azure-quickstart-templates/201-data-factory-v2-azure-sql-database-to-sql-data-warehouse-copy/azuredeploy.bicep(248,15) : Warning BCP036: The property "type" expected a value of type "'Container' | 'Execution'" but the provided value is of type "'ExecutePipeline'".
@@ -1020,9 +1009,7 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(116,20) : Warning BCP088: The property "contentFormat" expected a value of type "'swagger-json' | 'swagger-link-json' | 'wadl-link-json' | 'wadl-xml' | 'wsdl' | 'wsdl-link'" but the provided value is of type "'SwaggerLinkJson'". Did you mean "'swagger-link-json'"?
-/Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(133,7) : Warning BCP034: The enclosing array expected an item of type "'http' | 'https'", but the provided item was of type "'HTTPS'".
 /Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(175,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(187,7) : Warning BCP034: The enclosing array expected an item of type "'http' | 'https'", but the provided item was of type "'HTTPS'".
 /Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(222,61) : Warning BCP081: Resource type "Microsoft.ApiManagement/service/products/apis@2017-03-01" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(300,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "displayName".
 /Users/ant/Code/azure-quickstart-templates/201-api-management-create-all-resources/azuredeploy.bicep(313,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "displayName".
@@ -1054,7 +1041,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-secret/azuredeploy.bicep(78,21) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-secret/azuredeploy.bicep(83,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-secret/azuredeploy.bicep(84,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-secret/azuredeploy.bicep(103,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-secret/azuredeploy.bicep(104,17) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 
 
@@ -1133,7 +1119,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-nat-gateway-1-vm/azuredeploy.bicep(99,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -1375,7 +1360,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-emptydir/azuredeploy.bicep(70,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-emptydir/azuredeploy.bicep(93,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-emptydir/azuredeploy.bicep(94,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-emptydir/azuredeploy.bicep(112,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-emptydir/azuredeploy.bicep(113,17) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 
 
@@ -1491,8 +1475,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-logic-app-veter-pipeline/azuredeploy.bicep(19,5) : Error BCP032: The value must be a compile-time constant.
-/Users/ant/Code/azure-quickstart-templates/201-logic-app-veter-pipeline/azuredeploy.bicep(53,17) : Warning BCP088: The property "schemaType" expected a value of type "'NotSpecified' | 'Xml'" but the provided value is of type "'xml'". Did you mean "'Xml'"?
-/Users/ant/Code/azure-quickstart-templates/201-logic-app-veter-pipeline/azuredeploy.bicep(65,14) : Warning BCP088: The property "mapType" expected a value of type "'NotSpecified' | 'Xslt'" but the provided value is of type "'xslt'". Did you mean "'Xslt'"?
 /Users/ant/Code/azure-quickstart-templates/201-logic-app-veter-pipeline/azuredeploy.bicep(84,7) : Warning BCP073: The property "id" is read-only. Expressions cannot be assigned to read-only properties.
 
 
@@ -1627,8 +1609,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(286,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(341,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(347,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(378,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autopatching/azuredeploy.bicep(391,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -1847,7 +1827,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-iothub-auto-route-messages/azuredeploy.bicep(65,15) : Warning BCP036: The property "capacity" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-iothub-auto-route-messages/azuredeploy.bicep(71,25) : Warning BCP036: The property "partitionCount" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/101-iothub-auto-route-messages/azuredeploy.bicep(83,23) : Warning BCP088: The property "encoding" expected a value of type "'Avro' | 'AvroDeflate' | 'JSON'" but the provided value is of type "'json'". Did you mean "'JSON'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2266,7 +2245,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-sshkey/azuredeploy.bicep(173,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2332,7 +2310,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-automatic-static-ip/azuredeploy.bicep(80,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-automatic-static-ip/azuredeploy.bicep(164,5) : Error BCP062: The referenced declaration with name "updateIp" is not valid.
 /Users/ant/Code/azure-quickstart-templates/101-vm-automatic-static-ip/azuredeploy.bicep(168,17) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 
@@ -2529,12 +2506,9 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(33,5) : Warning BCP038: The property "type" is not allowed on objects of type "VirtualWanProperties". Permissible properties include "provisioningState".
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(59,11) : Error BCP080: The expression is involved in a cycle ("AzfwTest" -> "Hub_01").
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(74,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Network/firewallPolicies/ruleGroups".
-/Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(90,31) : Warning BCP088: The property "protocolType" expected a value of type "'Http' | 'Https'" but the provided value is of type "'http'". Did you mean "'Http'"?
-/Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(94,31) : Warning BCP088: The property "protocolType" expected a value of type "'Http' | 'Https'" but the provided value is of type "'https'". Did you mean "'Https'"?
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(129,11) : Error BCP080: The expression is involved in a cycle ("Hub_01" -> "AzfwTest").
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(290,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(321,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(333,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(405,5) : Error BCP080: The expression is involved in a cycle ("Hub_01" -> "AzfwTest").
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(406,5) : Error BCP080: The expression is involved in a cycle ("AzfwTest" -> "Hub_01").
 /Users/ant/Code/azure-quickstart-templates/fwm-docs-qs/azuredeploy.bicep(431,5) : Error BCP080: The expression is involved in a cycle ("Hub_01" -> "AzfwTest").
@@ -2594,9 +2568,7 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-simple-linux/azuredeploy.bicep(131,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-simple-linux/azuredeploy.bicep(171,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/101-vm-simple-linux/azuredeploy.bicep(192,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2677,7 +2649,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-web-app-loganalytics/azuredeploy.bicep(75,66) : Warning BCP081: Resource type "Microsoft.Web/sites/siteextensions@2019-08-01" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/201-web-app-loganalytics/azuredeploy.bicep(83,27) : Warning BCP081: Resource type "Microsoft.Web/sites/config@2019-08-01" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/201-web-app-loganalytics/azuredeploy.bicep(119,5) : Warning BCP073: The property "ApplicationId" is read-only. Expressions cannot be assigned to read-only properties.
-/Users/ant/Code/azure-quickstart-templates/201-web-app-loganalytics/azuredeploy.bicep(136,13) : Warning BCP088: The property "name" expected a value of type "'CapacityReservation' | 'Free' | 'PerGB2018' | 'PerNode' | 'Premium' | 'Standalone' | 'Standard'" but the provided value is of type "'pergb2018'". Did you mean "'PerGB2018'"?
 /Users/ant/Code/azure-quickstart-templates/201-web-app-loganalytics/azuredeploy.bicep(139,5) : Warning BCP038: The property "features" is not allowed on objects of type "WorkspaceProperties". Permissible properties include "provisioningState", "publicNetworkAccessForIngestion", "publicNetworkAccessForQuery", "workspaceCapping".
 
 
@@ -3096,11 +3067,7 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(131,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(144,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(157,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(211,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(260,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-linux-Jupyterhub/azuredeploy.bicep(270,23) : Warning BCP036: The property "diskSizeGB" expected a value of type "int" but the provided value is of type "'1024' | '16384' | '2048' | '32767' | '4096' | '8192'".
 
 
@@ -3994,13 +3961,10 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(57,5) : Warning BCP073: The property "scope" is read-only. Expressions cannot be assigned to read-only properties.
-/Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(136,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(158,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "'0.5'".
 /Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(159,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "'0.7'".
-/Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(170,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(188,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "'0.5'".
 /Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(189,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "'0.7'".
-/Users/ant/Code/azure-quickstart-templates/201-aci-wordpress/azuredeploy.bicep(216,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4134,7 +4098,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/openvpn-access-server-ubuntu/azuredeploy.bicep(128,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'UDP'". Did you mean "'Udp'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4150,8 +4113,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(273,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(336,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 /Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(342,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(373,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-sql-full-autobackup/azuredeploy.bicep(386,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4185,7 +4146,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-logic-app-xslt-with-params/azuredeploy.bicep(19,5) : Error BCP032: The value must be a compile-time constant.
-/Users/ant/Code/azure-quickstart-templates/201-logic-app-xslt-with-params/azuredeploy.bicep(53,14) : Warning BCP088: The property "mapType" expected a value of type "'NotSpecified' | 'Xslt'" but the provided value is of type "'xslt'". Did you mean "'Xslt'"?
 /Users/ant/Code/azure-quickstart-templates/201-logic-app-xslt-with-params/azuredeploy.bicep(72,7) : Warning BCP073: The property "id" is read-only. Expressions cannot be assigned to read-only properties.
 
 
@@ -4277,18 +4237,8 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(145,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(149,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(153,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(157,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(161,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(167,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(168,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(179,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(183,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(187,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(191,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
-/Users/ant/Code/azure-quickstart-templates/101-aci-dynamicsnav/azuredeploy.bicep(195,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4715,7 +4665,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-gitrepo/azuredeploy.bicep(53,21) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-gitrepo/azuredeploy.bicep(58,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-gitrepo/azuredeploy.bicep(59,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-gitrepo/azuredeploy.bicep(77,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-volume-gitrepo/azuredeploy.bicep(78,17) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 
 
@@ -4913,11 +4862,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-Telegraf-InfluxDB-Grafana/azuredeploy.bicep(84,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-Telegraf-InfluxDB-Grafana/azuredeploy.bicep(97,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-Telegraf-InfluxDB-Grafana/azuredeploy.bicep(110,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-Telegraf-InfluxDB-Grafana/azuredeploy.bicep(123,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-Telegraf-InfluxDB-Grafana/azuredeploy.bicep(136,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5004,7 +4948,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-aks-azml-targetcompute/azuredeploy.bicep(120,24) : Warning BCP088: The property "loadBalancerSku" expected a value of type "'basic' | 'standard'" but the provided value is of type "'Basic'". Did you mean "'basic'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5036,7 +4979,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-secure-environmentvariables/azuredeploy.bicep(63,21) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-secure-environmentvariables/azuredeploy.bicep(68,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-secure-environmentvariables/azuredeploy.bicep(69,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-secure-environmentvariables/azuredeploy.bicep(86,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/201-aci-linuxcontainer-secure-environmentvariables/azuredeploy.bicep(87,17) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 
 
@@ -5064,9 +5006,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(160,31) : Warning BCP088: The property "publicIPAllocationMethod" expected a value of type "'Dynamic' | 'Static'" but the provided value is of type "'dynamic'". Did you mean "'Dynamic'"?
-/Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(171,31) : Warning BCP088: The property "publicIPAllocationMethod" expected a value of type "'Dynamic' | 'Static'" but the provided value is of type "'static'". Did you mean "'Static'"?
-/Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(179,31) : Warning BCP088: The property "publicIPAllocationMethod" expected a value of type "'Dynamic' | 'Static'" but the provided value is of type "'static'". Did you mean "'Static'"?
 /Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(278,5) : Warning BCP034: The enclosing array expected an item of type "resource | module", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(336,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "locations".
 /Users/ant/Code/azure-quickstart-templates/pivotalcloudfoundry-apigee/pcf/pcfdeploy.bicep(337,5) : Warning BCP038: The property "name" is not allowed on objects of type "DatabaseAccountCreateUpdateProperties". Permissible properties include "capabilities", "connectorOffer", "consistencyPolicy", "enableAutomaticFailover", "enableCassandraConnector", "enableMultipleWriteLocations", "ipRangeFilter", "isVirtualNetworkFilterEnabled", "locations", "virtualNetworkRules".
@@ -5133,7 +5072,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/101-aci-linuxcontainer-public-ip/azuredeploy.bicep(65,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-aci-linuxcontainer-public-ip/azuredeploy.bicep(66,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-aci-linuxcontainer-public-ip/azuredeploy.bicep(73,20) : Warning BCP036: The property "restartPolicy" expected a value of type "'Always' | 'Never' | 'OnFailure'" but the provided value is of type "'always' | 'never' | 'onfailure'".
-/Users/ant/Code/azure-quickstart-templates/101-aci-linuxcontainer-public-ip/azuredeploy.bicep(78,21) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/101-aci-linuxcontainer-public-ip/azuredeploy.bicep(79,17) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
 
 
@@ -5197,7 +5135,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-autoscale/azuredeploy.bicep(128,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
-/Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-autoscale/azuredeploy.bicep(150,23) : Warning BCP088: The property "indexingMode" expected a value of type "'Consistent' | 'Lazy' | 'None'" but the provided value is of type "'consistent'". Did you mean "'Consistent'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-autoscale/azuredeploy.bicep(165,22) : Warning BCP088: The property "order" expected a value of type "'Ascending' | 'Descending'" but the provided value is of type "'ascending'". Did you mean "'Ascending'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-autoscale/azuredeploy.bicep(169,22) : Warning BCP088: The property "order" expected a value of type "'Ascending' | 'Descending'" but the provided value is of type "'descending'". Did you mean "'Descending'"?
 
@@ -5460,7 +5397,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/e-shop-website-with-ilb-ase/azuredeploy.bicep(399,33) : Warning BCP081: Resource type "Microsoft.Sql/servers/databases@2020-02-02-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/e-shop-website-with-ilb-ase/azuredeploy.bicep(412,56) : Warning BCP081: Resource type "Microsoft.Sql/servers/virtualNetworkRules@2020-02-02-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/e-shop-website-with-ilb-ase/azuredeploy.bicep(429,17) : Warning BCP036: The property "capacity" expected a value of type "int" but the provided value is of type "'1'".
-/Users/ant/Code/azure-quickstart-templates/e-shop-website-with-ilb-ase/azuredeploy.bicep(700,11) : Warning BCP088: The property "name" expected a value of type "'Custom_Verizon' | 'Premium_ChinaCdn' | 'Premium_Verizon' | 'Standard_Akamai' | 'Standard_ChinaCdn' | 'Standard_Microsoft' | 'Standard_Verizon'" but the provided value is of type "'standard_verizon'". Did you mean "'Standard_Verizon'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5664,18 +5600,13 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(145,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(158,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(171,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(225,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(274,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 /Users/ant/Code/azure-quickstart-templates/201-vm-linux-jupyterhub/azuredeploy.bicep(284,23) : Warning BCP036: The property "diskSizeGB" expected a value of type "int" but the provided value is of type "'1024' | '16384' | '2048' | '32767' | '4096' | '8192'".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-sql-managed-instance-azure-environment/azuredeploy.bicep(105,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5739,9 +5670,7 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-simple-zones/azuredeploy.bicep(115,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-simple-zones/azuredeploy.bicep(155,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/101-vm-simple-zones/azuredeploy.bicep(209,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5749,9 +5678,7 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/201-IoT-IotHub-EdgeEmulator-VM/azuredeploy.bicep(104,25) : Warning BCP036: The property "partitionCount" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-IoT-IotHub-EdgeEmulator-VM/azuredeploy.bicep(111,15) : Warning BCP036: The property "capacity" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-IoT-IotHub-EdgeEmulator-VM/azuredeploy.bicep(151,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/201-IoT-IotHub-EdgeEmulator-VM/azuredeploy.bicep(200,15) : Warning BCP036: The property "vmSize" expected a value of type "'Basic_A0' | 'Basic_A1' | 'Basic_A2' | 'Basic_A3' | 'Basic_A4' | 'Standard_A0' | 'Standard_A1' | 'Standard_A10' | 'Standard_A11' | 'Standard_A1_v2' | 'Standard_A2' | 'Standard_A2_v2' | 'Standard_A2m_v2' | 'Standard_A3' | 'Standard_A4' | 'Standard_A4_v2' | 'Standard_A4m_v2' | 'Standard_A5' | 'Standard_A6' | 'Standard_A7' | 'Standard_A8' | 'Standard_A8_v2' | 'Standard_A8m_v2' | 'Standard_A9' | 'Standard_B1ms' | 'Standard_B1s' | 'Standard_B2ms' | 'Standard_B2s' | 'Standard_B4ms' | 'Standard_B8ms' | 'Standard_D1' | 'Standard_D11' | 'Standard_D11_v2' | 'Standard_D12' | 'Standard_D12_v2' | 'Standard_D13' | 'Standard_D13_v2' | 'Standard_D14' | 'Standard_D14_v2' | 'Standard_D15_v2' | 'Standard_D16_v3' | 'Standard_D16s_v3' | 'Standard_D1_v2' | 'Standard_D2' | 'Standard_D2_v2' | 'Standard_D2_v3' | 'Standard_D2s_v3' | 'Standard_D3' | 'Standard_D32_v3' | 'Standard_D32s_v3' | 'Standard_D3_v2' | 'Standard_D4' | 'Standard_D4_v2' | 'Standard_D4_v3' | 'Standard_D4s_v3' | 'Standard_D5_v2' | 'Standard_D64_v3' | 'Standard_D64s_v3' | 'Standard_D8_v3' | 'Standard_D8s_v3' | 'Standard_DS1' | 'Standard_DS11' | 'Standard_DS11_v2' | 'Standard_DS12' | 'Standard_DS12_v2' | 'Standard_DS13' | 'Standard_DS13-2_v2' | 'Standard_DS13-4_v2' | 'Standard_DS13_v2' | 'Standard_DS14' | 'Standard_DS14-4_v2' | 'Standard_DS14-8_v2' | 'Standard_DS14_v2' | 'Standard_DS15_v2' | 'Standard_DS1_v2' | 'Standard_DS2' | 'Standard_DS2_v2' | 'Standard_DS3' | 'Standard_DS3_v2' | 'Standard_DS4' | 'Standard_DS4_v2' | 'Standard_DS5_v2' | 'Standard_E16_v3' | 'Standard_E16s_v3' | 'Standard_E2_v3' | 'Standard_E2s_v3' | 'Standard_E32-16_v3' | 'Standard_E32-8s_v3' | 'Standard_E32_v3' | 'Standard_E32s_v3' | 'Standard_E4_v3' | 'Standard_E4s_v3' | 'Standard_E64-16s_v3' | 'Standard_E64-32s_v3' | 'Standard_E64_v3' | 'Standard_E64s_v3' | 'Standard_E8_v3' | 'Standard_E8s_v3' | 'Standard_F1' | 'Standard_F16' | 'Standard_F16s' | 'Standard_F16s_v2' | 'Standard_F1s' | 'Standard_F2' | 'Standard_F2s' | 'Standard_F2s_v2' | 'Standard_F32s_v2' | 'Standard_F4' | 'Standard_F4s' | 'Standard_F4s_v2' | 'Standard_F64s_v2' | 'Standard_F72s_v2' | 'Standard_F8' | 'Standard_F8s' | 'Standard_F8s_v2' | 'Standard_G1' | 'Standard_G2' | 'Standard_G3' | 'Standard_G4' | 'Standard_G5' | 'Standard_GS1' | 'Standard_GS2' | 'Standard_GS3' | 'Standard_GS4' | 'Standard_GS4-4' | 'Standard_GS4-8' | 'Standard_GS5' | 'Standard_GS5-16' | 'Standard_GS5-8' | 'Standard_H16' | 'Standard_H16m' | 'Standard_H16mr' | 'Standard_H16r' | 'Standard_H8' | 'Standard_H8m' | 'Standard_L16s' | 'Standard_L32s' | 'Standard_L4s' | 'Standard_L8s' | 'Standard_M128-32ms' | 'Standard_M128-64ms' | 'Standard_M128ms' | 'Standard_M128s' | 'Standard_M64-16ms' | 'Standard_M64-32ms' | 'Standard_M64ms' | 'Standard_M64s' | 'Standard_NC12' | 'Standard_NC12s_v2' | 'Standard_NC12s_v3' | 'Standard_NC24' | 'Standard_NC24r' | 'Standard_NC24rs_v2' | 'Standard_NC24rs_v3' | 'Standard_NC24s_v2' | 'Standard_NC24s_v3' | 'Standard_NC6' | 'Standard_NC6s_v2' | 'Standard_NC6s_v3' | 'Standard_ND12s' | 'Standard_ND24rs' | 'Standard_ND24s' | 'Standard_ND6s' | 'Standard_NV12' | 'Standard_NV24' | 'Standard_NV6'" but the provided value is of type "'Standard_B12ms' | 'Standard_B16ms' | 'Standard_B1ls' | 'Standard_B1ms' | 'Standard_B1s' | 'Standard_B20ms' | 'Standard_B2ms' | 'Standard_B2s' | 'Standard_B4ms' | 'Standard_B8ms'".
-/Users/ant/Code/azure-quickstart-templates/201-IoT-IotHub-EdgeEmulator-VM/azuredeploy.bicep(204,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5941,14 +5868,12 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-signalr/azuredeploy.bicep(82,5) : Warning BCP038: The property "hostNamePrefix" is not allowed on objects of type "SignalRProperties". Permissible properties include "tls".
-/Users/ant/Code/azure-quickstart-templates/101-signalr/azuredeploy.bicep(101,22) : Warning BCP088: The property "defaultAction" expected a value of type "'Allow' | 'Deny'" but the provided value is of type "'deny'". Did you mean "'Deny'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-aci-vnet/azuredeploy.bicep(138,21) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "string".
-/Users/ant/Code/azure-quickstart-templates/101-aci-vnet/azuredeploy.bicep(139,25) : Warning BCP088: The property "protocol" expected a value of type "'TCP' | 'UDP'" but the provided value is of type "'Tcp'". Did you mean "'TCP'"?
 /Users/ant/Code/azure-quickstart-templates/101-aci-vnet/azuredeploy.bicep(144,20) : Warning BCP036: The property "cpu" expected a value of type "int" but the provided value is of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-aci-vnet/azuredeploy.bicep(145,27) : Warning BCP036: The property "memoryInGB" expected a value of type "int" but the provided value is of type "string".
 
@@ -6092,11 +6017,7 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-vm-ubuntu-DSVM-GPU-or-CPU/azuredeploy.bicep(132,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-vm-ubuntu-DSVM-GPU-or-CPU/azuredeploy.bicep(145,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
-/Users/ant/Code/azure-quickstart-templates/101-vm-ubuntu-DSVM-GPU-or-CPU/azuredeploy.bicep(158,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Ah' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/101-vm-ubuntu-DSVM-GPU-or-CPU/azuredeploy.bicep(198,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/101-vm-ubuntu-DSVM-GPU-or-CPU/azuredeploy.bicep(223,23) : Warning BCP088: The property "createOption" expected a value of type "'Attach' | 'Empty' | 'FromImage'" but the provided value is of type "'fromImage'". Did you mean "'FromImage'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -6378,7 +6299,6 @@ WARNING: Decompilation is a best-effort process, as there is no guaranteed mappi
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-container-sprocs/azuredeploy.bicep(129,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
-/Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-container-sprocs/azuredeploy.bicep(151,23) : Warning BCP088: The property "indexingMode" expected a value of type "'Consistent' | 'Lazy' | 'None'" but the provided value is of type "'consistent'". Did you mean "'Consistent'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-container-sprocs/azuredeploy.bicep(165,19) : Warning BCP036: The property "throughput" expected a value of type "string" but the provided value is of type "int".
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-container-sprocs/azuredeploy.bicep(175,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-sql-container-sprocs/azuredeploy.bicep(188,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
@@ -6492,7 +6412,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/obs-studio-stream-vm-chocolatey/azuredeploy.bicep(94,21) : Warning BCP088: The property "protocol" expected a value of type "'*' | 'Esp' | 'Icmp' | 'Tcp' | 'Udp'" but the provided value is of type "'TCP'". Did you mean "'Tcp'"?
 /Users/ant/Code/azure-quickstart-templates/obs-studio-stream-vm-chocolatey/azuredeploy.bicep(194,15) : Warning BCP036: The property "vmSize" expected a value of type "'Basic_A0' | 'Basic_A1' | 'Basic_A2' | 'Basic_A3' | 'Basic_A4' | 'Standard_A0' | 'Standard_A1' | 'Standard_A10' | 'Standard_A11' | 'Standard_A1_v2' | 'Standard_A2' | 'Standard_A2_v2' | 'Standard_A2m_v2' | 'Standard_A3' | 'Standard_A4' | 'Standard_A4_v2' | 'Standard_A4m_v2' | 'Standard_A5' | 'Standard_A6' | 'Standard_A7' | 'Standard_A8' | 'Standard_A8_v2' | 'Standard_A8m_v2' | 'Standard_A9' | 'Standard_B1ms' | 'Standard_B1s' | 'Standard_B2ms' | 'Standard_B2s' | 'Standard_B4ms' | 'Standard_B8ms' | 'Standard_D1' | 'Standard_D11' | 'Standard_D11_v2' | 'Standard_D12' | 'Standard_D12_v2' | 'Standard_D13' | 'Standard_D13_v2' | 'Standard_D14' | 'Standard_D14_v2' | 'Standard_D15_v2' | 'Standard_D16_v3' | 'Standard_D16s_v3' | 'Standard_D1_v2' | 'Standard_D2' | 'Standard_D2_v2' | 'Standard_D2_v3' | 'Standard_D2s_v3' | 'Standard_D3' | 'Standard_D32_v3' | 'Standard_D32s_v3' | 'Standard_D3_v2' | 'Standard_D4' | 'Standard_D4_v2' | 'Standard_D4_v3' | 'Standard_D4s_v3' | 'Standard_D5_v2' | 'Standard_D64_v3' | 'Standard_D64s_v3' | 'Standard_D8_v3' | 'Standard_D8s_v3' | 'Standard_DS1' | 'Standard_DS11' | 'Standard_DS11_v2' | 'Standard_DS12' | 'Standard_DS12_v2' | 'Standard_DS13' | 'Standard_DS13-2_v2' | 'Standard_DS13-4_v2' | 'Standard_DS13_v2' | 'Standard_DS14' | 'Standard_DS14-4_v2' | 'Standard_DS14-8_v2' | 'Standard_DS14_v2' | 'Standard_DS15_v2' | 'Standard_DS1_v2' | 'Standard_DS2' | 'Standard_DS2_v2' | 'Standard_DS3' | 'Standard_DS3_v2' | 'Standard_DS4' | 'Standard_DS4_v2' | 'Standard_DS5_v2' | 'Standard_E16_v3' | 'Standard_E16s_v3' | 'Standard_E2_v3' | 'Standard_E2s_v3' | 'Standard_E32-16_v3' | 'Standard_E32-8s_v3' | 'Standard_E32_v3' | 'Standard_E32s_v3' | 'Standard_E4_v3' | 'Standard_E4s_v3' | 'Standard_E64-16s_v3' | 'Standard_E64-32s_v3' | 'Standard_E64_v3' | 'Standard_E64s_v3' | 'Standard_E8_v3' | 'Standard_E8s_v3' | 'Standard_F1' | 'Standard_F16' | 'Standard_F16s' | 'Standard_F16s_v2' | 'Standard_F1s' | 'Standard_F2' | 'Standard_F2s' | 'Standard_F2s_v2' | 'Standard_F32s_v2' | 'Standard_F4' | 'Standard_F4s' | 'Standard_F4s_v2' | 'Standard_F64s_v2' | 'Standard_F72s_v2' | 'Standard_F8' | 'Standard_F8s' | 'Standard_F8s_v2' | 'Standard_G1' | 'Standard_G2' | 'Standard_G3' | 'Standard_G4' | 'Standard_G5' | 'Standard_GS1' | 'Standard_GS2' | 'Standard_GS3' | 'Standard_GS4' | 'Standard_GS4-4' | 'Standard_GS4-8' | 'Standard_GS5' | 'Standard_GS5-16' | 'Standard_GS5-8' | 'Standard_H16' | 'Standard_H16m' | 'Standard_H16mr' | 'Standard_H16r' | 'Standard_H8' | 'Standard_H8m' | 'Standard_L16s' | 'Standard_L32s' | 'Standard_L4s' | 'Standard_L8s' | 'Standard_M128-32ms' | 'Standard_M128-64ms' | 'Standard_M128ms' | 'Standard_M128s' | 'Standard_M64-16ms' | 'Standard_M64-32ms' | 'Standard_M64ms' | 'Standard_M64s' | 'Standard_NC12' | 'Standard_NC12s_v2' | 'Standard_NC12s_v3' | 'Standard_NC24' | 'Standard_NC24r' | 'Standard_NC24rs_v2' | 'Standard_NC24rs_v3' | 'Standard_NC24s_v2' | 'Standard_NC24s_v3' | 'Standard_NC6' | 'Standard_NC6s_v2' | 'Standard_NC6s_v3' | 'Standard_ND12s' | 'Standard_ND24rs' | 'Standard_ND24s' | 'Standard_ND6s' | 'Standard_NV12' | 'Standard_NV24' | 'Standard_NV6'" but the provided value is of type "'Standard_NC12' | 'Standard_NC12_Promo' | 'Standard_NC24' | 'Standard_NC24_Promo' | 'Standard_NC6' | 'Standard_NC6_Promo' | 'Standard_NV12' | 'Standard_NV12_Promo' | 'Standard_NV12s_v2' | 'Standard_NV12s_v3' | 'Standard_NV24' | 'Standard_NV24_Promo' | 'Standard_NV24s_v2' | 'Standard_NV24s_v3' | 'Standard_NV48s_v3' | 'Standard_NV6' | 'Standard_NV6_Promo' | 'Standard_NV6s_v2'".
 
 
@@ -6699,7 +6618,6 @@ You may need to fix warnings and errors in the generated bicep file(s), or decom
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin/azuredeploy.bicep(135,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin/azuredeploy.bicep(147,3) : Warning BCP035: The specified "object" declaration is missing the following required properties: "options".
-/Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin/azuredeploy.bicep(151,23) : Warning BCP088: The property "indexingMode" expected a value of type "'Consistent' | 'Lazy' | 'None'" but the provided value is of type "'consistent'". Did you mean "'Consistent'"?
 /Users/ant/Code/azure-quickstart-templates/101-cosmosdb-gremlin/azuredeploy.bicep(169,7) : Warning BCP038: The property "options" is not allowed on objects of type "GremlinGraphResource". Permissible properties include "conflictResolutionPolicy", "defaultTtl", "uniqueKeyPolicy".
 
 
@@ -7033,8 +6951,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(375,31) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(446,44) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
 /Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(452,38) : Error BCP083: The type "resourceGroup" does not contain property "Name". Did you mean "name"?
-/Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(483,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
-/Users/ant/Code/azure-quickstart-templates/301-vm-sql-full-autobackup-autopatching-keyvault/azuredeploy.bicep(496,22) : Warning BCP088: The property "direction" expected a value of type "'Inbound' | 'Outbound'" but the provided value is of type "'inbound'". Did you mean "'Inbound'"?
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.

@@ -157,7 +157,7 @@ resource vmName_devbox 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: '${vmName_var}-devbox'
   location: location_var
   properties: {
-    publicIPAllocationMethod: 'dynamic'
+    publicIPAllocationMethod: 'Dynamic'
     dnsSettings: {
       domainNameLabel: vmName_var
     }
@@ -168,7 +168,7 @@ resource vmName_bosh 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: '${vmName_var}-bosh'
   location: location_var
   properties: {
-    publicIPAllocationMethod: 'static'
+    publicIPAllocationMethod: 'Static'
   }
 }
 
@@ -176,7 +176,7 @@ resource vmName_cf 'Microsoft.Network/publicIPAddresses@2015-06-15' = {
   name: '${vmName_var}-cf'
   location: location_var
   properties: {
-    publicIPAllocationMethod: 'static'
+    publicIPAllocationMethod: 'Static'
   }
 }
 

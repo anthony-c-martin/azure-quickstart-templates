@@ -130,7 +130,7 @@ resource apiManagementServiceName_exampleApi 'Microsoft.ApiManagement/service/ap
     serviceUrl: 'https://example.net'
     path: 'exampleapipath'
     protocols: [
-      'HTTPS'
+      'https'
     ]
   }
   dependsOn: [
@@ -184,7 +184,7 @@ resource apiManagementServiceName_exampleApiWithPolicy 'Microsoft.ApiManagement/
     serviceUrl: 'https://exampleapiwithpolicy.net'
     path: 'exampleapiwithpolicypath'
     protocols: [
-      'HTTPS'
+      'https'
     ]
   }
   dependsOn: [

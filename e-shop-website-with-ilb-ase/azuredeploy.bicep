@@ -697,7 +697,7 @@ resource cdnName 'microsoft.cdn/profiles@2020-04-15' = {
   name: cdnName_var
   location: location
   sku: {
-    name: 'standard_verizon'
+    name: 'Standard_Verizon'
   }
 }
 

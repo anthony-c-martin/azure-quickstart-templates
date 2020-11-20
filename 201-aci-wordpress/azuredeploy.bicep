@@ -133,7 +133,7 @@ resource wordpresscontainerGroupName 'Microsoft.ContainerInstance/containerGroup
           image: 'wordpress:4.9-apache'
           ports: [
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 80
             }
           ]
@@ -167,7 +167,7 @@ resource wordpresscontainerGroupName 'Microsoft.ContainerInstance/containerGroup
           image: 'mysql:5.6'
           ports: [
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 3306
             }
           ]
@@ -213,7 +213,7 @@ resource wordpresscontainerGroupName 'Microsoft.ContainerInstance/containerGroup
     ipAddress: {
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 80
         }
       ]

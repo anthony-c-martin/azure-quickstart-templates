@@ -129,7 +129,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'JupyterHub'
         properties: {
           priority: 1010
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -142,7 +142,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'RStudioServer'
         properties: {
           priority: 1020
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -155,7 +155,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'SSH'
         properties: {
           priority: 1030
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -220,7 +220,7 @@ resource virtualMachineName_Cpu_Gpu 'Microsoft.Compute/virtualMachines@2019-07-0
     }
     storageProfile: {
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: osDiskType
         }

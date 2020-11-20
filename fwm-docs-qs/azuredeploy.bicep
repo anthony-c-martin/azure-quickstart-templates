@@ -87,11 +87,11 @@ resource Policy_01_DefaultApplicationRuleCollectionGroup 'Microsoft.Network/fire
             name: 'Allow-msft'
             protocols: [
               {
-                protocolType: 'http'
+                protocolType: 'Http'
                 port: 80
               }
               {
-                protocolType: 'https'
+                protocolType: 'Https'
                 port: 443
               }
             ]
@@ -330,7 +330,7 @@ resource nsg_jump_srv 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
       {
         name: 'RDP'
         properties: {
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '3389'
           sourceAddressPrefix: '*'

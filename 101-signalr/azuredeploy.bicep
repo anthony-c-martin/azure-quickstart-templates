@@ -98,7 +98,7 @@ resource name_res 'Microsoft.SignalRService/SignalR@2020-07-01-preview' = {
       allowedOrigins: allowedOrigins
     }
     networkACLs: {
-      defaultAction: 'deny'
+      defaultAction: 'Deny'
       publicNetwork: {
         allow: [
           'ClientConnection'

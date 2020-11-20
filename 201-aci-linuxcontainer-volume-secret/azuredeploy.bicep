@@ -100,7 +100,7 @@ resource containergroupname_res 'Microsoft.ContainerInstance/containerGroups@201
       dnsNameLabel: dnsnamelabel
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: port
         }
       ]

@@ -125,7 +125,7 @@ resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-
         properties: {
           priority: 1300
           sourceAddressPrefix: '*'
-          protocol: 'UDP'
+          protocol: 'Udp'
           destinationPortRange: '1194'
           access: 'Allow'
           direction: 'Inbound'

@@ -142,23 +142,23 @@ resource contGroupName_res 'Microsoft.ContainerInstance/containerGroups@2019-12-
           image: image
           ports: [
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 443
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 8080
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 7049
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 7048
             }
             {
-              protocol: 'Tcp'
+              protocol: 'TCP'
               port: 80
             }
           ]
@@ -176,23 +176,23 @@ resource contGroupName_res 'Microsoft.ContainerInstance/containerGroups@2019-12-
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 443
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 8080
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 7049
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 7048
         }
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 80
         }
       ]

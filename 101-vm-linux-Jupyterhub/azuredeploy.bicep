@@ -128,7 +128,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'HTTP'
         properties: {
           priority: 300
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -141,7 +141,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'HTTPS'
         properties: {
           priority: 310
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -154,7 +154,7 @@ resource networkSecurityGroupName_res 'Microsoft.Network/networkSecurityGroups@2
         name: 'SSH'
         properties: {
           priority: 340
-          protocol: 'TCP'
+          protocol: 'Tcp'
           access: 'Allow'
           direction: 'Inbound'
           sourceAddressPrefix: '*'
@@ -257,7 +257,7 @@ resource vmName_res 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     }
     storageProfile: {
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Standard_LRS'
         }

@@ -133,7 +133,7 @@ resource logAnalyticsName 'Microsoft.OperationalInsights/workspaces@2020-03-01-p
   }
   properties: {
     sku: {
-      name: 'pergb2018'
+      name: 'PerGB2018'
     }
     retentionInDays: 120
     features: {

@@ -138,7 +138,7 @@ resource sftpContainerGroupName 'Microsoft.ContainerInstance/containerGroups@201
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: 22
         }
       ]

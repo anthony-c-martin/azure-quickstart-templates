@@ -285,7 +285,7 @@ resource virtualMachineName 'Microsoft.Compute/virtualMachines@2019-12-01' = {
         version: 'latest'
       }
       osDisk: {
-        createOption: 'fromImage'
+        createOption: 'FromImage'
         managedDisk: {
           storageAccountType: 'Standard_LRS'
         }

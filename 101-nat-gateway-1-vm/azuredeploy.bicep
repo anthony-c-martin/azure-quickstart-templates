@@ -96,7 +96,7 @@ resource nsgname_res 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
       {
         name: 'SSH'
         properties: {
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '22'
           sourceAddressPrefix: '*'

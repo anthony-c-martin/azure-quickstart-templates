@@ -146,7 +146,7 @@ resource nsgName 'Microsoft.Network/networkSecurityGroups@2019-06-01' = {
       {
         name: 'RDP'
         properties: {
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '3389'
           sourceAddressPrefix: '*'

@@ -75,7 +75,7 @@ resource name_res 'Microsoft.ContainerInstance/containerGroups@2019-12-01' = {
       type: 'Public'
       ports: [
         {
-          protocol: 'Tcp'
+          protocol: 'TCP'
           port: port
         }
       ]

@@ -77,7 +77,7 @@ resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-
           access: 'Allow'
           direction: 'Inbound'
           destinationPortRange: '22'
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourceAddressPrefix: '*'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'

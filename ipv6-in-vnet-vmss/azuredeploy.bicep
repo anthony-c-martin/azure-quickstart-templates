@@ -153,7 +153,7 @@ resource loadBalancer 'Microsoft.Network/loadBalancers@2019-07-01' = {
           frontendIPConfiguration: {
             id: resourceId('Microsoft.Network/loadBalancers/frontendIpConfigurations', 'loadBalancer', 'LBFE')
           }
-          protocol: 'tcp'
+          protocol: 'Tcp'
           frontendPortRangeStart: natStartPort
           frontendPortRangeEnd: natEndPort
           backendPort: natBackendPort
@@ -172,7 +172,7 @@ resource VmssNsg 'Microsoft.Network/networkSecurityGroups@2019-02-01' = {
         name: 'allow-HTTP-in'
         properties: {
           description: 'Allow HTTP'
-          protocol: 'TCP'
+          protocol: 'Tcp'
           sourcePortRange: '80'
           destinationPortRange: '80'
           sourceAddressPrefix: '*'
