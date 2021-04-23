@@ -1,0 +1,77 @@
+@minLength(2)
+@description('Web app name.')
+param webAppName string = 'webApp-${uniqueString(resourceGroup().id)}'
+
+@description('Location for all resources.')
+param location string = resourceGroup().location
+
+@description('The SKU of App Service Plan.')
+param sku string = 'F1'
+
+@allowed([
+  '.net'
+  'php'
+  'node'
+  'html'
+])
+@description('The language stack of the app.')
+param language string = '.net'
+
+@description('Optional Git Repo URL, if empty a \'hello world\' app will be deploy from the Azure-Samples repo')
+param repoUrl string = ''
+
+var appServicePlanPortalName_var = 'AppServicePlan-${webAppName}'
+var gitRepoReference = {
+  '.net': 'https://github.com/Azure-Samples/app-service-web-dotnet-get-started'
+  node: 'https://github.com/Azure-Samples/nodejs-docs-hello-world'
+  php: 'https://github.com/Azure-Samples/php-docs-hello-world'
+  html: 'https://github.com/Azure-Samples/html-docs-hello-world'
+}
+var gitRepoUrl = (empty(repoUrl) ? gitRepoReference[language] : repoUrl)
+var configReference = {
+  '.net': {
+    comments: '.Net app. No additional configuration needed.'
+  }
+  html: {
+    comments: 'HTML app. No additional configuration needed.'
+  }
+  php: {
+    phpVersion: '7.4'
+  }
+  node: {
+    appSettings: [
+      {
+        name: 'WEBSITE_NODE_DEFAULT_VERSION'
+        value: '12.15.0'
+      }
+    ]
+  }
+}
+
+resource appServicePlanPortalName 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: appServicePlanPortalName_var
+  location: location
+  sku: {
+    name: sku
+  }
+}
+
+resource webAppName_resource 'Microsoft.Web/sites@2020-06-01' = {
+  name: webAppName
+  location: location
+  properties: {
+    siteConfig: configReference[language]
+    serverFarmId: appServicePlanPortalName.id
+  }
+}
+
+resource webAppName_web 'Microsoft.Web/sites/sourcecontrols@2020-06-01' = {
+  parent: webAppName_resource
+  name: 'web'
+  location: location
+  properties: {
+    repoUrl: gitRepoUrl
+    branch: 'master'
+    isManualIntegration: true
+  }
+}

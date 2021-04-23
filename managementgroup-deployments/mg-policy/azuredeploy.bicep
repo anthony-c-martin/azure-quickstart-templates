@@ -1,0 +1,45 @@
+targetScope = 'managementGroup'
+
+@description('Target Management Group')
+param targetMG string
+
+@description('An array of the allowed locations, all other locations will be denied by the created policy.')
+param allowedLocations array = [
+  'australiaeast'
+  'australiasoutheast'
+  'australiacentral'
+]
+
+var mgScope = tenantResourceId('Microsoft.Management/managementGroups', targetMG)
+var policyDefinition_var = 'LocationRestriction'
+
+resource policyDefinition 'Microsoft.Authorization/policyDefinitions@2019-09-01' = {
+  name: policyDefinition_var
+  properties: {
+    policyType: 'Custom'
+    mode: 'All'
+    parameters: {}
+    policyRule: {
+      if: {
+        not: {
+          field: 'location'
+          in: allowedLocations
+        }
+      }
+      then: {
+        effect: 'deny'
+      }
+    }
+  }
+}
+
+resource location_lock 'Microsoft.Authorization/policyAssignments@2019-09-01' = {
+  name: 'location-lock'
+  properties: {
+    scope: mgScope
+    policyDefinitionId: extensionResourceId(mgScope, 'Microsoft.Authorization/policyDefinitions', policyDefinition_var)
+  }
+  dependsOn: [
+    policyDefinition
+  ]
+}
