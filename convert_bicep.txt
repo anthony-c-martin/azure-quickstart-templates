@@ -471,8 +471,8 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/201-redis-vnet-nsg/azuredeploy.bicep(184,21) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/201-redis-vnet-nsg/nested_associateNsg.bicep(15,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/virtualNetworks/subnets". Permissible properties include "dependsOn", "parent".
+/Users/ant/Code/azure-quickstart-templates/201-redis-vnet-nsg/azuredeploy.bicep(184,21) : Error BCP104: The referenced module has errors.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -579,7 +579,7 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-ipgroups/azuredeploy.json: Decompilation failed with fatal error "[494:74]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-ipgroups/azuredeploy.bicep(356,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/firewallPolicies/ruleCollectionGroups". Permissible properties include "dependsOn".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -1617,7 +1617,8 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-sandbox-linux/azuredeploy.json: Decompilation failed with fatal error "[413:74]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-sandbox-linux/azuredeploy.bicep(345,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'80'".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-sandbox-linux/azuredeploy.bicep(349,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'443'".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2242,6 +2243,13 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(289,27) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(382,11) : Warning BCP036: The property "type" expected a value of type "'None' | 'SystemAssigned' | 'SystemAssigned,UserAssigned' | 'UserAssigned'" but the provided value is of type "'systemAssigned' | 'userAssigned'".
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(392,5) : Warning BCP038: The property "adbWorkspace" is not allowed on objects of type "WorkspaceProperties". Permissible properties include "allowPublicAccessWhenBehindVnet", "description", "discoveryUrl", "imageBuildCompute", "sharedPrivateLinkResources".
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(393,5) : Warning BCP038: The property "primaryUserAssignedIdentity" is not allowed on objects of type "WorkspaceProperties". Permissible properties include "allowPublicAccessWhenBehindVnet", "description", "discoveryUrl", "imageBuildCompute", "sharedPrivateLinkResources".
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(401,19) : Warning BCP036: The property "hbiWorkspace" expected a value of type "bool" but the provided value is of type "'false' | 'true'".
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(411,31) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_UpdateSubnetPolicy.bicep(2,35) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(4,26) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(5,38) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(6,24) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
@@ -2253,13 +2261,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(87,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(93,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/privateEndpoints/privateDnsZoneGroups". Permissible properties include "parent".
 /Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_DeployPrivateEndpoints.bicep(111,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/nested_UpdateSubnetPolicy.bicep(2,35) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(289,27) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(382,11) : Warning BCP036: The property "type" expected a value of type "'None' | 'SystemAssigned' | 'SystemAssigned,UserAssigned' | 'UserAssigned'" but the provided value is of type "'systemAssigned' | 'userAssigned'".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(392,5) : Warning BCP038: The property "adbWorkspace" is not allowed on objects of type "WorkspaceProperties". Permissible properties include "allowPublicAccessWhenBehindVnet", "description", "discoveryUrl", "imageBuildCompute", "sharedPrivateLinkResources".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(393,5) : Warning BCP038: The property "primaryUserAssignedIdentity" is not allowed on objects of type "WorkspaceProperties". Permissible properties include "allowPublicAccessWhenBehindVnet", "description", "discoveryUrl", "imageBuildCompute", "sharedPrivateLinkResources".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(401,19) : Warning BCP036: The property "hbiWorkspace" expected a value of type "bool" but the provided value is of type "'false' | 'true'".
-/Users/ant/Code/azure-quickstart-templates/201-machine-learning-advanced/azuredeploy.bicep(411,31) : Error BCP104: The referenced module has errors.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2414,7 +2415,10 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aks/azuredeploy.json: Decompilation failed with fatal error "[220:44]: Unable to find variable models"
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aks/azuredeploy.bicep(117,89) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aks/azuredeploy.bicep(123,60) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aks/azuredeploy.bicep(133,37) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aks/azuredeploy.bicep(135,32) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2438,7 +2442,12 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.json: Decompilation failed with fatal error "[528:82]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(206,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/virtualNetworks/virtualNetworkPeerings". Permissible properties include "dependsOn", "etag".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(221,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/virtualNetworks/virtualNetworkPeerings". Permissible properties include "dependsOn", "etag".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(457,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'80'".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(461,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'443'".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(539,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'80'".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-forced-tunneling/azuredeploy.bicep(543,25) : Warning BCP036: The property "port" expected a value of type "int" but the provided value is of type "'443'".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -2510,7 +2519,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-ipgroups-and-linux-jumpbox/azuredeploy.json: Decompilation failed with fatal error "[429:74]: Unable to find variable azureFirewallIpConfigurations"
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -3780,7 +3788,11 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.json: Decompilation failed with fatal error "[290:78]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.bicep(108,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/firewallPolicies/ruleCollectionGroups". Permissible properties include "dependsOn".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.bicep(146,3) : Error BCP037: No other properties are allowed on objects of type "Microsoft.Network/firewallPolicies/ruleCollectionGroups".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.bicep(174,13) : Warning BCP038: The property "terminateTLS" is not allowed on objects of type "ApplicationRule". Permissible properties include "description", "destinationAddresses", "sourceAddresses", "targetFqdns".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.bicep(202,13) : Warning BCP038: The property "terminateTLS" is not allowed on objects of type "ApplicationRule". Permissible properties include "description", "destinationAddresses", "fqdnTags", "sourceAddresses".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-firewallpolicy-apprule-netrule-ipgroups/azuredeploy.bicep(223,5) : Warning BCP038: The property "firewallPolicy" is not allowed on objects of type "AzureFirewallPropertiesFormat". Permissible properties include "applicationRuleCollections", "natRuleCollections", "networkRuleCollections", "provisioningState", "threatIntelMode".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4164,7 +4176,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-create-with-zones/azuredeploy.json: Decompilation failed with fatal error "[135:74]: Unable to find variable azureFirewallIpConfigurations"
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4289,19 +4300,19 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-databricks-workspace-with-customer-managed-keys/azuredeploy.bicep(53,32) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/101-databricks-workspace-with-customer-managed-keys/nested_configureCMKOnWorkspace.bicep(1,42) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
+/Users/ant/Code/azure-quickstart-templates/101-databricks-workspace-with-customer-managed-keys/azuredeploy.bicep(53,32) : Error BCP104: The referenced module has errors.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
+/Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/azuredeploy.bicep(115,40) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/azuredeploy.bicep(249,26) : Warning BCP036: The property "metricNamespace" expected a value of type "string" but the provided value is of type "null".
 /Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(26,36) : Warning BCP081: Resource type "Microsoft.OperationalInsights/workspaces@2017-04-26-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(51,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(59,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.OperationalInsights/workspaces/dataSources". Permissible properties include "eTag", "tags".
 /Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(64,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/azuredeploy.bicep(115,40) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/101-DDoS-Attack-Prevention/azuredeploy.bicep(249,26) : Warning BCP036: The property "metricNamespace" expected a value of type "string" but the provided value is of type "null".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4544,7 +4555,11 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.json: Decompilation failed with fatal error "[273:74]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.bicep(69,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPPrefixSku".
+/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.bicep(172,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
+/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.bicep(199,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
+/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.bicep(332,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
+/Users/ant/Code/azure-quickstart-templates/fw-docs-qs/azuredeploy.bicep(333,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4668,6 +4683,10 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/azuredeploy.bicep(104,94) : Error BCP019: Expected a new line character at this location.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/azuredeploy.bicep(105,82) : Error BCP064: Found unexpected tokens in interpolated expression.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/azuredeploy.bicep(106,80) : Error BCP019: Expected a new line character at this location.
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(5,24) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(6,38) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(7,28) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(8,29) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(148,20) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(156,19) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(173,5) : Error BCP062: The referenced declaration with name "optionalVip" is not valid.
@@ -4680,10 +4699,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(334,27) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(351,29) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/cluster.bicep(371,28) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(5,24) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(6,38) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(7,28) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-mirror/nestedtemplates/nested_optionalLB.bicep(8,29) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -4830,31 +4845,31 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(37,5) : Warning BCP038: The property "edition" is not allowed on objects of type "DatabaseProperties". Permissible properties include "autoPauseDelay", "catalogCollation", "collation", "elasticPoolId", "licenseType", "longTermRetentionBackupResourceId", "maxSizeBytes", "minCapacity", "readReplicaCount", "readScale", "recoverableDatabaseId", "recoveryServicesRecoveryPointId", "restorableDroppedDatabaseId", "restorePointInTime", "sampleName", "sourceDatabaseDeletionDate", "sourceDatabaseId", "zoneRedundant".
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(41,44) : Warning BCP081: Resource type "Microsoft.Sql/servers/databases/extensions@2014-04-01-preview" does not have types available.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(54,64) : Warning BCP174: Type validation is not available for resource types declared containing a "/providers/" segment. Please instead use the "scope" property. See https://aka.ms/BicepScopes for more information.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.securityalertpolicies.bicep(7,32) : Warning BCP081: Resource type "Microsoft.Sql/servers/securityAlertPolicies@2015-05-01-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.v12.0.bicep(23,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Sql/servers/firewallRules". Permissible properties include "dependsOn".
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.auditingsettings.bicep(11,28) : Warning BCP036: The property "auditActionsAndGroups" expected a value of type "string[]" but the provided value is of type "null".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.extensions.msdeploy.bicep(8,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Web/sites/extensions". Permissible properties include "dependsOn", "kind", "parent".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.extensions.msdeploy.bicep(9,3) : Error BCP038: The property "tags" is not allowed on objects of type "Microsoft.Web/sites/extensions". Permissible properties include "dependsOn", "kind", "parent".
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.securityalertpolicies.bicep(7,32) : Warning BCP081: Resource type "Microsoft.Sql/servers/securityAlertPolicies@2015-05-01-preview" does not have types available.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(101,39) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(280,46) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(294,37) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(307,31) : Error BCP104: The referenced module has errors.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.config.connectionstrings.bicep(22,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Web/sites/config@2018-02-01". Permissible properties include "dependsOn", "kind", "parent".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/serverfarms.bicep(17,5) : Warning BCP038: The property "name" is not allowed on objects of type "schemas:2_properties". Permissible properties include "freeOfferExpirationTime", "hostingEnvironmentProfile", "hyperV", "isSpot", "isXenon", "maximumElasticWorkerCount", "perSiteScaling", "spotExpirationTime", "targetWorkerCount", "targetWorkerSizeId", "workerTierName".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/serverfarms.bicep(18,5) : Warning BCP038: The property "workerSize" is not allowed on objects of type "schemas:2_properties". Permissible properties include "freeOfferExpirationTime", "hostingEnvironmentProfile", "hyperV", "isSpot", "isXenon", "maximumElasticWorkerCount", "perSiteScaling", "spotExpirationTime", "targetWorkerCount", "targetWorkerSizeId", "workerTierName".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/serverfarms.bicep(19,5) : Warning BCP038: The property "workerSizeId" is not allowed on objects of type "schemas:2_properties". Permissible properties include "freeOfferExpirationTime", "hostingEnvironmentProfile", "hyperV", "isSpot", "isXenon", "maximumElasticWorkerCount", "perSiteScaling", "spotExpirationTime", "targetWorkerCount", "targetWorkerSizeId", "workerTierName".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/serverfarms.bicep(20,5) : Warning BCP038: The property "numberOfWorkers" is not allowed on objects of type "schemas:2_properties". Permissible properties include "freeOfferExpirationTime", "hostingEnvironmentProfile", "hyperV", "isSpot", "isXenon", "maximumElasticWorkerCount", "perSiteScaling", "spotExpirationTime", "targetWorkerCount", "targetWorkerSizeId", "workerTierName".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/serverfarms.bicep(22,5) : Warning BCP038: The property "hostingEnvironment" is not allowed on objects of type "schemas:2_properties". Permissible properties include "freeOfferExpirationTime", "hostingEnvironmentProfile", "hyperV", "isSpot", "isXenon", "maximumElasticWorkerCount", "perSiteScaling", "spotExpirationTime", "targetWorkerCount", "targetWorkerSizeId", "workerTierName".
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(37,5) : Warning BCP038: The property "edition" is not allowed on objects of type "DatabaseProperties". Permissible properties include "autoPauseDelay", "catalogCollation", "collation", "elasticPoolId", "licenseType", "longTermRetentionBackupResourceId", "maxSizeBytes", "minCapacity", "readReplicaCount", "readScale", "recoverableDatabaseId", "recoveryServicesRecoveryPointId", "restorableDroppedDatabaseId", "restorePointInTime", "sampleName", "sourceDatabaseDeletionDate", "sourceDatabaseId", "zoneRedundant".
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(41,44) : Warning BCP081: Resource type "Microsoft.Sql/servers/databases/extensions@2014-04-01-preview" does not have types available.
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.databases.bicep(54,64) : Warning BCP174: Type validation is not available for resource types declared containing a "/providers/" segment. Please instead use the "scope" property. See https://aka.ms/BicepScopes for more information.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.config.connectionstrings.bicep(22,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Web/sites/config@2018-02-01". Permissible properties include "dependsOn", "kind", "parent".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(26,36) : Warning BCP081: Resource type "Microsoft.OperationalInsights/workspaces@2017-04-26-preview" does not have types available.
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(51,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(59,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.OperationalInsights/workspaces/dataSources". Permissible properties include "eTag", "tags".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.loganalytics/workspaces.bicep(64,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.network/applicationgateway.bicep(89,60) : Warning BCP174: Type validation is not available for resource types declared containing a "/providers/" segment. Please instead use the "scope" property. See https://aka.ms/BicepScopes for more information.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(101,39) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(280,46) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(294,37) : Error BCP104: The referenced module has errors.
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/azuredeploy.bicep(307,31) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.bicep(19,5) : Warning BCP038: The property "name" is not allowed on objects of type "schemas:56_properties". Permissible properties include "clientAffinityEnabled", "clientCertEnabled", "clientCertExclusionPaths", "cloningInfo", "containerSize", "dailyMemoryTimeQuota", "enabled", "geoDistributions", "hostingEnvironmentProfile", "hostNamesDisabled", "hostNameSslStates", "httpsOnly", "hyperV", "isXenon", "redundancyMode", "reserved", "scmSiteAlsoStopped", "siteConfig".
 /Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.web/sites.bicep(21,5) : Warning BCP038: The property "hostingEnvironment" is not allowed on objects of type "schemas:56_properties". Permissible properties include "clientAffinityEnabled", "clientCertEnabled", "clientCertExclusionPaths", "cloningInfo", "containerSize", "dailyMemoryTimeQuota", "enabled", "geoDistributions", "hostingEnvironmentProfile", "hostNamesDisabled", "hostNameSslStates", "httpsOnly", "hyperV", "isXenon", "redundancyMode", "reserved", "scmSiteAlsoStopped", "siteConfig".
-/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.sql/servers.auditingsettings.bicep(11,28) : Warning BCP036: The property "auditActionsAndGroups" expected a value of type "string[]" but the provided value is of type "null".
+/Users/ant/Code/azure-quickstart-templates/101-XSS-Attack-Prevention/nested/microsoft.network/applicationgateway.bicep(89,60) : Warning BCP174: Type validation is not available for resource types declared containing a "/providers/" segment. Please instead use the "scope" property. See https://aka.ms/BicepScopes for more information.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -5925,7 +5940,8 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aci/azuredeploy.json: Decompilation failed with fatal error "[142:54]: Unable to find variable models"
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aci/azuredeploy.bicep(78,89) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
+/Users/ant/Code/azure-quickstart-templates/101-machine-learning-service-create-aci/azuredeploy.bicep(84,60) : Error BCP102: The "createObject" function is not supported. Construct an object literal using {}.
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -6866,17 +6882,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(148,20) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(213,5) : Error BCP062: The referenced declaration with name "optionalVip" is not valid.
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(283,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(319,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(340,27) : Warning BCP036: The property "linuxConfiguration" expected a value of type "LinuxConfiguration" but the provided value is of type "'' | object".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(359,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(363,17) : Warning BCP081: Resource type "Microsoft.Authorization/roleAssignments@2016-07-01" does not have types available.
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(370,5) : Error BCP176: Values of the "any" type are not allowed here.
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(374,27) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(391,29) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
-/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(411,28) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(77,23) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(79,3) : Error BCP035: The specified "object" declaration is missing the following required properties: "artifactsLocation", "artifactsLocationSasToken".
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(92,5) : Error BCP089: The property "_artifactsLocation" is not allowed on objects of type "params". Did you mean "artifactsLocation"?
@@ -6888,6 +6893,17 @@ If you would like to report any issues or inaccurate conversions, please see htt
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(113,94) : Error BCP019: Expected a new line character at this location.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(114,82) : Error BCP064: Found unexpected tokens in interpolated expression.
 /Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/azuredeploy.bicep(115,80) : Error BCP019: Expected a new line character at this location.
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(148,20) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(213,5) : Error BCP062: The referenced declaration with name "optionalVip" is not valid.
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(283,5) : Warning BCP037: No other properties are allowed on objects of type "PublicIPAddressSku".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(319,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(340,27) : Warning BCP036: The property "linuxConfiguration" expected a value of type "LinuxConfiguration" but the provided value is of type "'' | object".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(359,5) : Error BCP034: The enclosing array expected an item of type "module[] | (resource | module) | resource[]", but the provided item was of type "string".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(363,17) : Warning BCP081: Resource type "Microsoft.Authorization/roleAssignments@2016-07-01" does not have types available.
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(370,5) : Error BCP176: Values of the "any" type are not allowed here.
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(374,27) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(391,29) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
+/Users/ant/Code/azure-quickstart-templates/safekit-cluster-farm/nestedtemplates/cluster.bicep(411,28) : Error BCP085: The specified module path contains one ore more invalid path characters. The following are not permitted: """, "*", ":", "<", ">", "?", "\", "|".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -6905,13 +6921,13 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(6,39) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
-/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(45,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
-/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(68,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/azuredeploy.bicep(209,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/azuredeploy.bicep(234,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
 /Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/azuredeploy.bicep(249,25) : Error BCP104: The referenced module has errors.
 /Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/azuredeploy.bicep(274,15) : Warning BCP036: The property "vmSize" expected a value of type "'Basic_A0' | 'Basic_A1' | 'Basic_A2' | 'Basic_A3' | 'Basic_A4' | 'Standard_A0' | 'Standard_A1' | 'Standard_A10' | 'Standard_A11' | 'Standard_A1_v2' | 'Standard_A2' | 'Standard_A2_v2' | 'Standard_A2m_v2' | 'Standard_A3' | 'Standard_A4' | 'Standard_A4_v2' | 'Standard_A4m_v2' | 'Standard_A5' | 'Standard_A6' | 'Standard_A7' | 'Standard_A8' | 'Standard_A8_v2' | 'Standard_A8m_v2' | 'Standard_A9' | 'Standard_B1ms' | 'Standard_B1s' | 'Standard_B2ms' | 'Standard_B2s' | 'Standard_B4ms' | 'Standard_B8ms' | 'Standard_D1' | 'Standard_D11' | 'Standard_D11_v2' | 'Standard_D12' | 'Standard_D12_v2' | 'Standard_D13' | 'Standard_D13_v2' | 'Standard_D14' | 'Standard_D14_v2' | 'Standard_D15_v2' | 'Standard_D16_v3' | 'Standard_D16s_v3' | 'Standard_D1_v2' | 'Standard_D2' | 'Standard_D2_v2' | 'Standard_D2_v3' | 'Standard_D2s_v3' | 'Standard_D3' | 'Standard_D32_v3' | 'Standard_D32s_v3' | 'Standard_D3_v2' | 'Standard_D4' | 'Standard_D4_v2' | 'Standard_D4_v3' | 'Standard_D4s_v3' | 'Standard_D5_v2' | 'Standard_D64_v3' | 'Standard_D64s_v3' | 'Standard_D8_v3' | 'Standard_D8s_v3' | 'Standard_DS1' | 'Standard_DS11' | 'Standard_DS11_v2' | 'Standard_DS12' | 'Standard_DS12_v2' | 'Standard_DS13' | 'Standard_DS13-2_v2' | 'Standard_DS13-4_v2' | 'Standard_DS13_v2' | 'Standard_DS14' | 'Standard_DS14-4_v2' | 'Standard_DS14-8_v2' | 'Standard_DS14_v2' | 'Standard_DS15_v2' | 'Standard_DS1_v2' | 'Standard_DS2' | 'Standard_DS2_v2' | 'Standard_DS3' | 'Standard_DS3_v2' | 'Standard_DS4' | 'Standard_DS4_v2' | 'Standard_DS5_v2' | 'Standard_E16_v3' | 'Standard_E16s_v3' | 'Standard_E2_v3' | 'Standard_E2s_v3' | 'Standard_E32-16_v3' | 'Standard_E32-8s_v3' | 'Standard_E32_v3' | 'Standard_E32s_v3' | 'Standard_E4_v3' | 'Standard_E4s_v3' | 'Standard_E64-16s_v3' | 'Standard_E64-32s_v3' | 'Standard_E64_v3' | 'Standard_E64s_v3' | 'Standard_E8_v3' | 'Standard_E8s_v3' | 'Standard_F1' | 'Standard_F16' | 'Standard_F16s' | 'Standard_F16s_v2' | 'Standard_F1s' | 'Standard_F2' | 'Standard_F2s' | 'Standard_F2s_v2' | 'Standard_F32s_v2' | 'Standard_F4' | 'Standard_F4s' | 'Standard_F4s_v2' | 'Standard_F64s_v2' | 'Standard_F72s_v2' | 'Standard_F8' | 'Standard_F8s' | 'Standard_F8s_v2' | 'Standard_G1' | 'Standard_G2' | 'Standard_G3' | 'Standard_G4' | 'Standard_G5' | 'Standard_GS1' | 'Standard_GS2' | 'Standard_GS3' | 'Standard_GS4' | 'Standard_GS4-4' | 'Standard_GS4-8' | 'Standard_GS5' | 'Standard_GS5-16' | 'Standard_GS5-8' | 'Standard_H16' | 'Standard_H16m' | 'Standard_H16mr' | 'Standard_H16r' | 'Standard_H8' | 'Standard_H8m' | 'Standard_L16s' | 'Standard_L32s' | 'Standard_L4s' | 'Standard_L8s' | 'Standard_M128-32ms' | 'Standard_M128-64ms' | 'Standard_M128ms' | 'Standard_M128s' | 'Standard_M64-16ms' | 'Standard_M64-32ms' | 'Standard_M64ms' | 'Standard_M64s' | 'Standard_NC12' | 'Standard_NC12s_v2' | 'Standard_NC12s_v3' | 'Standard_NC24' | 'Standard_NC24r' | 'Standard_NC24rs_v2' | 'Standard_NC24rs_v3' | 'Standard_NC24s_v2' | 'Standard_NC24s_v3' | 'Standard_NC6' | 'Standard_NC6s_v2' | 'Standard_NC6s_v3' | 'Standard_ND12s' | 'Standard_ND24rs' | 'Standard_ND24s' | 'Standard_ND6s' | 'Standard_NV12' | 'Standard_NV24' | 'Standard_NV6'" but the provided value is of type "'Standard_D16_v3' | 'Standard_D16s_v3' | 'Standard_D2_v3' | 'Standard_D2s_v3' | 'Standard_D32_v3' | 'Standard_D32s_v3' | 'Standard_D48_v3' | 'Standard_D48s_v3' | 'Standard_D4_v3' | 'Standard_D4s_v3' | 'Standard_D64_v3' | 'Standard_D64s_v3' | 'Standard_D8_v3' | 'Standard_D8s_v3' | 'Standard_E16_v3' | 'Standard_E16s_v3' | 'Standard_E20_v3' | 'Standard_E20s_v3' | 'Standard_E2_v3' | 'Standard_E2s_v3' | 'Standard_E32_v3' | 'Standard_E32s_v3' | 'Standard_E48_v3' | 'Standard_E48s_v3' | 'Standard_E4_v3' | 'Standard_E4s_v3' | 'Standard_E64_v3' | 'Standard_E64s_v3' | 'Standard_E8_v3' | 'Standard_E8s_v3'".
+/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(6,39) : Error BCP014: Expected a parameter type at this location. Please specify one of the following types: "array", "bool", "int", "object", "string".
+/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(45,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
+/Users/ant/Code/azure-quickstart-templates/301-nested-vms-in-virtual-network/nested_UpdateNetworking.bicep(68,20) : Warning BCP036: The property "primary" expected a value of type "bool" but the provided value is of type "'true'".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -7023,7 +7039,9 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-with-firewallpolicy-sandbox-linux/azuredeploy.json: Decompilation failed with fatal error "[502:74]: Unable to find variable azureFirewallIpConfigurations"
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-with-firewallpolicy-sandbox-linux/azuredeploy.bicep(335,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/firewallPolicies/ruleGroups". Permissible properties include "dependsOn".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-with-firewallpolicy-sandbox-linux/azuredeploy.bicep(341,9) : Warning BCP037: No other properties are allowed on objects of type "FirewallPolicyFilterRule".
+/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-with-firewallpolicy-sandbox-linux/azuredeploy.bicep(373,3) : Error BCP038: The property "location" is not allowed on objects of type "Microsoft.Network/firewallPolicies/ruleGroups". Permissible properties include "dependsOn".
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
@@ -7704,7 +7722,6 @@ If you would like to report any issues or inaccurate conversions, please see htt
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
 You may need to fix warnings and errors in the generated bicep file(s), or decompilation may fail entirely if an accurate conversion is not possible.
 If you would like to report any issues or inaccurate conversions, please see https://github.com/Azure/bicep/issues.
-/Users/ant/Code/azure-quickstart-templates/101-azurefirewall-with-zones-sandbox/azuredeploy.json: Decompilation failed with fatal error "[393:74]: Unable to find variable azureFirewallIpConfigurations"
 
 
 WARNING: Decompilation is a best-effort process, as there is no guaranteed mapping from ARM JSON to Bicep.
